@@ -1,0 +1,27 @@
+# ajv-cli
+
+A basic command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the [fastest json schema validators](https://github.com/ebdrup/json-schema-benchmark).
+
+# Installation
+
+```sh
+npm install ajv-cli
+```
+
+# Usage
+
+```sh
+ ajv -s schema.json -d data.json
+```
+
+> You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
+
+# Version History
+
+## 0.1.0
+
+ - Initial publication and basic usage `-s` and `-d`
+
+# Licence
+
+MIT
