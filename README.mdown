@@ -11,14 +11,18 @@ npm install ajv-cli
 # Usage
 
 ```sh
- ajv -s schema.json -d data.json
+ajv -s test/schema.json -d test/valid_data.json
 ```
 
 > You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
 
 # Version History
 
-## 0.1.0
+## 0.2.0 (3/2016)
+
+- Integrating #2 and #4. Updated package version.
+
+## 0.1.0 (9/2015)
 
  - Initial publication and basic usage `-s` and `-d`
 

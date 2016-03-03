@@ -26,18 +26,20 @@ if (errors > 0){
 }
 
 function openFile(filename, suffix){
-    var result = null;;
+    var result = null;
     try {
         result = require(path.resolve(process.cwd(), filename));
     } catch(err) {
         console.log('error:  ' + err.message.replace(' module', ' ' + suffix));
     }
+    return result;
 }
 
 var schemaFile = openFile(argv.s, 'schema');
 var data = openFile(argv.d, 'datafile');
 
 if (!schemaFile || !data) {
+    console.log('Schema file or data file not found.');
     process.exit(2);
 }
 
