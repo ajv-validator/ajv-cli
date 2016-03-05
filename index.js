@@ -51,7 +51,7 @@ var validate = ajv.compile(schemaFile);
 var validData = validate(data);
 
 if (!validData) {
-	console.error(validate.errors);
+	console.error(JSON.stringify(validate.errors, null, '  '));
 	process.exit(1);
 } else {
 	console.log('Data is valid!');

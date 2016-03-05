@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*.spec.js -R spec"
   },
   "bin": {
     "ajv": "index.js"
@@ -11,12 +11,16 @@
   "preferGlobal": true,
   "author": "Jesse Collis <jesse@jcmultimedia.com.au>",
   "license": "MIT",
-  "repository" : { 
-		"type" : "git",
-		"url" : "https://github.com/jessedc/ajv-cli"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jessedc/ajv-cli"
   },
   "dependencies": {
     "ajv": "^3.8.0",
     "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "pre-commit": "^1.1.2"
   }
 }
