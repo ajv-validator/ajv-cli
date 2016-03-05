@@ -21,7 +21,7 @@ REQUIRED_PARAMS.forEach(function (param) {
 });
 
 if (errors > 0){
-    console.log('usage:  ajv-cli -s schema[.json] -d data[.json]');
+    console.error('usage:  ajv-cli -s schema[.json] -d data[.json]');
     process.exit(2);
 }
 
@@ -30,7 +30,7 @@ function openFile(filename, suffix){
     try {
         result = require(path.resolve(process.cwd(), filename));
     } catch(err) {
-        console.log('error:  ' + err.message.replace(' module', ' ' + suffix));
+        console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
     }
     return result;
 }
@@ -39,7 +39,7 @@ var schemaFile = openFile(argv.s, 'schema');
 var data = openFile(argv.d, 'datafile');
 
 if (!schemaFile || !data) {
-    console.log('Schema file or data file not found.');
+    console.error('Schema file or data file not found.');
     process.exit(2);
 }
 
@@ -51,7 +51,7 @@ var validate = ajv.compile(schemaFile);
 var validData = validate(data);
 
 if (!validData) {
-	console.log(validate.errors);
+	console.error(validate.errors);
 	process.exit(1);
 } else {
 	console.log('Data is valid!');
