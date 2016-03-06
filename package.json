@@ -1,6 +1,6 @@
 {
   "name": "ajv-cli",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
     "test": "mocha test/*.spec.js -R spec"
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "ajv": "^3.8.0",
+    "glob": "^7.0.3",
     "minimist": "^1.2.0"
   },
   "devDependencies": {

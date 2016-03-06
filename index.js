@@ -5,6 +5,7 @@ var argv = require('minimist')(process.argv.slice(2));
 //TODO: check length, provide help documentation
 
 var path = require('path');
+var glob = require('glob');
 var Ajv = require('ajv');
 
 //TODO: allow parsing of ajv options via a third parameter
@@ -26,20 +27,19 @@ if (errors > 0){
 }
 
 function openFile(filename, suffix){
-    var result = null;
+    var json = null;
     try {
-        result = require(path.resolve(process.cwd(), filename));
+        json = require(path.resolve(process.cwd(), filename));
     } catch(err) {
         console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
     }
-    return result;
+    return json;
 }
 
 var schemaFile = openFile(argv.s, 'schema');
-var data = openFile(argv.d, 'datafile');
 
-if (!schemaFile || !data) {
-    console.error('Schema file or data file not found.');
+if (!schemaFile) {
+    console.error('Schema file not found.');
     process.exit(2);
 }
 
@@ -48,11 +48,35 @@ if (!schemaFile || !data) {
 
 var ajv = Ajv();
 var validate = ajv.compile(schemaFile);
-var validData = validate(data);
 
-if (!validData) {
-	console.error(JSON.stringify(validate.errors, null, '  '));
-	process.exit(1);
+var allValid = true;
+if (glob.hasMagic(argv.d)) {
+    var dataFiles = glob.sync(argv.d, { cwd: process.cwd() });
+    dataFiles.forEach(validateDataFile);
 } else {
-	console.log('Data is valid!');
+    validateDataFile(argv.d);
+}
+
+if (!allValid) process.exit(1);
+
+function validateDataFile(file) {
+    var data = openFile(file, 'datafile ' + file);
+    var validData = validate(data);
+    allValid = allValid && validData;
+
+    if (validData) {
+        console.log(file, 'valid');
+    } else {
+        console.error(file, 'invalid');
+        var errors;
+        switch (argv.errors) {
+            case 'json': errors = JSON.stringify(validate.errors, null, '  ');
+            case 'line': errors = JSON.stringify(validate.errors); break;
+            case 'text': errors = ajv.errorsText(validate.errors); break;
+            case 'js':
+            default:
+                errors = validate.errors; break;
+        }
+        console.error(errors);
+    }
 }

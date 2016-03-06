@@ -1,6 +1,6 @@
 # ajv-cli
 
-A basic command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the [fastest json schema validators](https://github.com/ebdrup/json-schema-benchmark).
+Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the [fastest json schema validators](https://github.com/ebdrup/json-schema-benchmark).
 
 # Installation
 
@@ -8,23 +8,38 @@ A basic command line interface for [ajv](https://github.com/epoberezkin/ajv), on
 npm install ajv-cli
 ```
 
+
 # Usage
 
 ```sh
 ajv -s test/schema.json -d test/valid_data.json
 ```
 
-> You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
+You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
+
+You can also use [glob patterns](https://github.com/isaacs/node-glob#glob-primer) to validate multiple files, glob pattern should be quoted and extensions cannot be omitted:
+
+```sh
+ajv -s test/schema.json -d "test/valid*.json"
+```
+
+If some file is invalid exit code will be 1.
+
+
+# Options
+
+`--errors=`: error reporting format. Possible values:
+
+    - `js` (default): JavaScript object
+    - `json`: JSON with indentation and line-breaks
+    - `line`: JSON without indentaion/line-breaks (for easy parsing)
+    - `text`: human readable error message with data path
+
 
 # Version History
 
-## 0.2.0 (3/2016)
+See https://github.com/jessedc/ajv-cli/releases
 
-- Integrating #2 and #4. Updated package version.
-
-## 0.1.0 (9/2015)
-
- - Initial publication and basic usage `-s` and `-d`
 
 # Licence
 
