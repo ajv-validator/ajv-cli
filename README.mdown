@@ -30,10 +30,10 @@ If some file is invalid exit code will be 1.
 
 `--errors=`: error reporting format. Possible values:
 
-    - `js` (default): JavaScript object
-    - `json`: JSON with indentation and line-breaks
-    - `line`: JSON without indentaion/line-breaks (for easy parsing)
-    - `text`: human readable error message with data path
+- `js` (default): JavaScript object
+- `json`: JSON with indentation and line-breaks
+- `line`: JSON without indentaion/line-breaks (for easy parsing)
+- `text`: human readable error message with data path
 
 
 # Version History
