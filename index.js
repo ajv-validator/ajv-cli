@@ -26,41 +26,35 @@ if (errors > 0){
     process.exit(2);
 }
 
-function openFile(filename, suffix){
-    var json = null;
-    try {
-        json = require(path.resolve(process.cwd(), filename));
-    } catch(err) {
-        console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
-    }
-    return json;
+if (Array.isArray(argv.s) || glob.hasMagic(argv.s)) {
+    console.error('only one schema should be passed in -s parameter');
+    process.exit(2);
 }
 
 var schemaFile = openFile(argv.s, 'schema');
 
-if (!schemaFile) {
-    console.error('Schema file not found.');
-    process.exit(2);
+var ajv = Ajv();
+
+if (argv.r) {
+    var refFiles = getFiles(argv.r);
+    var refSchemas = refFiles.map(function(file) {
+        return openFile(file, 'schema');
+    });
+    ajv.addSchema(refSchemas);
 }
 
-// var schemaFile = require(path.resolve(process.cwd(), argv.s));
-// var data = require(path.resolve(process.cwd(), argv.d));
-
-var ajv = Ajv();
 var validate = ajv.compile(schemaFile);
 
 var allValid = true;
-if (glob.hasMagic(argv.d)) {
-    var dataFiles = glob.sync(argv.d, { cwd: process.cwd() });
-    dataFiles.forEach(validateDataFile);
-} else {
-    validateDataFile(argv.d);
-}
+
+var dataFiles = getFiles(argv.d);
+dataFiles.forEach(validateDataFile);
 
 if (!allValid) process.exit(1);
 
+
 function validateDataFile(file) {
-    var data = openFile(file, 'datafile ' + file);
+    var data = openFile(file, 'data file ' + file);
     var validData = validate(data);
     allValid = allValid && validData;
 
@@ -79,4 +73,33 @@ function validateDataFile(file) {
         }
         console.error(errors);
     }
+}
+
+
+function getFiles(args) {
+    var files = [];
+    if (Array.isArray(args)) args.forEach(_getFiles);
+    else _getFiles(args);
+    return files;
+
+    function _getFiles(fileOrPattern) {
+        if (glob.hasMagic(fileOrPattern)) {
+            var dataFiles = glob.sync(fileOrPattern, { cwd: process.cwd() });
+            files = files.concat(dataFiles);
+        } else {
+            files.push(fileOrPattern);
+        }
+    }
+}
+
+
+function openFile(filename, suffix){
+    var json = null;
+    try {
+        json = require(path.resolve(process.cwd(), filename));
+    } catch(err) {
+        console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
+        process.exit(2);
+    }
+    return json;
 }

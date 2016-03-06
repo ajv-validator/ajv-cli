@@ -30,22 +30,84 @@ describe('single file validation', function() {
 
 
 describe('multiple file validation', function() {
-  it('should exit without error if all files are valid', function (done) {
-    exec('node ../index -s schema -d "valid*.json" --errors=line', { cwd: __dirname },
+  describe('with glob', function() {
+    it('should exit without error if all files are valid', function (done) {
+      exec('node ../index -s schema -d "valid*.json"', { cwd: __dirname },
+        function (error, stdout, stderr) {
+          assert.strictEqual(error, null);
+          assertValid(stdout, 2);
+          assert.equal(stderr, '');
+          done();
+        }
+      );
+    });
+
+    it('should exit with error if some files are invalid', function (done) {
+      exec('node ../index -s schema -d "*data*.json" --errors=line', { cwd: __dirname },
+        function (error, stdout, stderr) {
+          assert(error instanceof Error);
+          assertValid(stdout, 2);
+          assertError(stderr);
+          done();
+        }
+      );
+    });
+  });
+
+  describe('with multiple files or patterns', function() {
+    it('should exit without error if all files are valid', function (done) {
+      exec('node ../index -s schema -d valid_data.json -d valid_data2.json', { cwd: __dirname },
+        function (error, stdout, stderr) {
+          assert.strictEqual(error, null);
+          assertValid(stdout, 2);
+          assert.equal(stderr, '');
+          done();
+        }
+      );
+    });
+
+    it('should exit with error if some files are invalid', function (done) {
+      exec('node ../index -s schema -d valid_data.json -d valid_data2.json -d invalid_data.json --errors=line', { cwd: __dirname },
+        function (error, stdout, stderr) {
+          assert(error instanceof Error);
+          assertValid(stdout, 2);
+          assertError(stderr);
+          done();
+        }
+      );
+    });
+
+    it('should exit with error if some files are invalid (multiple patterns)', function (done) {
+      exec('node ../index -s schema -d "valid*.json" -d "invalid*.json" --errors=line', { cwd: __dirname },
+        function (error, stdout, stderr) {
+          assert(error instanceof Error);
+          assertValid(stdout, 2);
+          assertError(stderr);
+          done();
+        }
+      );
+    });
+  });
+});
+
+
+describe('validate schema with $ref', function() {
+  it('should resolve reference and validate', function() {
+    exec('node ../index -s schema_with_ref -r schema -d valid_data', { cwd: __dirname },
       function (error, stdout, stderr) {
         assert.strictEqual(error, null);
-        assertValid(stdout, 2);
+        assertValid(stdout, 1);
         assert.equal(stderr, '');
         done();
       }
     );
   });
 
-  it('should exit with error if all files are valid', function (done) {
-    exec('node ../index -s schema -d "*data*.json" --errors=line', { cwd: __dirname },
+  it('should resolve reference and validate invalide data', function() {
+    exec('node ../index -s schema_with_ref -r schema -d invalid_data --errors=line', { cwd: __dirname },
       function (error, stdout, stderr) {
         assert(error instanceof Error);
-        assertValid(stdout, 2);
+        assert.equal(stdout, '');
         assertError(stderr);
         done();
       }

@@ -1,5 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "schema.json",
     "description": "basic schema from z-schema benchmark (https://github.com/zaggino/z-schema)",
     "title": "Product set",
     "type": "array",

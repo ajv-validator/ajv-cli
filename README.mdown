@@ -9,7 +9,7 @@ npm install ajv-cli
 ```
 
 
-# Usage
+# Basic usage
 
 ```sh
 ajv -s test/schema.json -d test/valid_data.json
@@ -17,7 +17,24 @@ ajv -s test/schema.json -d test/valid_data.json
 
 You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
 
-You can also use [glob patterns](https://github.com/isaacs/node-glob#glob-primer) to validate multiple files, glob pattern should be quoted and extensions cannot be omitted:
+
+# Parameters
+
+#### `-s` - file name of JSON-schema
+
+Only one schema can be passed in this parameter
+
+
+#### `-r` - referenced schemas
+
+The schema in `-s` parameter can reference any of these schemas with `$ref` keyword.
+
+Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer). Glob pattern should be quoted and extensions cannot be omitted.
+
+
+#### `-d` - JSON data
+
+Multiple data files can be passed, as in `-r` parameter:
 
 ```sh
 ajv -s test/schema.json -d "test/valid*.json"
@@ -33,7 +50,7 @@ If some file is invalid exit code will be 1.
 - `js` (default): JavaScript object
 - `json`: JSON with indentation and line-breaks
 - `line`: JSON without indentaion/line-breaks (for easy parsing)
-- `text`: human readable error message with data path
+- `text`: human readable error messages with data paths
 
 
 # Version History
