@@ -58,7 +58,7 @@ If some file is invalid exit code will be 1.
 You can pass the following Ajv options:
 
 |Option|Description|
-|---|:-:|
+|---|---|
 |`--v5`|support v5 proposals|
 |`--all-errors`|collect all errors|
 |`--verbose`|include schema and data in errors|
