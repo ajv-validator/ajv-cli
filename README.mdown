@@ -53,6 +53,29 @@ If some file is invalid exit code will be 1.
 - `text`: human readable error messages with data paths
 
 
+# Ajv options
+
+You can pass the following Ajv options:
+
+|Option|Description|
+|---|:-:|
+|'--v5'|support v5 proposals|
+|'--all-errors'|collect all errors|
+|'--verbose'|include schema and data in errors|
+|'--json-pointers'|report data paths in errors using JSON-pointers|
+|'--unique-items=false'|do not validate uniqueItems keyword|
+|'--unicode=false'|count unicode pairs as 2 characters|
+|'--format=full'|format mode|
+|'--missing-refs'|pass `ignore` or `fail`|
+|'--multiple-of-precision'|pass integer number|
+|'--error-data-path=property'|data path in errors|
+|'--messages=false'|do not include text messages in errors|
+
+Options can be passed as both dash-case and camelCase.
+
+See [Ajv Options](https://github.com/epoberezkin/ajv#options) for more information.
+
+
 # Version History
 
 See https://github.com/jessedc/ajv-cli/releases

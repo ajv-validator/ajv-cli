@@ -14,6 +14,20 @@ var Ajv = require('ajv');
 var REQUIRED_PARAMS = ['s', 'd'];
 var errors = 0;
 
+var AJV_OPTIONS = [    // default,    values ...
+    'v5',              // false,      true
+    'all-errors',      // false,      true
+    'verbose',         // false,      true
+    'json-pointers',   // false,      true
+    'unique-items',    // true,       false
+    'unicode',         // true,       false
+    'format',          // 'fast',     'full'
+    'missing-refs',    // true,       'ignore', 'fail'
+    'multiple-of-precision',// false, integer number
+    'error-data-path', // 'object',   'property'
+    'messages'         // true,       false
+];
+
 REQUIRED_PARAMS.forEach(function (param) {
     if (!argv[param]) {
         console.error('error:  -' + param + ' parameter required');
@@ -22,7 +36,7 @@ REQUIRED_PARAMS.forEach(function (param) {
 });
 
 if (errors > 0){
-    console.error('usage:  ajv-cli -s schema[.json] -d data[.json]');
+    console.error('usage:  ajv-cli -s schema[.json] -d data[.json] -r referenced_schema[.json]');
     process.exit(2);
 }
 
@@ -33,7 +47,7 @@ if (Array.isArray(argv.s) || glob.hasMagic(argv.s)) {
 
 var schemaFile = openFile(argv.s, 'schema');
 
-var ajv = Ajv();
+var ajv = Ajv(getOptions());
 
 if (argv.r) {
     var refFiles = getFiles(argv.r);
@@ -64,7 +78,7 @@ function validateDataFile(file) {
         console.error(file, 'invalid');
         var errors;
         switch (argv.errors) {
-            case 'json': errors = JSON.stringify(validate.errors, null, '  ');
+            case 'json': errors = JSON.stringify(validate.errors, null, '  '); break;
             case 'line': errors = JSON.stringify(validate.errors); break;
             case 'text': errors = ajv.errorsText(validate.errors); break;
             case 'js':
@@ -102,4 +116,19 @@ function openFile(filename, suffix){
         process.exit(2);
     }
     return json;
+}
+
+
+function getOptions() {
+    var options = {};
+    AJV_OPTIONS.forEach(function(opt) {
+        var camelCased = opt.replace(/-([a-z])/g, function (s) { return s[1].toUpperCase(); })
+        var value = argv[opt] || argv[camelCased];
+        if (value) {
+            value = value === 'true' ? true : value === 'false' ? false
+                    : /^[0-9]+$/.test(value) ? +value : value;
+            options[camelCased] = value;
+        }
+    });
+    return options;
 }

@@ -132,7 +132,7 @@ function assertError(stderr) {
   assert.equal(errors.length, 1);
   var err = errors[0]
   assert.equal(err.keyword, 'required');
-  assert.equal(err.dataPath, '[1].dimensions');
+  assert.equal(err.dataPath, '[0].dimensions');
   assert.equal(err.schemaPath, '#/items/properties/dimensions/required');
   assert.deepEqual(err.params, { missingProperty: 'height' });
 }
