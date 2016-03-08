@@ -3,7 +3,9 @@
   "version": "0.5.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
-    "test": "mocha test/*.spec.js -R spec"
+    "test-spec": "mocha test/*.spec.js -R spec",
+    "test-cov": "rm -rf coverage && CLI_TEST_COVERAGE=true npm run test-spec && istanbul report lcov text-summary",
+    "test": "npm run test-cov"
   },
   "bin": {
     "ajv": "index.js"
@@ -21,6 +23,8 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
+    "coveralls": "^2.11.8",
+    "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "pre-commit": "^1.1.2"
   }

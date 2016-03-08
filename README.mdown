@@ -2,6 +2,12 @@
 
 Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the [fastest json schema validators](https://github.com/ebdrup/json-schema-benchmark).
 
+[![Build Status](https://travis-ci.org/jessedc/ajv-cli.svg?branch=master)](https://travis-ci.org/jessedc/ajv-cli)
+[![npm version](https://badge.fury.io/js/ajv-cli.svg)](https://www.npmjs.com/package/ajv-cli)
+[![Code Climate](https://codeclimate.com/github/jessedc/ajv-cli/badges/gpa.svg)](https://codeclimate.com/github/jessedc/ajv-cli)
+[![Coverage Status](https://coveralls.io/repos/jessedc/ajv-cli/badge.svg?branch=master&service=github)](https://coveralls.io/github/jessedc/ajv-cli?branch=master)
+
+
 # Installation
 
 ```sh
@@ -11,11 +17,19 @@ npm install ajv-cli
 
 # Basic usage
 
+Validate:
+
 ```sh
 ajv -s test/schema.json -d test/valid_data.json
 ```
 
 You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
+
+Help:
+
+```sh
+ajv help
+```
 
 
 # Parameters
@@ -66,12 +80,15 @@ You can pass the following Ajv options:
 |`--unique-items=false`|do not validate uniqueItems keyword|
 |`--unicode=false`|count unicode pairs as 2 characters|
 |`--format=full`|format mode|
-|`--missing-refs`|pass `ignore` or `fail`|
-|`--multiple-of-precision`|pass integer number|
+|`--missing-refs=`|handle missing referenced schemas (true/ignore/fail)|
+|`--remove-additional`|remove additional properties (true/all/failing)|
+|`--use-defaults`|replace missing properties/items with the values from default keyword|
+|`--coerce-types`|change type of data to match type keyword|
+|`--multiple-of-precision`|precision of multipleOf, pass integer number|
 |`--error-data-path=property`|data path in errors|
 |`--messages=false`|do not include text messages in errors|
 
-Options can be passed as both dash-case and camelCase.
+Options can be passed in either dash-case and camelCase.
 
 See [Ajv Options](https://github.com/epoberezkin/ajv#options) for more information.
 

@@ -1,31 +1,38 @@
 #! /usr/bin/env node
 
 var argv = require('minimist')(process.argv.slice(2));
+var help = require('./lib/help');
 
-//TODO: check length, provide help documentation
+
+if (argv._[0] == 'help') {
+    help.main();
+    process.exit(0);
+}
+
 
 var path = require('path');
 var glob = require('glob');
 var Ajv = require('ajv');
 
-//TODO: allow parsing of ajv options via a third parameter
-//https://github.com/epoberezkin/ajv#options
-
 var REQUIRED_PARAMS = ['s', 'd'];
 var errors = 0;
 
-var AJV_OPTIONS = [    // default,    values ...
-    'v5',              // false,      true
-    'all-errors',      // false,      true
-    'verbose',         // false,      true
-    'json-pointers',   // false,      true
-    'unique-items',    // true,       false
-    'unicode',         // true,       false
-    'format',          // 'fast',     'full'
-    'missing-refs',    // true,       'ignore', 'fail'
-    'multiple-of-precision',// false, integer number
-    'error-data-path', // 'object',   'property'
-    'messages'         // true,       false
+var AJV_OPTIONS = [
+    'v5',
+    'all-errors',
+    'verbose',
+    'json-pointers',
+    'unique-items',
+    'unicode',
+    'format',
+    'missing-refs',
+    'multiple-of-precision',
+    'error-data-path',
+    'messages',
+    // modifying options
+    'remove-additional',
+    'use-defaults',
+    'coerce-types'
 ];
 
 REQUIRED_PARAMS.forEach(function (param) {
@@ -35,8 +42,20 @@ REQUIRED_PARAMS.forEach(function (param) {
     }
 });
 
+var ALLOWED_PARAMS = ['r', 'errors']
+                        .concat(REQUIRED_PARAMS)
+                        .concat(AJV_OPTIONS)
+                        .concat(AJV_OPTIONS.map(toCamelCase));
+
+for (var param in argv) {
+    if (param != '_' && ALLOWED_PARAMS.indexOf(param) == -1) {
+        console.error('error: ' + param + ' parameter unknown');
+        errors++;
+    }
+}
+
 if (errors > 0){
-    console.error('usage:  ajv-cli -s schema[.json] -d data[.json] -r referenced_schema[.json]');
+    help.usage();
     process.exit(2);
 }
 
@@ -121,14 +140,21 @@ function openFile(filename, suffix){
 
 function getOptions() {
     var options = {};
-    AJV_OPTIONS.forEach(function(opt) {
-        var camelCased = opt.replace(/-([a-z])/g, function (s) { return s[1].toUpperCase(); })
-        var value = argv[opt] || argv[camelCased];
+    AJV_OPTIONS.forEach(function (opt) {
+        var optCC = toCamelCase(opt);
+        var value = argv[opt] || argv[optCC];
         if (value) {
             value = value === 'true' ? true : value === 'false' ? false
                     : /^[0-9]+$/.test(value) ? +value : value;
-            options[camelCased] = value;
+            options[optCC] = value;
         }
     });
     return options;
+}
+
+
+function toCamelCase(str) {
+    return str.replace(/-[a-z]/g, function (s) {
+        return s[1].toUpperCase();
+    });
 }
