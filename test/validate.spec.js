@@ -14,96 +14,100 @@ function cli(params, callback) {
 }
 
 
-describe('single file validation', function() {
-  it('should validate valid data', function (done) {
-    cli('-s test/schema -d test/valid_data', function (error, stdout, stderr) {
-      console.log(stderr);
-      assert.strictEqual(error, null);
-      assertValid(stdout, 1);
-      assert.equal(stderr, '');
-      done();
-    });
-  });
+describe('validate', function() {
+  this.timeout(5000);
 
-  it('should validate invalid data', function (done) {
-    cli('-s test/schema.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
-      assert(error instanceof Error);
-      assert.equal(stdout, '');
-      assertError(stderr);
-      done();
-    });
-  });
-});
-
-
-describe('multiple file validation', function() {
-  describe('with glob', function() {
-    it('should exit without error if all files are valid', function (done) {
-      cli('-s test/schema -d "test/valid*.json"', function (error, stdout, stderr) {
+  describe('single file validation', function() {
+    it('should validate valid data', function (done) {
+      cli('-s test/schema -d test/valid_data', function (error, stdout, stderr) {
+        console.log(stderr);
         assert.strictEqual(error, null);
-        assertValid(stdout, 2);
+        assertValid(stdout, 1);
         assert.equal(stderr, '');
         done();
       });
     });
 
-    it('should exit with error if some files are invalid', function (done) {
-      cli('-s test/schema -d "test/*data*.json" --errors=line', function (error, stdout, stderr) {
+    it('should validate invalid data', function (done) {
+      cli('-s test/schema.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
-        assertValid(stdout, 2);
+        assert.equal(stdout, '');
         assertError(stderr);
         done();
       });
     });
   });
 
-  describe('with multiple files or patterns', function() {
-    it('should exit without error if all files are valid', function (done) {
-      cli('-s test/schema -d test/valid_data.json -d test/valid_data2.json', function (error, stdout, stderr) {
+
+  describe('multiple file validation', function() {
+    describe('with glob', function() {
+      it('should exit without error if all files are valid', function (done) {
+        cli('-s test/schema -d "test/valid*.json"', function (error, stdout, stderr) {
+          assert.strictEqual(error, null);
+          assertValid(stdout, 2);
+          assert.equal(stderr, '');
+          done();
+        });
+      });
+
+      it('should exit with error if some files are invalid', function (done) {
+        cli('-s test/schema -d "test/*data*.json" --errors=line', function (error, stdout, stderr) {
+          assert(error instanceof Error);
+          assertValid(stdout, 2);
+          assertError(stderr);
+          done();
+        });
+      });
+    });
+
+    describe('with multiple files or patterns', function() {
+      it('should exit without error if all files are valid', function (done) {
+        cli('-s test/schema -d test/valid_data.json -d test/valid_data2.json', function (error, stdout, stderr) {
+          assert.strictEqual(error, null);
+          assertValid(stdout, 2);
+          assert.equal(stderr, '');
+          done();
+        });
+      });
+
+      it('should exit with error if some files are invalid', function (done) {
+        cli('-s test/schema -d test/valid_data.json -d test/valid_data2.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
+          assert(error instanceof Error);
+          assertValid(stdout, 2);
+          assertError(stderr);
+          done();
+        });
+      });
+
+      it('should exit with error if some files are invalid (multiple patterns)', function (done) {
+        cli('-s test/schema -d "test/valid*.json" -d "test/invalid*.json" --errors=line', function (error, stdout, stderr) {
+          assert(error instanceof Error);
+          assertValid(stdout, 2);
+          assertError(stderr);
+          done();
+        });
+      });
+    });
+  });
+
+
+  describe('validate schema with $ref', function() {
+    it('should resolve reference and validate', function (done) {
+      cli('-s test/schema_with_ref -r test/schema -d test/valid_data', function (error, stdout, stderr) {
         assert.strictEqual(error, null);
-        assertValid(stdout, 2);
+        assertValid(stdout, 1);
         assert.equal(stderr, '');
         done();
       });
     });
 
-    it('should exit with error if some files are invalid', function (done) {
-      cli('-s test/schema -d test/valid_data.json -d test/valid_data2.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
+    it('should resolve reference and validate invalide data', function (done) {
+      cli('-s test/schema_with_ref -r test/schema -d test/invalid_data --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
-        assertValid(stdout, 2);
-        assertError(stderr);
+        assert.equal(stdout, '');
+        assertError(stderr, 'schema.json');
         done();
       });
-    });
-
-    it('should exit with error if some files are invalid (multiple patterns)', function (done) {
-      cli('-s test/schema -d "test/valid*.json" -d "test/invalid*.json" --errors=line', function (error, stdout, stderr) {
-        assert(error instanceof Error);
-        assertValid(stdout, 2);
-        assertError(stderr);
-        done();
-      });
-    });
-  });
-});
-
-
-describe('validate schema with $ref', function() {
-  it('should resolve reference and validate', function (done) {
-    cli('-s test/schema_with_ref -r test/schema -d test/valid_data', function (error, stdout, stderr) {
-      assert.strictEqual(error, null);
-      assertValid(stdout, 1);
-      assert.equal(stderr, '');
-      done();
-    });
-  });
-
-  it('should resolve reference and validate invalide data', function (done) {
-    cli('-s test/schema_with_ref -r test/schema -d test/invalid_data --errors=line', function (error, stdout, stderr) {
-      assert(error instanceof Error);
-      assert.equal(stdout, '');
-      assertError(stderr, 'schema.json');
-      done();
     });
   });
 });
