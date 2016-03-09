@@ -18,7 +18,7 @@
     "url": "https://github.com/jessedc/ajv-cli"
   },
   "dependencies": {
-    "ajv": "^3.8.0",
+    "ajv": "^3.8.4",
     "glob": "^7.0.3",
     "minimist": "^1.2.0"
   },

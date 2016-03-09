@@ -14,9 +14,7 @@ module.exports = {
 
 function check(argv) {
     var REQUIRED_PARAMS = ['s', 'd'];
-    var ALLOWED_PARAMS = ['r', 'errors']
-                            .concat(REQUIRED_PARAMS)
-                            .concat(options.AJV);
+    var ALLOWED_PARAMS = ['r', 'm', 'errors'].concat(options.AJV);
 
     return argv._.length <= 1
             && options.check(argv, REQUIRED_PARAMS, ALLOWED_PARAMS)

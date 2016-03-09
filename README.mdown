@@ -46,6 +46,13 @@ The schema in `-s` parameter can reference any of these schemas with `$ref` keyw
 Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer). Glob pattern should be quoted and extensions cannot be omitted.
 
 
+#### `-m` - meta-schemas
+
+Schemas can use any of these schemas as a meta-schema (that is the schema used in `$schema` keyword - it is used to validate the schema itself).
+
+Multiple meta-schemas can be passed, as in `-r` parameter.
+
+
 #### `-d` - JSON data
 
 Multiple data files can be passed, as in `-r` parameter:

@@ -36,7 +36,9 @@ function checkOptions(argv, requiredParams, allowedParams) {
         }
     });
 
-    allowedParams = allowedParams.concat(allowedParams.map(toCamelCase));
+    allowedParams = allowedParams
+                    .concat(allowedParams.map(toCamelCase))
+                    .concat(requiredParams);
     for (var param in argv) {
         if (param != '_' && allowedParams.indexOf(param) == -1) {
             console.error('error: ' + param + ' parameter unknown');
