@@ -1,23 +1,19 @@
 'use strict';
 
+var options = require('./options');
+
 module.exports = {
-    usage: usage,
-    main: main
+    check: check,
+    execute: execute
 };
 
 
-function usage() {
-    console.error('\
-usage:\n\
-    validate:  ajv -s schema[.json] -d data[.json]\n\
-               ajv -s schema[.json] -d data[.json] -r referenced_schemas[.json]\n\
-               -d, -r can be globs and can be used multiple times\n\
-\n\
-    help:      ajv help');
+function check(argv) {
+    return argv._.length == 1 && options.check(argv, [], []);
 }
 
 
-function main() {
+function execute() {
     console.log('\
 usage:\n\
     ajv -s schema[.json] -d data[.json]\n\
@@ -68,4 +64,5 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
              property  point to property\n\
 \n\
     --messages=false   do not include text messages in errors');
+    return true;
 }
