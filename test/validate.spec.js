@@ -1,17 +1,7 @@
 'use strict';
 
-var exec = require('child_process').exec;
+var cli = require('./cli');
 var assert = require('assert');
-var path = require('path');
-
-var RUN_CLI = process.env.CLI_TEST_COVERAGE == 'true'
-              ? 'istanbul cover --report none --print none --include-pid index.js -- '
-              : 'node index ';
-var CWD = path.join(__dirname, '..');
-
-function cli(params, callback) {
-  exec(RUN_CLI + params, { cwd: CWD }, callback);
-}
 
 
 describe('validate', function() {
@@ -20,7 +10,6 @@ describe('validate', function() {
   describe('single file validation', function() {
     it('should validate valid data', function (done) {
       cli('-s test/schema -d test/valid_data', function (error, stdout, stderr) {
-        console.log(stderr);
         assert.strictEqual(error, null);
         assertValid(stdout, 1);
         assert.equal(stderr, '');
@@ -33,6 +22,16 @@ describe('validate', function() {
         assert(error instanceof Error);
         assert.equal(stdout, '');
         assertError(stderr);
+        done();
+      });
+    });
+
+    it('should print usage if syntax is invalid', function (done) {
+      cli('-d test/valid_data', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        assert(/usage/.test(stderr));
+        assert(/parameter\srequired/.test(stderr));
         done();
       });
     });

@@ -1,5 +1,16 @@
 'use strict';
 
-module.exports = function compile(argv) {
-
+module.exports = {
+    check: check,
+    execute: execute
 };
+
+
+function check() {
+
+}
+
+
+function execute() {
+
+}
