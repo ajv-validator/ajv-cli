@@ -5,7 +5,7 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 [![Build Status](https://travis-ci.org/epoberezkin/ajv-cli.svg?branch=master)](https://travis-ci.org/epoberezkin/ajv-cli)
 [![npm version](https://badge.fury.io/js/ajv-cli.svg)](https://www.npmjs.com/package/ajv-cli)
 [![Code Climate](https://codeclimate.com/github/epoberezkin/ajv-cli/badges/gpa.svg)](https://codeclimate.com/github/epoberezkin/ajv-cli)
-[![Coverage Status](https://coveralls.io/repos/epoberezkin/ajv-cli/badge.svg?branch=master&service=github)](https://coveralls.io/github/epoberezkin/ajv-cli?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/epoberezkin/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/epoberezkin/ajv-cli?branch=master)
 
 
 # Installation
