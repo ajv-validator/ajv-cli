@@ -21,7 +21,7 @@ describe('validate', function() {
       cli('-s test/schema.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
-        assertError(stderr);
+        assertRequiredError(stderr);
         done();
       });
     });
@@ -50,10 +50,10 @@ describe('validate', function() {
       });
 
       it('should exit with error if some files are invalid', function (done) {
-        cli('-s test/schema -d "test/*data*.json" --errors=line', function (error, stdout, stderr) {
+        cli('-s test/schema -d "test/{valid,invalid}*.json" --errors=line', function (error, stdout, stderr) {
           assert(error instanceof Error);
           assertValid(stdout, 2);
-          assertError(stderr);
+          assertRequiredError(stderr);
           done();
         });
       });
@@ -73,7 +73,7 @@ describe('validate', function() {
         cli('-s test/schema -d test/valid_data.json -d test/valid_data2.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
           assert(error instanceof Error);
           assertValid(stdout, 2);
-          assertError(stderr);
+          assertRequiredError(stderr);
           done();
         });
       });
@@ -82,7 +82,7 @@ describe('validate', function() {
         cli('-s test/schema -d "test/valid*.json" -d "test/invalid*.json" --errors=line', function (error, stdout, stderr) {
           assert(error instanceof Error);
           assertValid(stdout, 2);
-          assertError(stderr);
+          assertRequiredError(stderr);
           done();
         });
       });
@@ -104,7 +104,71 @@ describe('validate', function() {
       cli('-s test/schema_with_ref -r test/schema -d test/invalid_data --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
-        assertError(stderr, 'schema.json');
+        assertRequiredError(stderr, 'schema.json');
+        done();
+      });
+    });
+  });
+
+
+  describe('validate v5 schema', function() {
+    it('should validate valid data', function (done) {
+      cli('-s test/v5/schema -d test/v5/valid_data --v5', function (error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('should validate invalid data', function (done) {
+      cli('-s test/v5/schema.json -d test/v5/invalid_data.json --v5 --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        var errors = assertError(stderr);
+        var err = errors[0];
+        assert.equal(err.keyword, 'constant');
+        assert.equal(err.dataPath, "['1']");
+        assert.equal(err.schemaPath, '#/patternProperties/%5E%5B0-9%5D%2B%24/constant');
+        done();
+      });
+    });
+  });
+
+
+  describe('validate with schema using added meta-schema', function() {
+    it('should validate valid data', function (done) {
+      cli('-s test/meta/schema -d test/meta/valid_data -m test/meta/meta_schema', function (error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('should validate invalid data', function (done) {
+      cli('-s test/meta/schema -d test/meta/invalid_data -m test/meta/meta_schema --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        var errors = assertError(stderr);
+        var err = errors[0];
+        assert.equal(err.keyword, 'type');
+        assert.equal(err.dataPath, ".foo");
+        assert.equal(err.schemaPath, '#/properties/foo/type');
+        done();
+      });
+    });
+
+    it('should fail on invalid schema', function (done) {
+      cli('-s test/meta/invalid_schema -d test/meta/valid_data -m test/meta/meta_schema --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        var lines = stderr.split('\n');
+        assert.equal(lines.length, 3);
+        assert(/schema/.test(lines[0]));
+        assert(/invalid/.test(lines[0]));
+        assert(/error/.test(lines[1]));
+        assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]));
         done();
       });
     });
@@ -120,16 +184,22 @@ function assertValid(stdout, count) {
 }
 
 
-function assertError(stderr, schemaRef) {
-  var lines = stderr.split('\n');
-  schemaRef = schemaRef || '#';
-  assert.equal(lines.length, 3);
-  assert(/\sinvalid/.test(lines[0]));
-  var errors = JSON.parse(lines[1]);
-  assert.equal(errors.length, 1);
+function assertRequiredError(stderr, schemaRef) {
+  var errors = assertError(stderr)
   var err = errors[0]
+  schemaRef = schemaRef || '#';
   assert.equal(err.keyword, 'required');
   assert.equal(err.dataPath, '[0].dimensions');
   assert.equal(err.schemaPath, schemaRef + '/items/properties/dimensions/required');
   assert.deepEqual(err.params, { missingProperty: 'height' });
+}
+
+
+function assertError(stderr) {
+  var lines = stderr.split('\n');
+  assert.equal(lines.length, 3);
+  assert(/\sinvalid/.test(lines[0]));
+  var errors = JSON.parse(lines[1]);
+  assert.equal(errors.length, 1);
+  return errors;
 }

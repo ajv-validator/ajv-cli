@@ -31,7 +31,13 @@ function execute(argv) {
     var schemaFile = util.openFile(argv.s, 'schema');
 
     var ajv = getAjv(argv);
-    var validate = ajv.compile(schemaFile);
+    var validate;
+    try { validate = ajv.compile(schemaFile); }
+    catch (err) {
+        console.error('schema', argv.s, 'is invalid');
+        console.error('error:', err.message);
+        process.exit(1);
+    }
     var allValid = true;
 
     var dataFiles = util.getFiles(argv.d);
