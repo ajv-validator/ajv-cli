@@ -11,22 +11,11 @@ if (cmd) {
         var ok = cmd.execute(argv);
         process.exit(ok ? 0 : 1);
     } else {
-        usage();
+        commands.help.usage();
         process.exit(2);
     }
 } else {
     console.error('Unknown command', command);
-    usage();
+    commands.help.usage();
     process.exit(2);
-}
-
-
-function usage() {
-    console.error('\
-usage:\n\
-    validate:  ajv -s schema[.json] -d data[.json]\n\
-               ajv -s schema[.json] -d data[.json] -r referenced_schemas[.json]\n\
-               -d, -r can be globs and can be used multiple times\n\
-\n\
-    help:      ajv help');
 }

@@ -67,4 +67,4 @@ function execute(argv) {
             console.error(errors);
         }
     }
-};
+}

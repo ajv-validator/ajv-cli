@@ -11,8 +11,40 @@ describe('help', function() {
     cli('help', function (error, stdout, stderr) {
       assert.strictEqual(error, null);
       assert(/usage/.test(stdout));
+      assert.equal(stderr, '');
+      done();
+    });
+  });
+
+  it('should print help for validate', function (done) {
+    cli('help validate', function (error, stdout, stderr) {
+      assert.strictEqual(error, null);
+      assert(/Validate/.test(stdout));
+      assert(/usage/.test(stdout));
       assert(/options/.test(stdout));
       assert.equal(stderr, '');
+      done();
+    });
+  });
+
+  it('should print help for compile', function (done) {
+    cli('help compile', function (error, stdout, stderr) {
+      assert.strictEqual(error, null);
+      assert(/Compile/.test(stdout));
+      assert(/usage/.test(stdout));
+      assert(/options/.test(stdout));
+      assert.equal(stderr, '');
+      done();
+    });
+  });
+
+  it('should print usage if command in unknown', function (done) {
+    cli('help unknown', function (error, stdout, stderr) {
+      assert(error instanceof Error);
+      assert.equal(stdout, '');
+      assert(/command/.test(stderr));
+      assert(/unknown/.test(stderr));
+      assert(/usage/.test(stderr));
       done();
     });
   });

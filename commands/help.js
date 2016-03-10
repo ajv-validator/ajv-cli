@@ -4,30 +4,124 @@ var options = require('./options');
 
 module.exports = {
     check: check,
-    execute: execute
+    execute: execute,
+    usage: usage
+};
+
+
+var commands = {
+    validate: helpValidate,
+    compile: helpCompile
 };
 
 
 function check(argv) {
-    return argv._.length == 1 && options.check(argv, [], []);
+    return argv._.length <= 2 && options.check(argv, [], []);
 }
 
 
-function execute() {
-    console.log('\
+function execute(argv) {
+    var command = argv._[1];
+    if (!command || command == 'help') {
+        mainHelp();
+        return true;
+    }
+
+    var cmdHelp = commands[command];
+
+    if (cmdHelp) {
+        cmdHelp();
+        return true;
+    } else {
+        console.error('Unknown command', command);
+        usage();
+    }
+}
+
+
+function usage() {
+    console.error('\
 usage:\n\
-    ajv -s schema[.json] -d data[.json]\n\
-    ajv -s schema[.json] -d data[.json] -r referenced_schemas[.json]\n\
+    validate:  ajv [validate] -s schema[.json] -d data[.json]\n\
+    compile:   ajv compile -s schema[.json]\n\
 \n\
-    -d, -r can be globs and can be used multiple times\n\
+    help:      ajv help\n\
+               ajv help <command>');
+}
+
+
+function mainHelp() {
+    _helpValidate('    ');
+    _helpCompile('    ');
+    console.log('\
+More information:\n\
+        ajv help validate\n\
+        ajv help compile');
+}
+
+
+function helpValidate() {
+    _helpValidate();
+    console.log('\
+parameters\n\
+    -s JSON schema to validate against (required, only one schema allowed)\n\
+    -d data file(s) to be validated (required)\n\
+    -r referenced schema(s)\n\
+    -m meta schema(s)\n\
+\n\
+    -d, -r, -m can be globs and can be used multiple times\n\
+    glob should be enclosed in double quotes\n\
+    .json extension can be omitted (but should be used in globs)\n\
 \n\
 options:\n\
     --errors=          error reporting\n\
              js        JavaScript object (default)\n\
              json      JSON format\n\
              line      JSON single line\n\
-             text      text message\n\
+             text      text message\n');
+    helpAjvOptions();
+}
+
+
+function _helpValidate(indent) {
+    indent = indent || '';
+    console.log('\
+Validate data file(s) against schema\n\
 \n\
+'+indent+'usage:\n\
+'+indent+'    ajv [validate] -s schema[.json] -d data[.json]\n\
+'+indent+'    ajv [validate] -s schema[.json] -d "data*.json"\n');
+}
+
+
+function helpCompile() {
+    _helpCompile();
+    console.log('\
+parameters\n\
+    -s JSON schema to validate against (required)\n\
+    -r referenced schema(s)\n\
+    -m meta schema(s)\n\
+\n\
+    -s, -r, -m can be globs and can be used multiple times\n\
+    glob should be enclosed in double quotes\n\
+    .json extension can be omitted (but should be used in globs)\n');
+    helpAjvOptions();
+}
+
+
+function _helpCompile(indent) {
+    indent = indent || '';
+    console.log('\
+Compile schema(s)\n\
+\n\
+'+indent+'usage:\n\
+'+indent+'    ajv compile -s schema[.json]\n\
+'+indent+'    ajv compile -s "schema*.json"\n');
+}
+
+
+function helpAjvOptions() {
+    console.log('\
 Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
     --v5               support validation keywords from v5 proposals\n\
 \n\
@@ -64,5 +158,4 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
              property  point to property\n\
 \n\
     --messages=false   do not include text messages in errors');
-    return true;
 }
