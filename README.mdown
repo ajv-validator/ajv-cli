@@ -14,10 +14,17 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 npm install ajv-cli
 ```
 
+# Help
 
-# Basic usage
+```sh
+ajv help
+ajv help validate
+ajv help compile
+```
 
-Validate:
+
+# Validate data files against JSON-schema
+
 
 ```sh
 ajv -s test/schema.json -d test/valid_data.json
@@ -25,18 +32,23 @@ ajv -s test/schema.json -d test/valid_data.json
 
 You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
 
-Help:
 
-```sh
-ajv help
-```
-
-
-# Parameters
+## Parameters
 
 #### `-s` - file name of JSON-schema
 
 Only one schema can be passed in this parameter
+
+
+#### `-d` - JSON data
+
+Multiple data files can be passed, as in `-r` parameter:
+
+```sh
+ajv -s test/schema.json -d "test/valid*.json"
+```
+
+If some file is invalid exit code will be 1.
 
 
 #### `-r` - referenced schemas
@@ -53,18 +65,7 @@ Schemas can use any of these schemas as a meta-schema (that is the schema used i
 Multiple meta-schemas can be passed, as in `-r` parameter.
 
 
-#### `-d` - JSON data
-
-Multiple data files can be passed, as in `-r` parameter:
-
-```sh
-ajv -s test/schema.json -d "test/valid*.json"
-```
-
-If some file is invalid exit code will be 1.
-
-
-# Options
+## Options
 
 `--errors=`: error reporting format. Possible values:
 
@@ -72,6 +73,40 @@ If some file is invalid exit code will be 1.
 - `json`: JSON with indentation and line-breaks
 - `line`: JSON without indentaion/line-breaks (for easy parsing)
 - `text`: human readable error messages with data paths
+
+
+# Compile schemas
+
+This command validates and compiles schema without validating any data.
+
+It can be used to check that the schema is valid.
+
+```sh
+ajv compile -s schema
+```
+
+## Parameters
+
+#### `-s` - file name(s) of JSON-schema(s)
+
+Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
+
+```sh
+ajv compile -s "test/schema*.json"
+```
+
+#### `-r` - referenced schemas
+
+The schema in `-s` parameter can reference any of these schemas with `$ref` keyword.
+
+Multiple schemas can be passed, as in `-s` parameter.
+
+
+#### `-m` - meta-schemas
+
+Schemas can use any of these schemas as a meta-schema (that is the schema used in `$schema` keyword - it is used to validate the schema itself).
+
+Multiple meta-schemas can be passed, as in `-s` parameter.
 
 
 # Ajv options
