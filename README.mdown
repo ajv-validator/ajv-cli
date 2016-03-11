@@ -23,14 +23,16 @@ ajv help compile
 ```
 
 
-# Validate data files against JSON-schema
+# Validate data
 
+This command validates data files against JSON-schema
 
 ```sh
+ajv validate -s test/schema.json -d test/valid_data.json
 ajv -s test/schema.json -d test/valid_data.json
 ```
 
-You can omit the `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
+You can omit `validate` command name and `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
 
 
 ## Parameters
