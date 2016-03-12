@@ -10,7 +10,8 @@ describe('help', function() {
   it('should print help', function (done) {
     cli('help', function (error, stdout, stderr) {
       assert.strictEqual(error, null);
-      assert(/usage/.test(stdout));
+      assert(/Validate/.test(stdout));
+      assert(/Compile/.test(stdout));
       assert.equal(stderr, '');
       done();
     });
@@ -20,7 +21,6 @@ describe('help', function() {
     cli('help validate', function (error, stdout, stderr) {
       assert.strictEqual(error, null);
       assert(/Validate/.test(stdout));
-      assert(/usage/.test(stdout));
       assert(/options/.test(stdout));
       assert.equal(stderr, '');
       done();
@@ -31,7 +31,6 @@ describe('help', function() {
     cli('help compile', function (error, stdout, stderr) {
       assert.strictEqual(error, null);
       assert(/Compile/.test(stdout));
-      assert(/usage/.test(stdout));
       assert(/options/.test(stdout));
       assert.equal(stderr, '');
       done();

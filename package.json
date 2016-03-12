@@ -1,11 +1,12 @@
 {
   "name": "ajv-cli",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
+    "eslint": "eslint index.js commands/*.js",
     "test-spec": "mocha test/*.spec.js -R spec",
     "test-cov": "rm -rf coverage && CLI_TEST_COVERAGE=true npm run test-spec && istanbul report lcov text-summary",
-    "test": "npm run test-cov"
+    "test": "npm run eslint && npm run test-cov"
   },
   "bin": {
     "ajv": "index.js"
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.8",
+    "eslint": "^2.4.0",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "pre-commit": "^1.1.2"

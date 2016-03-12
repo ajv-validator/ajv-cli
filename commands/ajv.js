@@ -20,7 +20,7 @@ module.exports = function (argv) {
         files.forEach(function (file) {
             var schema = util.openFile(file, fileType);
             try { method(schema); }
-            catch (e) {
+            catch (err) {
                 console.error(fileType, file, 'is invalid');
                 console.error('error:', err.message);
                 invalid = true;

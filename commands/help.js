@@ -32,10 +32,10 @@ function execute(argv) {
     if (cmdHelp) {
         cmdHelp();
         return true;
-    } else {
-        console.error('Unknown command', command);
-        usage();
     }
+
+    console.error('Unknown command', command);
+    usage();
 }
 
 
@@ -51,8 +51,8 @@ usage:\n\
 
 
 function mainHelp() {
-    _helpValidate('    ');
-    _helpCompile('    ');
+    _helpValidate();
+    _helpCompile();
     console.log('\
 More information:\n\
         ajv help validate\n\
@@ -83,14 +83,11 @@ options:\n\
 }
 
 
-function _helpValidate(indent) {
-    indent = indent || '';
+function _helpValidate() {
     console.log('\
 Validate data file(s) against schema\n\
-\n\
-'+indent+'usage:\n\
-'+indent+'    ajv [validate] -s schema[.json] -d data[.json]\n\
-'+indent+'    ajv [validate] -s schema[.json] -d "data*.json"\n');
+    ajv [validate] -s schema[.json] -d data[.json]\n\
+    ajv [validate] -s schema[.json] -d "data*.json"\n');
 }
 
 
@@ -109,14 +106,11 @@ parameters\n\
 }
 
 
-function _helpCompile(indent) {
-    indent = indent || '';
+function _helpCompile() {
     console.log('\
 Compile schema(s)\n\
-\n\
-'+indent+'usage:\n\
-'+indent+'    ajv compile -s schema[.json]\n\
-'+indent+'    ajv compile -s "schema*.json"\n');
+    ajv compile -s schema[.json]\n\
+    ajv compile -s "schema*.json"\n');
 }
 
 
