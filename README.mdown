@@ -8,13 +8,13 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 [![Coverage Status](https://coveralls.io/repos/github/epoberezkin/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/epoberezkin/ajv-cli?branch=master)
 
 
-# Installation
+## Installation
 
 ```sh
 npm install ajv-cli
 ```
 
-# Help
+## Help
 
 ```sh
 ajv help
@@ -23,7 +23,7 @@ ajv help compile
 ```
 
 
-# Validate data
+## Validate data
 
 This command validates data files against JSON-schema
 
@@ -35,14 +35,14 @@ ajv -s test/schema.json -d test/valid_data.json
 You can omit `validate` command name and `.json` from the [input file names](https://nodejs.org/api/modules.html#modules_file_modules). 
 
 
-## Parameters
+#### Parameters
 
-#### `-s` - file name of JSON-schema
+##### `-s` - file name of JSON-schema
 
 Only one schema can be passed in this parameter
 
 
-#### `-d` - JSON data
+##### `-d` - JSON data
 
 Multiple data files can be passed, as in `-r` parameter:
 
@@ -53,21 +53,21 @@ ajv -s test/schema.json -d "test/valid*.json"
 If some file is invalid exit code will be 1.
 
 
-#### `-r` - referenced schemas
+##### `-r` - referenced schemas
 
 The schema in `-s` parameter can reference any of these schemas with `$ref` keyword.
 
 Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer). Glob pattern should be quoted and extensions cannot be omitted.
 
 
-#### `-m` - meta-schemas
+##### `-m` - meta-schemas
 
 Schemas can use any of these schemas as a meta-schema (that is the schema used in `$schema` keyword - it is used to validate the schema itself).
 
 Multiple meta-schemas can be passed, as in `-r` parameter.
 
 
-## Options
+#### Options
 
 `--errors=`: error reporting format. Possible values:
 
@@ -77,7 +77,7 @@ Multiple meta-schemas can be passed, as in `-r` parameter.
 - `text`: human readable error messages with data paths
 
 
-# Compile schemas
+## Compile schemas
 
 This command validates and compiles schema without validating any data.
 
@@ -87,9 +87,9 @@ It can be used to check that the schema is valid.
 ajv compile -s schema
 ```
 
-## Parameters
+#### Parameters
 
-#### `-s` - file name(s) of JSON-schema(s)
+##### `-s` - file name(s) of JSON-schema(s)
 
 Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
 
@@ -97,21 +97,21 @@ Multiple schemas can be passed both by using this parameter mupltiple times and 
 ajv compile -s "test/schema*.json"
 ```
 
-#### `-r` - referenced schemas
+##### `-r` - referenced schemas
 
 The schema in `-s` parameter can reference any of these schemas with `$ref` keyword.
 
 Multiple schemas can be passed, as in `-s` parameter.
 
 
-#### `-m` - meta-schemas
+##### `-m` - meta-schemas
 
 Schemas can use any of these schemas as a meta-schema (that is the schema used in `$schema` keyword - it is used to validate the schema itself).
 
 Multiple meta-schemas can be passed, as in `-s` parameter.
 
 
-# Ajv options
+## Ajv options
 
 You can pass the following Ajv options:
 
@@ -137,11 +137,11 @@ Options can be passed in either dash-case and camelCase.
 See [Ajv Options](https://github.com/epoberezkin/ajv#options) for more information.
 
 
-# Version History
+## Version History
 
 See https://github.com/jessedc/ajv-cli/releases
 
 
-# Licence
+## Licence
 
 MIT
