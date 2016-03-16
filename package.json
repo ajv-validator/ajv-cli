@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "ajv": "^3.8.4",
+    "fast-json-patch": "^0.5.6",
     "glob": "^7.0.3",
     "minimist": "^1.2.0"
   },

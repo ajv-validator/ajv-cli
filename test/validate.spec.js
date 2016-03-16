@@ -173,14 +173,34 @@ describe('validate', function() {
       });
     });
   });
+
+
+  describe('option "changes"', function() {
+    it('should log changes ni the object after validation', function (done) {
+      cli('-s test/schema -d test/data_with_additional --remove-additional  --changes=line', function (error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        var lines = assertValid(stdout, 1, 2);
+        assert(/changes/.test(lines[1]));
+        var changes = JSON.parse(lines[2]);
+        assert.deepEqual(changes, [
+          { op: 'remove', path: '/1/additionalInfo' },
+          { op: 'remove', path: '/0/additionalInfo' }
+        ]);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+  });
 });
 
 
-function assertValid(stdout, count) {
+function assertValid(stdout, count, extraLines) {
   var lines = stdout.split('\n');
-  assert.equal(lines.length, count + 1);
+  extraLines = extraLines || 0;
+  assert.equal(lines.length, count + extraLines + 1);
   for (var i=0; i<count; i++)
     assert(/\svalid/.test(lines[i]));
+  return lines;
 }
 
 

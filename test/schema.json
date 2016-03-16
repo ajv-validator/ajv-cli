@@ -7,6 +7,7 @@
     "items": {
         "title": "Product",
         "type": "object",
+        "additionalProperties": false,
         "properties": {
             "id": {
                 "description": "The unique identifier for a product",

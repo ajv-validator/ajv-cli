@@ -4,6 +4,7 @@ var options = require('./options');
 var util = require('./util');
 var glob = require('glob');
 var getAjv = require('./ajv');
+var jsonPatch = require('fast-json-patch');
 
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
 
 function check(argv) {
     var REQUIRED_PARAMS = ['s', 'd'];
-    var ALLOWED_PARAMS = ['r', 'm', 'errors'].concat(options.AJV);
+    var ALLOWED_PARAMS = ['r', 'm', 'errors', 'changes'].concat(options.AJV);
 
     return argv._.length <= 1
             && options.check(argv, REQUIRED_PARAMS, ALLOWED_PARAMS)
@@ -48,10 +49,25 @@ function execute(argv) {
 
     function validateDataFile(file) {
         var data = util.openFile(file, 'data file ' + file);
+        var original;
+        if (argv.changes) original = JSON.parse(JSON.stringify(data));
         var validData = validate(data);
 
         if (validData) {
             console.log(file, 'valid');
+            if (argv.changes) {
+                var patch = jsonPatch.compare(original, data);
+                if (patch.length == 0) {
+                    console.log('no changes');
+                } else {
+                    switch (argv.changes) {
+                        case 'json': patch = JSON.stringify(patch, null, '  '); break;
+                        case 'line': patch = JSON.stringify(patch); break;
+                    }
+                    console.log('changes:');
+                    console.log(patch);
+                }
+            }
         } else {
             allValid = false;
             console.error(file, 'invalid');
