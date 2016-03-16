@@ -77,7 +77,7 @@ Multiple meta-schemas can be passed, as in `-r` parameter.
 
 - `--changes=`: detect changes in data after validation.<br>
     Data can be modifyed with [Ajv options](#ajv-options) `--remove-additional`, `--use-defaults` and `--coerce-types`).<br>
-    The changes are reported in JSON-patch format ([RFC6902](https://tools.ietf.org/html/rfc6902#appendix-A.5)).<br>
+    The changes are reported in JSON-patch format ([RFC6902](https://tools.ietf.org/html/rfc6902)).<br>
     Possible values are `js` (default), `json` and `line` (see `--errors` option).
 
 
