@@ -21,7 +21,7 @@ describe('validate', function() {
       cli('-s test/schema.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
-        assertRequiredError(stderr);
+        assertRequiredErrors(stderr);
         done();
       });
     });
@@ -53,7 +53,7 @@ describe('validate', function() {
         cli('-s test/schema -d "test/{valid,invalid}*.json" --errors=line', function (error, stdout, stderr) {
           assert(error instanceof Error);
           assertValid(stdout, 2);
-          assertRequiredError(stderr);
+          assertRequiredErrors(stderr, '#', 2);
           done();
         });
       });
@@ -73,7 +73,7 @@ describe('validate', function() {
         cli('-s test/schema -d test/valid_data.json -d test/valid_data2.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
           assert(error instanceof Error);
           assertValid(stdout, 2);
-          assertRequiredError(stderr);
+          assertRequiredErrors(stderr);
           done();
         });
       });
@@ -82,7 +82,7 @@ describe('validate', function() {
         cli('-s test/schema -d "test/valid*.json" -d "test/invalid*.json" --errors=line', function (error, stdout, stderr) {
           assert(error instanceof Error);
           assertValid(stdout, 2);
-          assertRequiredError(stderr);
+          assertRequiredErrors(stderr, '#', 2);
           done();
         });
       });
@@ -104,7 +104,7 @@ describe('validate', function() {
       cli('-s test/schema_with_ref -r test/schema -d test/invalid_data --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
-        assertRequiredError(stderr, 'schema.json');
+        assertRequiredErrors(stderr, 'schema.json');
         done();
       });
     });
@@ -125,7 +125,8 @@ describe('validate', function() {
       cli('-s test/v5/schema.json -d test/v5/invalid_data.json --v5 --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
-        var errors = assertError(stderr);
+        var results = assertErrors(stderr);
+        var errors = results[0];
         var err = errors[0];
         assert.equal(err.keyword, 'constant');
         assert.equal(err.dataPath, "['1']");
@@ -150,7 +151,8 @@ describe('validate', function() {
       cli('-s test/meta/schema -d test/meta/invalid_data -m test/meta/meta_schema --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
-        var errors = assertError(stderr);
+        var results = assertErrors(stderr);
+        var errors = results[0];
         var err = errors[0];
         assert.equal(err.keyword, 'type');
         assert.equal(err.dataPath, ".foo");
@@ -204,22 +206,30 @@ function assertValid(stdout, count, extraLines) {
 }
 
 
-function assertRequiredError(stderr, schemaRef) {
-  var errors = assertError(stderr)
-  var err = errors[0]
-  schemaRef = schemaRef || '#';
-  assert.equal(err.keyword, 'required');
-  assert.equal(err.dataPath, '[0].dimensions');
-  assert.equal(err.schemaPath, schemaRef + '/items/properties/dimensions/required');
-  assert.deepEqual(err.params, { missingProperty: 'height' });
+function assertRequiredErrors(stderr, schemaRef, count) {
+  count = count || 1;
+  var results = assertErrors(stderr, count);
+  results.forEach(function (errors) {
+    var err = errors[0];
+    schemaRef = schemaRef || '#';
+    assert.equal(err.keyword, 'required');
+    assert.equal(err.dataPath, '[0].dimensions');
+    assert.equal(err.schemaPath, schemaRef + '/items/properties/dimensions/required');
+    assert.deepEqual(err.params, { missingProperty: 'height' });
+  });
 }
 
 
-function assertError(stderr) {
+function assertErrors(stderr, count) {
+  count = count || 1;
   var lines = stderr.split('\n');
-  assert.equal(lines.length, 3);
-  assert(/\sinvalid/.test(lines[0]));
-  var errors = JSON.parse(lines[1]);
-  assert.equal(errors.length, 1);
-  return errors;
+  assert.equal(lines.length, count*2 + 1);
+  var results = [];
+  for (var i=0; i<count; i+=2) {
+    assert(/\sinvalid/.test(lines[i]));
+    var errors = JSON.parse(lines[i+1]);
+    assert.equal(errors.length, 1);
+    results.push(errors);
+  }
+  return results;
 }

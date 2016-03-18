@@ -6,7 +6,8 @@ var path = require('path');
 
 module.exports = {
     getFiles: getFiles,
-    openFile: openFile
+    openFile: openFile,
+    logJSON: logJSON
 };
 
 
@@ -36,4 +37,15 @@ function openFile(filename, suffix){
         process.exit(2);
     }
     return json;
+}
+
+
+function logJSON(mode, data, ajv) {
+    switch (mode) {
+        case 'json': data = JSON.stringify(data, null, '  '); break;
+        case 'line': data = JSON.stringify(data); break;
+        case 'no':   data = ''; break;
+        case 'text': if (ajv) data = ajv.errorsText(data);
+    }
+    return data;
 }

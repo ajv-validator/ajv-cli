@@ -14,7 +14,7 @@ describe('compile', function() {
         assertValid(stdout, 1);
         assert.equal(stderr, '');
         done();
-      })
+      });
     });
 
     it('should compile valid v5 schema', function (done) {
@@ -23,7 +23,7 @@ describe('compile', function() {
         assertValid(stdout, 1);
         assert.equal(stderr, '');
         done();
-      })
+      });
     });
 
     it('should compile valid schema with a custom meta-schema', function (done) {
@@ -32,7 +32,7 @@ describe('compile', function() {
         assertValid(stdout, 1);
         assert.equal(stderr, '');
         done();
-      })
+      });
     });
 
     it('should fail to compile invalid schema with a custom meta-schema', function (done) {
@@ -42,7 +42,7 @@ describe('compile', function() {
         var lines = assertError(stderr);
         assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]));
         done();
-      })
+      });
     });
   });
 });

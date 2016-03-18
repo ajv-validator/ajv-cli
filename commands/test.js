@@ -4,7 +4,6 @@ var options = require('./options');
 var util = require('./util');
 var glob = require('glob');
 var getAjv = require('./ajv');
-var jsonPatch = require('fast-json-patch');
 
 
 module.exports = {
@@ -15,10 +14,11 @@ module.exports = {
 
 function check(argv) {
     var REQUIRED_PARAMS = ['s', 'd'];
-    var ALLOWED_PARAMS = ['r', 'm', 'errors', 'changes'].concat(options.AJV);
+    var ALLOWED_PARAMS = ['r', 'm', 'errors', 'valid', 'invalid'].concat(options.AJV);
 
     return argv._.length <= 1
             && options.check(argv, REQUIRED_PARAMS, ALLOWED_PARAMS)
+            && (argv.valid ? !argv.invalid : argv.invalid)
             && checkSchema();
 
     function checkSchema() {
@@ -39,35 +39,28 @@ function execute(argv) {
         console.error('error:', err.message);
         process.exit(1);
     }
-    var allValid = true;
+    var shouldBeValid = !!argv.valid && argv.valid != 'false';
+    var allPassed = true;
 
     var dataFiles = util.getFiles(argv.d);
-    dataFiles.forEach(validateDataFile);
+    dataFiles.forEach(testDataFile);
 
-    return allValid;
+    return allPassed;
 
 
-    function validateDataFile(file) {
+    function testDataFile(file) {
         var data = util.openFile(file, 'data file ' + file);
-        var original;
-        if (argv.changes) original = JSON.parse(JSON.stringify(data));
         var validData = validate(data);
+        var errors;
+        if (!validData) errors = util.logJSON(argv.errors, validate.errors, ajv);
 
-        if (validData) {
-            console.log(file, 'valid');
-            if (argv.changes) {
-                var patch = jsonPatch.compare(original, data);
-                if (patch.length == 0) {
-                    console.log('no changes');
-                } else {
-                    console.log('changes:');
-                    console.log(util.logJSON(argv.changes, patch));
-                }
-            }
+        if (validData === shouldBeValid) {
+            console.log(file, 'passed test');
+            if (errors) console.log(errors);
         } else {
-            allValid = false;
-            console.error(file, 'invalid');
-            console.error(util.logJSON(argv.errors, validate.errors, ajv));
+            allPassed = false;
+            console.error(file, 'failed test');
+            if (errors) console.error(errors);
         }
     }
 }

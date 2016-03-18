@@ -3,5 +3,6 @@
 module.exports = {
     help: require('./help'),
     validate: require('./validate'),
-    compile: require('./compile')
+    compile: require('./compile'),
+    test: require('./test')
 };
