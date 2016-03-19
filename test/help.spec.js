@@ -37,6 +37,16 @@ describe('help', function() {
     });
   });
 
+  it('should print help for test', function (done) {
+    cli('help test', function (error, stdout, stderr) {
+      assert.strictEqual(error, null);
+      assert(/Test/.test(stdout));
+      assert(/options/.test(stdout));
+      assert.equal(stderr, '');
+      done();
+    });
+  });
+
   it('should print usage if command in unknown', function (done) {
     cli('help unknown', function (error, stdout, stderr) {
       assert(error instanceof Error);

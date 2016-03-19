@@ -11,7 +11,8 @@ module.exports = {
 
 var commands = {
     validate: helpValidate,
-    compile: helpCompile
+    compile: helpCompile,
+    test: helpTest
 };
 
 
@@ -44,6 +45,7 @@ function usage() {
 usage:\n\
     validate:  ajv [validate] -s schema[.json] -d data[.json]\n\
     compile:   ajv compile -s schema[.json]\n\
+    test:      ajv test -s schema[.json] -d data[.json] --[in]valid\n\
 \n\
     help:      ajv help\n\
                ajv help <command>');
@@ -53,10 +55,12 @@ usage:\n\
 function mainHelp() {
     _helpValidate();
     _helpCompile();
+    _helpTest();
     console.log('\
 More information:\n\
         ajv help validate\n\
-        ajv help compile');
+        ajv help compile\n\
+        ajv help test');
 }
 
 
@@ -74,11 +78,13 @@ parameters\n\
     .json extension can be omitted (but should be used in globs)\n\
 \n\
 options:\n\
-    --errors=          error reporting\n\
-             js        JavaScript object (default)\n\
+    --errors=          error reporting format ("js" by deafult)\n\
+    --changes=         log changes in data after validation ("no" by default)\n\
+             js        JavaScript object\n\
              json      JSON format\n\
              line      JSON single line\n\
-             text      text message\n');
+             text      text message (only for --errors option)\n\
+             no        don\'t log errors');
     helpAjvOptions();
 }
 
@@ -111,6 +117,40 @@ function _helpCompile() {
 Compile schema(s)\n\
     ajv compile -s schema[.json]\n\
     ajv compile -s "schema*.json"\n');
+}
+
+
+function helpTest() {
+    _helpTest();
+    console.log('\
+parameters\n\
+    -s JSON schema to validate against (required, only one schema allowed)\n\
+    -d data file(s) to be validated (required)\n\
+    -r referenced schema(s)\n\
+    -m meta schema(s)\n\
+    --valid/--invalid data file(s) must be valid/invalid for this command to succeed\n\
+\n\
+    -d, -r, -m can be globs and can be used multiple times\n\
+    glob should be enclosed in double quotes\n\
+    .json extension can be omitted (but should be used in globs)\n\
+    --valid=false can be used instead of --invalid\n\
+\n\
+options:\n\
+    --errors=          error reporting\n\
+             js        JavaScript object (default)\n\
+             json      JSON format\n\
+             line      JSON single line\n\
+             text      text message\n');
+    helpAjvOptions();
+}
+
+
+function _helpTest() {
+    console.log('\
+Test data validation result\n\
+    ajv test -s schema[.json] -d data[.json] --valid\n\
+    ajv test -s schema[.json] -d data[.json] --invalid\n\
+    ajv test -s schema[.json] -d "data*.json" --valid \n');
 }
 
 
