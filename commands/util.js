@@ -7,7 +7,9 @@ var path = require('path');
 module.exports = {
     getFiles: getFiles,
     openFile: openFile,
-    logJSON: logJSON
+    logJSON: logJSON,
+    compile: compile,
+    checkSchema: checkSchema
 };
 
 
@@ -48,4 +50,21 @@ function logJSON(mode, data, ajv) {
         case 'text': if (ajv) data = ajv.errorsText(data);
     }
     return data;
+}
+
+
+function compile(ajv, schemaFile) {
+    var schema = openFile(schemaFile, 'schema');
+    try { return ajv.compile(schema); }
+    catch (err) {
+        console.error('schema', schemaFile, 'is invalid');
+        console.error('error:', err.message);
+        process.exit(1);
+    }
+}
+
+
+function checkSchema(argv) {
+    if (!Array.isArray(argv.s) && !glob.hasMagic(argv.s)) return true;
+    console.error('only one schema should be passed in -s parameter');
 }

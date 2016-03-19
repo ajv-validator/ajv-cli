@@ -5,7 +5,7 @@ var assert = require('assert');
 
 
 describe('validate', function() {
-  this.timeout(5000);
+  this.timeout(10000);
 
   describe('single file validation', function() {
     it('should validate valid data', function (done) {

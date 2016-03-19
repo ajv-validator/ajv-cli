@@ -2,7 +2,6 @@
 
 var options = require('./options');
 var util = require('./util');
-var glob = require('glob');
 var getAjv = require('./ajv');
 
 
@@ -19,26 +18,13 @@ function check(argv) {
     return argv._.length <= 1
             && options.check(argv, REQUIRED_PARAMS, ALLOWED_PARAMS)
             && (argv.valid ? !argv.invalid : argv.invalid)
-            && checkSchema();
-
-    function checkSchema() {
-        if (!Array.isArray(argv.s) && !glob.hasMagic(argv.s)) return true;
-        console.error('only one schema should be passed in -s parameter');
-    }
+            && util.checkSchema(argv);
 }
 
 
 function execute(argv) {
-    var schemaFile = util.openFile(argv.s, 'schema');
-
     var ajv = getAjv(argv);
-    var validate;
-    try { validate = ajv.compile(schemaFile); }
-    catch (err) {
-        console.error('schema', argv.s, 'is invalid');
-        console.error('error:', err.message);
-        process.exit(1);
-    }
+    var validate = util.compile(ajv, argv.s);
     var shouldBeValid = !!argv.valid && argv.valid != 'false';
     var allPassed = true;
 
