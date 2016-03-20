@@ -115,6 +115,20 @@ Schemas can use any of these schemas as a meta-schema (that is the schema used i
 Multiple meta-schemas can be passed, as in `-s` parameter.
 
 
+## Test validation result
+
+This command asserts that the result of the validation is as expected.
+
+```sh
+ajv test -s test/schema.json -d test/valid_data.json --valid
+ajv test -s test/schema.json -d test/invalid_data.json --invalid
+```
+
+If the option `--valid` (`--invalid`) is used for the `test` to pass (exit code 0) the data file(s) should be valid (invalid).
+
+This command supports the same options and parameters as [validate](#validate-data) with the exception of `--changes`.
+
+
 ## Ajv options
 
 You can pass the following Ajv options:
