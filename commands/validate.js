@@ -1,25 +1,28 @@
 'use strict';
 
-var options = require('./options');
 var util = require('./util');
 var getAjv = require('./ajv');
 var jsonPatch = require('fast-json-patch');
 
 
 module.exports = {
-    check: check,
-    execute: execute
+    execute: execute,
+    schema: {
+        type: 'object',
+        required: ['s', 'd'],
+        properties: {
+            s: {
+                type: 'string',
+                format: 'notGlob'
+            },
+            d: { $ref: '#/definitions/stringOrArray' },
+            r: { $ref: '#/definitions/stringOrArray' },
+            m: { $ref: '#/definitions/stringOrArray' },
+            errors: { enum: ['json', 'line', 'text', 'js', 'no'] },
+            changes: { enum: [ true, 'json', 'line', 'js' ] }
+        }
+    }
 };
-
-
-function check(argv) {
-    var REQUIRED_PARAMS = ['s', 'd'];
-    var ALLOWED_PARAMS = ['r', 'm', 'errors', 'changes'].concat(options.AJV);
-
-    return argv._.length <= 1
-            && options.check(argv, REQUIRED_PARAMS, ALLOWED_PARAMS)
-            && util.checkSchema(argv);
-}
 
 
 function execute(argv) {

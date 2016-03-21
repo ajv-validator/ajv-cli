@@ -31,7 +31,8 @@ describe('validate', function() {
         assert(error instanceof Error);
         assert.equal(stdout, '');
         assert(/usage/.test(stderr));
-        assert(/parameter\srequired/.test(stderr));
+        assert(/parameter/.test(stderr));
+        assert(/required/.test(stderr));
         done();
       });
     });

@@ -1,22 +1,20 @@
 'use strict';
 
-var options = require('./options');
 var util = require('./util');
 var getAjv = require('./ajv');
 
 module.exports = {
-    check: check,
-    execute: execute
+    execute: execute,
+    schema: {
+        type: 'object',
+        required: ['s'],
+        properties: {
+            s: { $ref: '#/definitions/stringOrArray' },
+            r: { $ref: '#/definitions/stringOrArray' },
+            m: { $ref: '#/definitions/stringOrArray' }
+        }
+    }
 };
-
-
-function check(argv) {
-    var REQUIRED_PARAMS = ['s'];
-    var ALLOWED_PARAMS = ['r', 'm'].concat(options.AJV);
-
-    return argv._.length <= 1
-            && options.check(argv, REQUIRED_PARAMS, ALLOWED_PARAMS);
-}
 
 
 function execute(argv) {

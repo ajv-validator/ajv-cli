@@ -63,7 +63,8 @@ describe('help', function() {
       assert(error instanceof Error);
       assert.equal(stdout, '');
       assert(/usage/.test(stderr));
-      assert(/parameter\sunknown/.test(stderr));
+      assert(/parameter/.test(stderr));
+      assert(/unknown/.test(stderr));
       done();
     });
   });

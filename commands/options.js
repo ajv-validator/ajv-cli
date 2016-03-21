@@ -1,59 +1,114 @@
 'use strict';
 
-var AJV_OPTIONS = [
-    'v5',
-    'all-errors',
-    'verbose',
-    'json-pointers',
-    'unique-items',
-    'unicode',
-    'format',
-    'missing-refs',
-    'multiple-of-precision',
-    'error-data-path',
-    'messages',
+var Ajv = require('ajv');
+var glob = require('glob');
+var ajv = Ajv({
+    allErrors: true,
+    coerceTypes: true,
+    jsonPointers: true,
+    formats: {
+        notGlob: function(s) { return !glob.hasMagic(s); }
+    }
+});
+
+var AJV_OPTIONS = {
+    'v5':               { type: 'boolean' },
+    'all-errors':       { type: 'boolean' },
+    'verbose':          { type: 'boolean' },
+    'json-pointers':    { type: 'boolean' },
+    'unique-items':     { type: 'boolean' },
+    'unicode':          { type: 'boolean' },
+    'format':           { anyOf: [
+                            { type: 'boolean' },
+                            { enum: [ 'fast', 'full' ] }
+    ] },
+    'missing-refs':     { anyOf: [
+                            { type: 'boolean' },
+                            { enum: [ 'ignore', 'fail' ] }
+    ] },
+    'multiple-of-precision': { type: 'integer' },
+    'error-data-path':  { enum: [ 'object', 'property' ] },
+    'messages':         { type: 'boolean' },
     // modifying options
-    'remove-additional',
-    'use-defaults',
-    'coerce-types'
-];
+    'remove-additional': { anyOf: [
+                            { type: 'boolean' },
+                            { enum: [ 'all', 'failing' ] }
+    ] },
+    'use-defaults':     { type: 'boolean' },
+    'coerce-types':     { type: 'boolean' }
+};
 
 
 module.exports = {
     check: checkOptions,
-    get: getOptions,
-    AJV: AJV_OPTIONS
+    get: getOptions
 };
 
 
-function checkOptions(argv, requiredParams, allowedParams) {
-    var ok = true;
-    requiredParams = requiredParams.concat(requiredParams.map(toCamelCase));
-    requiredParams.forEach(function (param) {
-        if (!argv[param]) {
-            console.error('error:  -' + param + ' parameter required');
-            ok = false;
-        }
-    });
+var DEFINITIONS = {
+    stringOrArray: {
+        anyOf: [
+            { type: 'string' },
+            {
+                type: 'array',
+                items: { type: 'string' }
+            }
+        ]
+    }
+};
 
-    allowedParams = allowedParams
-                    .concat(allowedParams.map(toCamelCase))
-                    .concat(requiredParams);
-    for (var param in argv) {
-        if (param != '_' && allowedParams.indexOf(param) == -1) {
-            console.error('error: ' + param + ' parameter unknown');
-            ok = false;
+function checkOptions(schema, argv) {
+    schema.definitions = DEFINITIONS;
+    if (schema._ajvOptions !== false) {
+        for (var opt in AJV_OPTIONS) {
+            var optSchema = AJV_OPTIONS[opt];
+            schema.properties[opt] = optSchema;
+            schema.properties[toCamelCase(opt)] = optSchema;
         }
     }
+    schema.properties._ = schema.properties._ || { maxItems: 1 };
+    schema.additionalProperties = false;
 
-    return ok;
+    var valid = ajv.validate(schema, argv);
+    if (valid) return null;
+    var errors = '';
+    ajv.errors.forEach(function (err) {
+        errors += 'error: ';
+        switch (err.keyword) {
+            case 'required':
+                errors += 'parameter ' + parameter(err.params.missingProperty) + ' is required';
+                break;
+            case 'additionalProperties':
+                errors += 'parameter ' + parameter(err.params.additionalProperty) + ' is unknown';
+                break;
+            case 'maxItems':
+                errors += 'invalid syntax (too many arguments)';
+                break;
+            case 'format':
+                if (err.params.format == 'notGlob') {
+                    errors += 'only one file is allowed in parameter ' + parameter(err.dataPath.slice(1));
+                    break;
+                }
+                // falls through
+            default:
+                errors += 'parameter ' + parameter(err.dataPath.slice(1)) + ' ' + err.message;
+        }
+        errors += '\n';
+    });
+
+    return errors;
+}
+
+
+function parameter(str) {
+    return (str.length == 1 ? '-' : '--') + str;
 }
 
 
 var NUMBER = /^[0-9]+$/;
 function getOptions(argv) {
     var options = {};
-    AJV_OPTIONS.forEach(function (opt) {
+    for (var opt in AJV_OPTIONS) {
         var optCC = toCamelCase(opt);
         var value = argv[opt] || argv[optCC];
         if (value) {
@@ -61,7 +116,7 @@ function getOptions(argv) {
                     : NUMBER.test(value) ? +value : value;
             options[optCC] = value;
         }
-    });
+    }
     return options;
 }
 

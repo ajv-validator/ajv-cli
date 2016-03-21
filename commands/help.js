@@ -1,11 +1,15 @@
 'use strict';
 
-var options = require('./options');
-
 module.exports = {
-    check: check,
     execute: execute,
-    usage: usage
+    usage: usage,
+    schema: {
+        type: 'object',
+        properties: {
+            _: { maxItems: 2 }
+        },
+        _ajvOptions: false
+    }
 };
 
 
@@ -14,11 +18,6 @@ var commands = {
     compile: helpCompile,
     test: helpTest
 };
-
-
-function check(argv) {
-    return argv._.length <= 2 && options.check(argv, [], []);
-}
 
 
 function execute(argv) {

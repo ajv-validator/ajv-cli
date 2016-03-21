@@ -8,8 +8,7 @@ module.exports = {
     getFiles: getFiles,
     openFile: openFile,
     logJSON: logJSON,
-    compile: compile,
-    checkSchema: checkSchema
+    compile: compile
 };
 
 
@@ -61,10 +60,4 @@ function compile(ajv, schemaFile) {
         console.error('error:', err.message);
         process.exit(1);
     }
-}
-
-
-function checkSchema(argv) {
-    if (!Array.isArray(argv.s) && !glob.hasMagic(argv.s)) return true;
-    console.error('only one schema should be passed in -s parameter');
 }
