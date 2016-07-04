@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs');
 var glob = require('glob');
 var path = require('path');
 
@@ -31,8 +32,13 @@ function getFiles(args) {
 
 function openFile(filename, suffix){
     var json = null;
+    var file = path.resolve(process.cwd(), filename);
     try {
-        json = require(path.resolve(process.cwd(), filename));
+        if (endsWith(filename, 'json') || endsWith(filename, 'js')) {
+            json = require(file);
+        } else {
+            json = JSON.parse(fs.readFileSync(file).toString());
+        }
     } catch(err) {
         console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
         process.exit(2);
@@ -60,4 +66,9 @@ function compile(ajv, schemaFile) {
         console.error('error:', err.message);
         process.exit(1);
     }
+}
+
+
+function endsWith(str, suffix) {
+    return str.substr(-suffix.length) === suffix;
 }
