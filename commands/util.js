@@ -34,11 +34,8 @@ function openFile(filename, suffix){
     var json = null;
     var file = path.resolve(process.cwd(), filename);
     try {
-        if (endsWith(filename, 'json') || endsWith(filename, 'js')) {
-            json = require(file);
-        } else {
-            json = JSON.parse(fs.readFileSync(file).toString());
-        }
+        if (endsWith(filename, 'json') || endsWith(filename, 'js')) json = require(file);
+        else json = JSON.parse(fs.readFileSync(file).toString());
     } catch(err) {
         console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
         process.exit(2);
