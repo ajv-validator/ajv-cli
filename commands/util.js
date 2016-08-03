@@ -2,6 +2,7 @@
 
 var glob = require('glob');
 var path = require('path');
+var fs = require('fs');
 
 
 module.exports = {
@@ -31,8 +32,13 @@ function getFiles(args) {
 
 function openFile(filename, suffix){
     var json = null;
+    var file = path.resolve(process.cwd(), filename);
     try {
-        json = require(path.resolve(process.cwd(), filename));
+        try {
+            json = JSON.parse(fs.readFileSync(file).toString());
+        } catch(JSONerr) {
+            json = require(file);
+        }
     } catch(err) {
         console.error('error:  ' + err.message.replace(' module', ' ' + suffix));
         process.exit(2);
