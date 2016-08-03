@@ -20,22 +20,25 @@ var AJV_OPTIONS = {
     'unicode':          { type: 'boolean' },
     'format':           { anyOf: [
                             { type: 'boolean' },
-                            { enum: [ 'fast', 'full' ] }
+                            { enum: ['fast', 'full'] }
     ] },
     'missing-refs':     { anyOf: [
                             { type: 'boolean' },
-                            { enum: [ 'ignore', 'fail' ] }
+                            { enum: ['ignore', 'fail'] }
     ] },
     'multiple-of-precision': { type: 'integer' },
-    'error-data-path':  { enum: [ 'object', 'property' ] },
+    'error-data-path':  { enum: ['object', 'property'] },
     'messages':         { type: 'boolean' },
     // modifying options
     'remove-additional': { anyOf: [
                             { type: 'boolean' },
-                            { enum: [ 'all', 'failing' ] }
+                            { enum: ['all', 'failing'] }
     ] },
     'use-defaults':     { type: 'boolean' },
-    'coerce-types':     { type: 'boolean' }
+    'coerce-types':     { anyOf: [
+                            { type: 'boolean' },
+                            { enum: ['array'] }
+    ] }
 };
 
 
@@ -110,7 +113,7 @@ function getOptions(argv) {
     var options = {};
     for (var opt in AJV_OPTIONS) {
         var optCC = toCamelCase(opt);
-        var value = argv[opt] || argv[optCC];
+        var value = argv[opt] === undefined ? argv[optCC] : argv[opt];
         if (value) {
             value = value === 'true' ? true : value === 'false' ? false
                     : NUMBER.test(value) ? +value : value;
