@@ -11,7 +11,7 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 ## Installation
 
 ```sh
-npm install ajv-cli
+npm install -g ajv-cli
 ```
 
 ## Help
