@@ -7,6 +7,7 @@ var util = require('./util');
 
 module.exports = function (argv) {
     var opts = options.get(argv);
+    if (argv.o) opts.sourceCode = true;
     var ajv = Ajv(opts);
     var invalid;
     addSchemas(argv.m, ajv.addMetaSchema, 'meta-schema');

@@ -19,7 +19,8 @@
     "url": "https://github.com/jessedc/ajv-cli"
   },
   "dependencies": {
-    "ajv": "^4.3.0",
+    "ajv": "^4.7.4",
+    "ajv-pack": "^0.2.1",
     "fast-json-patch": "^0.5.6",
     "glob": "^7.0.3",
     "minimist": "^1.2.0"

@@ -86,10 +86,11 @@ Multiple meta-schemas can be passed, as in `-r` parameter.
 
 This command validates and compiles schema without validating any data.
 
-It can be used to check that the schema is valid.
+It can be used to check that the schema is valid and to create a standalone module exporting validation function (using [ajv-pack](https://github.com/epoberezkin/ajv-pack)).
 
 ```sh
 ajv compile -s schema
+ajv compile -s schema -o validate.js
 ```
 
 #### Parameters
@@ -101,6 +102,16 @@ Multiple schemas can be passed both by using this parameter mupltiple times and 
 ```sh
 ajv compile -s "test/schema*.json"
 ```
+
+
+##### `-o` - output file for compiled validation function module
+
+Only a single schema can be compiled with this option.
+
+```sh
+ajv compile -s "schema.json" -o "validate_schema.js"
+```
+
 
 ##### `-r` - referenced schemas
 
