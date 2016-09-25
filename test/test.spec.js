@@ -141,7 +141,7 @@ function assertRequiredErrors(out, count, regexp, schemaRef) {
   schemaRef = schemaRef || '#';
   var results = assertErrors(out, count, regexp);
   results.forEach(function (errors) {
-    var err = errors[0]
+    var err = errors[0];
     assert.equal(err.keyword, 'required');
     assert.equal(err.dataPath, '[0].dimensions');
     assert.equal(err.schemaPath, schemaRef + '/items/properties/dimensions/required');

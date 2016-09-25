@@ -21,6 +21,7 @@ module.exports = {
             d: { $ref: '#/definitions/stringOrArray' },
             r: { $ref: '#/definitions/stringOrArray' },
             m: { $ref: '#/definitions/stringOrArray' },
+            c: { $ref: '#/definitions/stringOrArray' },
             valid:   { type: 'boolean' },
             invalid: { type: 'boolean', enum: [true] },
             errors:  { enum: ['json', 'line', 'text', 'js', 'no'] }

@@ -156,7 +156,7 @@ describe('validate', function() {
         var errors = results[0];
         var err = errors[0];
         assert.equal(err.keyword, 'type');
-        assert.equal(err.dataPath, ".foo");
+        assert.equal(err.dataPath, '.foo');
         assert.equal(err.schemaPath, '#/properties/foo/type');
         done();
       });
@@ -190,6 +190,55 @@ describe('validate', function() {
           { op: 'remove', path: '/0/additionalInfo' }
         ]);
         assert.equal(stderr, '');
+        done();
+      });
+    });
+  });
+
+
+  describe('custom keywords', function() {
+    it('should validate valid data; custom keyword definition in file', function (done) {
+      cli('validate -s test/custom/schema -c ./test/custom/typeof.js -d test/custom/valid_data', function (error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('should validate valid data; custom keyword definition in package', function (done) {
+      cli('validate -s test/custom/schema -c ajv-keywords/keywords/typeof -d test/custom/valid_data', function (error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('should validate invalid data; custom keyword definition in file', function (done) {
+      cli('validate -s test/custom/schema -c ./test/custom/typeof.js -d test/custom/invalid_data --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        var results = assertErrors(stderr);
+        var errors = results[0];
+        var err = errors[0];
+        assert.equal(err.keyword, 'typeof');
+        assert.equal(err.dataPath, '');
+        assert.equal(err.schemaPath, '#/typeof');
+        done();
+      });
+    });
+
+    it('should validate invalid data; custom keyword definition in package', function (done) {
+      cli('validate -s test/custom/schema -c ajv-keywords/keywords/typeof -d test/custom/invalid_data --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        var results = assertErrors(stderr);
+        var errors = results[0];
+        var err = errors[0];
+        assert.equal(err.keyword, 'typeof');
+        assert.equal(err.dataPath, '');
+        assert.equal(err.schemaPath, '#/typeof');
         done();
       });
     });

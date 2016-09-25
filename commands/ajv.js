@@ -3,6 +3,7 @@
 var Ajv = require('ajv');
 var options = require('./options');
 var util = require('./util');
+var path = require('path');
 
 
 module.exports = function (argv) {
@@ -10,8 +11,9 @@ module.exports = function (argv) {
     if (argv.o) opts.sourceCode = true;
     var ajv = Ajv(opts);
     var invalid;
-    addSchemas(argv.m, ajv.addMetaSchema, 'meta-schema');
-    addSchemas(argv.r, ajv.addSchema, 'schema');
+    addSchemas(argv.m, 'addMetaSchema', 'meta-schema');
+    addSchemas(argv.r, 'addSchema', 'schema');
+    customFormatsKeywords(argv.c);
     if (invalid) process.exit(1);
     return ajv;
 
@@ -20,9 +22,24 @@ module.exports = function (argv) {
         var files = util.getFiles(args);
         files.forEach(function (file) {
             var schema = util.openFile(file, fileType);
-            try { method(schema); }
+            try { ajv[method](schema); }
             catch (err) {
                 console.error(fileType, file, 'is invalid');
+                console.error('error:', err.message);
+                invalid = true;
+            }
+        });
+    }
+
+    function customFormatsKeywords(args) {
+        if (!args) return;
+        var files = util.getFiles(args);
+        files.forEach(function (file) {
+            if (file[0] == '.') file = path.resolve(process.cwd(), file);
+            try {
+                require(file)(ajv);
+            } catch (err) {
+                console.error('module', file, 'is invalid; it should export function');
                 console.error('error:', err.message);
                 invalid = true;
             }

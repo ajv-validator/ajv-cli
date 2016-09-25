@@ -14,6 +14,7 @@ module.exports = {
             s: { $ref: '#/definitions/stringOrArray' },
             r: { $ref: '#/definitions/stringOrArray' },
             m: { $ref: '#/definitions/stringOrArray' },
+            c: { $ref: '#/definitions/stringOrArray' },
             o: { type: 'string' }
         }
     }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
-    "eslint": "eslint index.js commands/*.js",
+    "eslint": "eslint index.js commands/*.js test/*.js test/**/*.js",
     "test-spec": "mocha test/*.spec.js -R spec",
     "test-cov": "rm -rf coverage && CLI_TEST_COVERAGE=true npm run test-spec && istanbul report lcov text-summary",
     "test": "npm run eslint && npm run test-cov"
@@ -20,12 +20,13 @@
   },
   "dependencies": {
     "ajv": "^4.7.4",
-    "ajv-pack": "^0.2.1",
+    "ajv-pack": "^0.2.3",
     "fast-json-patch": "^0.5.6",
     "glob": "^7.0.3",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
+    "ajv-keywords": "^1.1.1",
     "coveralls": "^2.11.8",
     "eslint": "^2.4.0",
     "istanbul": "^0.4.2",
