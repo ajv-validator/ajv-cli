@@ -71,9 +71,12 @@ parameters\n\
     -d data file(s) to be validated (required)\n\
     -r referenced schema(s)\n\
     -m meta schema(s)\n\
+    -c custom keywords/formats definitions\n\
 \n\
-    -d, -r, -m can be globs and can be used multiple times\n\
+    -d, -r, -m, -c can be globs and can be used multiple times\n\
     glob should be enclosed in double quotes\n\
+    -c module(s) should export a function that accepts Ajv instance as parameter\n\
+    (file path should start with ".", otherwise used as require package)\n\
     .json extension can be omitted (but should be used in globs)\n\
 \n\
 options:\n\
@@ -103,9 +106,14 @@ parameters\n\
     -s JSON schema to validate against (required)\n\
     -r referenced schema(s)\n\
     -m meta schema(s)\n\
+    -c custom keywords/formats definitions\n\
+    -o output file for compiled validation function\n\
 \n\
-    -s, -r, -m can be globs and can be used multiple times\n\
+    -s, -r, -m, -c can be globs and can be used multiple times\n\
+    If option -o is used only one schema can be compiled (-c option)\n\
     glob should be enclosed in double quotes\n\
+    -c module(s) should export a function that accepts Ajv instance as parameter\n\
+    (file path should start with ".", otherwise used as require package)\n\
     .json extension can be omitted (but should be used in globs)\n');
     helpAjvOptions();
 }
@@ -127,10 +135,13 @@ parameters\n\
     -d data file(s) to be validated (required)\n\
     -r referenced schema(s)\n\
     -m meta schema(s)\n\
+    -c custom keywords/formats definitions\n\
     --valid/--invalid data file(s) must be valid/invalid for this command to succeed\n\
 \n\
-    -d, -r, -m can be globs and can be used multiple times\n\
+    -d, -r, -m, -c can be globs and can be used multiple times\n\
     glob should be enclosed in double quotes\n\
+    -c module(s) should export a function that accepts Ajv instance as parameter\n\
+    (file path should start with ".", otherwise used as require package)\n\
     .json extension can be omitted (but should be used in globs)\n\
     --valid=false can be used instead of --invalid\n\
 \n\
