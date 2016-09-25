@@ -68,6 +68,13 @@ Schemas can use any of these schemas as a meta-schema (that is the schema used i
 Multiple meta-schemas can be passed, as in `-r` parameter.
 
 
+##### `-c` - custom keywords/formats definitions
+
+You can pass module(s) that define custom keywords/formats. The modules should export a function that accepts Ajv instance as a parameter. The file name should start with ".", it will be resolved relative to the current folder. The package name can also be passed - it will be used in require as is.
+
+For example, you can use `-c ajv-keywords` to add all keywords from [ajv-keywords](https://github.com/epoberezkin/ajv-keywords) package or `-c ajv-keywords/keywords/typeof` to add only typeof keyword.
+
+
 #### Options
 
 - `--errors=`: error reporting format. Possible values:
@@ -112,19 +119,7 @@ Only a single schema can be compiled with this option.
 ajv compile -s "schema.json" -o "validate_schema.js"
 ```
 
-
-##### `-r` - referenced schemas
-
-The schema in `-s` parameter can reference any of these schemas with `$ref` keyword.
-
-Multiple schemas can be passed, as in `-s` parameter.
-
-
-##### `-m` - meta-schemas
-
-Schemas can use any of these schemas as a meta-schema (that is the schema used in `$schema` keyword - it is used to validate the schema itself).
-
-Multiple meta-schemas can be passed, as in `-s` parameter.
+This command also supports parameters `-r`, `-m` and `-c` as in [validate](#validate-data) command.
 
 
 ## Test validation result
