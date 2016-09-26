@@ -97,6 +97,8 @@ It can be used to check that the schema is valid and to create a standalone modu
 
 ```sh
 ajv compile -s schema
+
+# compile to module (BETA)
 ajv compile -s schema -o validate.js
 ```
 
@@ -111,7 +113,7 @@ ajv compile -s "test/schema*.json"
 ```
 
 
-##### `-o` - output file for compiled validation function module
+##### `-o` - output file for compiled validation function module (BETA)
 
 Only a single schema can be compiled with this option.
 
