@@ -26,6 +26,7 @@ var AJV_OPTIONS = {
                             { type: 'boolean' },
                             { enum: ['ignore', 'fail'] }
     ] },
+    'inline-refs':      { type: ['boolean', 'integer'], minimum: 0 },
     'multiple-of-precision': { type: 'integer' },
     'error-data-path':  { enum: ['object', 'property'] },
     'messages':         { type: 'boolean' },
@@ -108,17 +109,12 @@ function parameter(str) {
 }
 
 
-var NUMBER = /^[0-9]+$/;
 function getOptions(argv) {
     var options = {};
     for (var opt in AJV_OPTIONS) {
         var optCC = toCamelCase(opt);
         var value = argv[opt] === undefined ? argv[optCC] : argv[opt];
-        if (value) {
-            value = value === 'true' ? true : value === 'false' ? false
-                    : NUMBER.test(value) ? +value : value;
-            options[optCC] = value;
-        }
+        if (value !== undefined) options[optCC] = value;
     }
     return options;
 }
