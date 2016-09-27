@@ -152,7 +152,7 @@ You can pass the following Ajv options:
 |`--unicode=false`|count unicode pairs as 2 characters|
 |`--format=full`|format mode|
 |`--missing-refs=`|handle missing referenced schemas (true/ignore/fail)|
-|`--inline-refs=|referenced schemas compilation mode (true/false/\<number\>)|
+|`--inline-refs=`|referenced schemas compilation mode (true/false/\<number\>)|
 |`--remove-additional`|remove additional properties (true/all/failing)|
 |`--use-defaults`|replace missing properties/items with the values from default keyword|
 |`--coerce-types`|change type of data to match type keyword|
