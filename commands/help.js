@@ -167,8 +167,6 @@ Test data validation result\n\
 function helpAjvOptions() {
     console.log('\
 Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
-    --v5               support validation keywords from v5 proposals\n\
-\n\
     --all-errors       collect all errors\n\
 \n\
     --json-pointers    report data paths as JSON pointers\n\

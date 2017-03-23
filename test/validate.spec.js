@@ -112,32 +112,6 @@ describe('validate', function() {
   });
 
 
-  describe('validate v5 schema', function() {
-    it('should validate valid data', function (done) {
-      cli('-s test/v5/schema -d test/v5/valid_data --v5', function (error, stdout, stderr) {
-        assert.strictEqual(error, null);
-        assertValid(stdout, 1);
-        assert.equal(stderr, '');
-        done();
-      });
-    });
-
-    it('should validate invalid data', function (done) {
-      cli('-s test/v5/schema.json -d test/v5/invalid_data.json --v5 --errors=line', function (error, stdout, stderr) {
-        assert(error instanceof Error);
-        assert.equal(stdout, '');
-        var results = assertErrors(stderr);
-        var errors = results[0];
-        var err = errors[0];
-        assert.equal(err.keyword, 'constant');
-        assert.equal(err.dataPath, "['1']");
-        assert.equal(err.schemaPath, '#/patternProperties/%5E%5B0-9%5D%2B%24/constant');
-        done();
-      });
-    });
-  });
-
-
   describe('validate with schema using added meta-schema', function() {
     it('should validate valid data', function (done) {
       cli('-s test/meta/schema -d test/meta/valid_data -m test/meta/meta_schema', function (error, stdout, stderr) {

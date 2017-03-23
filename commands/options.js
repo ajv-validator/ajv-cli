@@ -12,7 +12,6 @@ var ajv = Ajv({
 });
 
 var AJV_OPTIONS = {
-    'v5':               { type: 'boolean' },
     'all-errors':       { type: 'boolean' },
     'verbose':          { type: 'boolean' },
     'json-pointers':    { type: 'boolean' },

@@ -43,15 +43,6 @@ describe('compile', function() {
     });
   });
 
-  it('should compile valid v5 schema', function (done) {
-    cli('compile -s test/v5/schema --v5', function (error, stdout, stderr) {
-      assert.strictEqual(error, null);
-      assertValid(stdout, 1);
-      assert.equal(stderr, '');
-      done();
-    });
-  });
-
   it('should compile valid schema with a custom meta-schema', function (done) {
     cli('compile -s test/meta/schema -m test/meta/meta_schema', function (error, stdout, stderr) {
       assert.strictEqual(error, null);
