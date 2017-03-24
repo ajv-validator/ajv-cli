@@ -144,13 +144,16 @@ You can pass the following Ajv options:
 
 |Option|Description|
 |---|---|
-|`--v5`|support v5 proposals|
+|`--data`|use [$data references](https://github.com/epoberezkin/ajv#data-reference)|
 |`--all-errors`|collect all errors|
+|`--unknown-formats=`|handling of unknown formats|
 |`--verbose`|include schema and data in errors|
 |`--json-pointers`|report data paths in errors using JSON-pointers|
 |`--unique-items=false`|do not validate uniqueItems keyword|
 |`--unicode=false`|count unicode pairs as 2 characters|
 |`--format=full`|format mode|
+|`--schema-id=`|keyword(s) to use as schema ID|
+|`--extend-refs=`|validation of other keywords when $ref is present in the schema|
 |`--missing-refs=`|handle missing referenced schemas (true/ignore/fail)|
 |`--inline-refs=`|referenced schemas compilation mode (true/false/\<number\>)|
 |`--remove-additional`|remove additional properties (true/all/failing)|
