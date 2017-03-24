@@ -167,7 +167,13 @@ Test data validation result\n\
 function helpAjvOptions() {
     console.log('\
 Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
+    --data             use $data references\n\
+\n\
     --all-errors       collect all errors\n\
+\n\
+    --unknown-formats= handling of unknown formats\n\
+             true      throw exception during schema compilation (default)\n\
+             <string>  allowed unknown format name, multiple names can be used\n\
 \n\
     --json-pointers    report data paths as JSON pointers\n\
 \n\
@@ -178,6 +184,15 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
     --format=          format validation mode\n\
              fast      using regex (default)\n\
              full      using functions\n\
+\n\
+    --schema-id=       (by default both IDs will be used)\n\
+             $id       use $id\n\
+             id        use id\n\
+\n\
+    --extend-refs=     validation of other keywords when $ref is present in the schema\n\
+             ignore    ignore other keywords (default)\n\
+             fail      throw exception (recommended)\n\
+             true      validate all keywords\n\
 \n\
     --missing-refs=    handling missing referenced schemas\n\
              true      fail schema compilation (default)\n\
