@@ -153,7 +153,7 @@ describe('validate', function() {
 
 
   describe('option "changes"', function() {
-    it('should log changes ni the object after validation', function (done) {
+    it('should log changes in the object after validation', function (done) {
       cli('-s test/schema -d test/data_with_additional --remove-additional  --changes=line', function (error, stdout, stderr) {
         assert.strictEqual(error, null);
         var lines = assertValid(stdout, 1, 2);
