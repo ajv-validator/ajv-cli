@@ -8,6 +8,18 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 [![Coverage Status](https://coveralls.io/repos/github/jessedc/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/jessedc/ajv-cli?branch=master)
 
 
+## Contents
+
+- [Installation](#installation)
+- Commands
+  - [Help](#help)
+  - [Validate data](#validate-data)
+  - [Migrate schema(s) to draft-06](#migrate-schemas-to-draft-06)
+  - [Test validation result](#test-validation-result)
+- [Ajv options](#ajv-options)
+- [Version History, License](#version_history)
+
+
 ## Installation
 
 ```sh
@@ -184,7 +196,7 @@ This command supports the same options and parameters as [validate](#validate-da
 
 ## Ajv options
 
-You can pass the following Ajv options:
+You can pass the following Ajv options (excluding `migrate` command):
 
 |Option|Description|
 |---|---|
