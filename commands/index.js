@@ -2,8 +2,8 @@
 
 module.exports = {
     help: require('./help'),
-    migrate: require('./migrate'),
     validate: require('./validate'),
     compile: require('./compile'),
+    migrate: require('./migrate'),
     test: require('./test')
 };
