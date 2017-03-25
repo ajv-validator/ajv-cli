@@ -2,7 +2,7 @@
 
 var Ajv = require('ajv');
 var glob = require('glob');
-var ajv = Ajv({
+var ajv = new Ajv({
     allErrors: true,
     coerceTypes: 'array',
     jsonPointers: true,
