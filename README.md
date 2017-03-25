@@ -14,12 +14,14 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 npm install -g ajv-cli
 ```
 
+
 ## Help
 
 ```sh
 ajv help
 ajv help validate
 ajv help compile
+ajv help migrate
 ajv help test
 ```
 
@@ -122,6 +124,48 @@ ajv compile -s "schema.json" -o "validate_schema.js"
 ```
 
 This command also supports parameters `-r`, `-m` and `-c` as in [validate](#validate-data) command.
+
+
+## Migrate schema(s) to draft-06
+
+This command validates and migrates schema to draft-06 using [json-schema-migrate](https://github.com/epoberezkin/json-schema-migrate) package.
+
+
+```sh
+ajv migrate -s schema
+
+# compile to specific file name
+ajv migrate -s schema -o migrated_schema.json
+```
+
+#### Parameters
+
+##### `-s` - file name(s) of JSON-schema(s)
+
+Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
+
+```sh
+ajv migrate -s "test/schema*.json"
+```
+
+If parameter `-o` is not specified the migrated schema is written to the same file and the original file is preserved with `.bak` extension.
+
+If migration doesn't change anything in the schema file no changes in files are made.
+
+
+##### `-o` - output file for migrated schema
+
+Only a single schema can be migrated with this option.
+
+```sh
+ajv compile -s "schema.json" -o migrated_schema.json
+```
+
+#### Options
+
+- `v5`: migrate schema as v5 if $schema is not specified
+- `--indent=`: indentation in migrated schema JSON file, 4 by default
+- `--validate-schema=false`: skip schema validation
 
 
 ## Test validation result
