@@ -9,7 +9,7 @@ var path = require('path');
 module.exports = function (argv) {
     var opts = options.get(argv);
     if (argv.o) opts.sourceCode = true;
-    var ajv = Ajv(opts);
+    var ajv = new Ajv(opts);
     var invalid;
     addSchemas(argv.m, 'addMetaSchema', 'meta-schema');
     addSchemas(argv.r, 'addSchema', 'schema');

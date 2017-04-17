@@ -1,7 +1,0 @@
-{
-    "patternProperties": {
-        "^[0-9]+$": { "constant": { "$data": "0#" } },
-        "^[a-z]+$": { "constant": { "$data": "0#" } }
-    },
-    "patternRequired": ["^[0-9]+$", "^[a-z]+$"]
-}

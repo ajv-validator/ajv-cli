@@ -2,9 +2,9 @@
 
 var Ajv = require('ajv');
 var glob = require('glob');
-var ajv = Ajv({
+var ajv = new Ajv({
     allErrors: true,
-    coerceTypes: true,
+    coerceTypes: 'array',
     jsonPointers: true,
     formats: {
         notGlob: function(s) { return !glob.hasMagic(s); }
@@ -12,7 +12,7 @@ var ajv = Ajv({
 });
 
 var AJV_OPTIONS = {
-    'v5':               { type: 'boolean' },
+    'data':             { type: 'boolean' },
     'all-errors':       { type: 'boolean' },
     'verbose':          { type: 'boolean' },
     'json-pointers':    { type: 'boolean' },
@@ -21,6 +21,16 @@ var AJV_OPTIONS = {
     'format':           { anyOf: [
                             { type: 'boolean' },
                             { enum: ['fast', 'full'] }
+    ] },
+    'unknown-formats':  { anyOf: [
+                            { type: 'boolean' },
+                            { const: 'ignore' },
+                            { type: 'array', items: { type: 'string' } }
+    ] },
+    'schema-id':        { enum: ['$id', 'id'] },
+    'extend-refs':      { anyOf: [
+                            { type: 'boolean' },
+                            { enum: ['ignore', 'fail'] }
     ] },
     'missing-refs':     { anyOf: [
                             { type: 'boolean' },

@@ -8,11 +8,24 @@ Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the
 [![Coverage Status](https://coveralls.io/repos/github/jessedc/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/jessedc/ajv-cli?branch=master)
 
 
+## Contents
+
+- [Installation](#installation)
+- Commands
+  - [Help](#help)
+  - [Validate data](#validate-data)
+  - [Migrate schema(s) to draft-06](#migrate-schemas-to-draft-06)
+  - [Test validation result](#test-validation-result)
+- [Ajv options](#ajv-options)
+- [Version History, License](#version_history)
+
+
 ## Installation
 
 ```sh
 npm install -g ajv-cli
 ```
+
 
 ## Help
 
@@ -20,6 +33,7 @@ npm install -g ajv-cli
 ajv help
 ajv help validate
 ajv help compile
+ajv help migrate
 ajv help test
 ```
 
@@ -124,6 +138,48 @@ ajv compile -s "schema.json" -o "validate_schema.js"
 This command also supports parameters `-r`, `-m` and `-c` as in [validate](#validate-data) command.
 
 
+## Migrate schema(s) to draft-06
+
+This command validates and migrates schema to draft-06 using [json-schema-migrate](https://github.com/epoberezkin/json-schema-migrate) package.
+
+
+```sh
+ajv migrate -s schema
+
+# compile to specific file name
+ajv migrate -s schema -o migrated_schema.json
+```
+
+#### Parameters
+
+##### `-s` - file name(s) of JSON-schema(s)
+
+Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
+
+```sh
+ajv migrate -s "test/schema*.json"
+```
+
+If parameter `-o` is not specified the migrated schema is written to the same file and the original file is preserved with `.bak` extension.
+
+If migration doesn't change anything in the schema file no changes in files are made.
+
+
+##### `-o` - output file for migrated schema
+
+Only a single schema can be migrated with this option.
+
+```sh
+ajv compile -s "schema.json" -o migrated_schema.json
+```
+
+#### Options
+
+- `v5`: migrate schema as v5 if $schema is not specified
+- `--indent=`: indentation in migrated schema JSON file, 4 by default
+- `--validate-schema=false`: skip schema validation
+
+
 ## Test validation result
 
 This command asserts that the result of the validation is as expected.
@@ -140,17 +196,20 @@ This command supports the same options and parameters as [validate](#validate-da
 
 ## Ajv options
 
-You can pass the following Ajv options:
+You can pass the following Ajv options (excluding `migrate` command):
 
 |Option|Description|
 |---|---|
-|`--v5`|support v5 proposals|
+|`--data`|use [$data references](https://github.com/epoberezkin/ajv#data-reference)|
 |`--all-errors`|collect all errors|
+|`--unknown-formats=`|handling of unknown formats|
 |`--verbose`|include schema and data in errors|
 |`--json-pointers`|report data paths in errors using JSON-pointers|
 |`--unique-items=false`|do not validate uniqueItems keyword|
 |`--unicode=false`|count unicode pairs as 2 characters|
 |`--format=full`|format mode|
+|`--schema-id=`|keyword(s) to use as schema ID|
+|`--extend-refs=`|validation of other keywords when $ref is present in the schema|
 |`--missing-refs=`|handle missing referenced schemas (true/ignore/fail)|
 |`--inline-refs=`|referenced schemas compilation mode (true/false/\<number\>)|
 |`--remove-additional`|remove additional properties (true/all/failing)|

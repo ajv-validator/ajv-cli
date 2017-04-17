@@ -16,6 +16,7 @@ module.exports = {
 var commands = {
     validate: helpValidate,
     compile: helpCompile,
+    migrate: helpMigrate,
     test: helpTest
 };
 
@@ -44,6 +45,7 @@ function usage() {
 usage:\n\
     validate:  ajv [validate] -s schema[.json] -d data[.json]\n\
     compile:   ajv compile -s schema[.json]\n\
+    migrate:   ajv migrate -s schema[.json] -o migrated_schema.json\n\
     test:      ajv test -s schema[.json] -d data[.json] --[in]valid\n\
 \n\
     help:      ajv help\n\
@@ -54,11 +56,13 @@ usage:\n\
 function mainHelp() {
     _helpValidate();
     _helpCompile();
+    _helpMigrate();
     _helpTest();
     console.log('\
 More information:\n\
         ajv help validate\n\
         ajv help compile\n\
+        ajv help migrate\n\
         ajv help test');
 }
 
@@ -110,7 +114,7 @@ parameters\n\
     -o output file for compiled validation function\n\
 \n\
     -s, -r, -m, -c can be globs and can be used multiple times\n\
-    If option -o is used only one schema can be compiled (-c option)\n\
+    If option -o is used only one schema can be compiled\n\
     glob should be enclosed in double quotes\n\
     -c module(s) should export a function that accepts Ajv instance as parameter\n\
     (file path should start with ".", otherwise used as require package)\n\
@@ -124,6 +128,33 @@ function _helpCompile() {
 Compile schema(s)\n\
     ajv compile -s schema[.json]\n\
     ajv compile -s "schema*.json"\n');
+}
+
+
+function helpMigrate() {
+    _helpMigrate();
+    console.log('\
+parameters\n\
+    -s JSON schema(s) to migrate to draft-06 (required)\n\
+    -o output file for migrated schema (only allowed for a single schema)\n\
+\n\
+    -s can be glob and can be used multiple times\n\
+    If option -o is used only one schema can be migrated\n\
+    glob should be enclosed in double quotes\n\
+    .json extension can be omitted (but should be used in globs)\n\
+\n\
+options:\n\
+    --v5                    migrate schema as v5 if $schema is not specified\n\
+    --indent=<N>            indentation in migrated schema JSON file, 4 by default\n\
+    --validate-schema=false skip schema validation\n');
+}
+
+
+function _helpMigrate() {
+    console.log('\
+Migrate schema(s) to draft-06\n\
+    ajv migrate -s schema[.json] -o migrated_schema.json\n\
+    ajv migrate -s "schema*.json"\n');
 }
 
 
@@ -167,9 +198,13 @@ Test data validation result\n\
 function helpAjvOptions() {
     console.log('\
 Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
-    --v5               support validation keywords from v5 proposals\n\
+    --data             use $data references\n\
 \n\
     --all-errors       collect all errors\n\
+\n\
+    --unknown-formats= handling of unknown formats\n\
+             true      throw exception during schema compilation (default)\n\
+             <string>  allowed unknown format name, multiple names can be used\n\
 \n\
     --json-pointers    report data paths as JSON pointers\n\
 \n\
@@ -180,6 +215,15 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):\n\
     --format=          format validation mode\n\
              fast      using regex (default)\n\
              full      using functions\n\
+\n\
+    --schema-id=       (by default both IDs will be used)\n\
+             $id       use $id\n\
+             id        use id\n\
+\n\
+    --extend-refs=     validation of other keywords when $ref is present in the schema\n\
+             ignore    ignore other keywords (default)\n\
+             fail      throw exception (recommended)\n\
+             true      validate all keywords\n\
 \n\
     --missing-refs=    handling missing referenced schemas\n\
              true      fail schema compilation (default)\n\
