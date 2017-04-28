@@ -1,6 +1,6 @@
 {
   "name": "ajv-cli",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
     "eslint": "eslint index.js commands/*.js test/*.js test/**/*.js",
