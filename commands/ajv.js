@@ -11,6 +11,7 @@ module.exports = function (argv) {
     if (argv.o) opts.sourceCode = true;
     var ajv = new Ajv(opts);
     var invalid;
+    ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
     addSchemas(argv.m, 'addMetaSchema', 'meta-schema');
     addSchemas(argv.r, 'addSchema', 'schema');
     customFormatsKeywords(argv.c);

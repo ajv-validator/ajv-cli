@@ -66,6 +66,15 @@ describe('compile', function() {
     });
   });
 
+  it('should support draft-04 meta-schema', function(done) {
+    cli('compile -s test/migrate/schema', function (error, stdout, stderr) {
+      assert.strictEqual(error, null);
+      assertValid(stdout, 1);
+      assert.equal(stderr, '');
+      done();
+    });
+  });
+
   it('should fail to compile invalid schema with a custom meta-schema', function (done) {
     cli('compile -s test/meta/invalid_schema -m test/meta/meta_schema', function (error, stdout, stderr) {
       assert(error instanceof Error);
