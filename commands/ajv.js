@@ -8,10 +8,12 @@ var path = require('path');
 
 module.exports = function (argv) {
     var opts = options.get(argv);
+    opts.schemaId = 'auto';
     if (argv.o) opts.sourceCode = true;
     var ajv = new Ajv(opts);
     var invalid;
     ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
+    ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));
     addSchemas(argv.m, 'addMetaSchema', 'meta-schema');
     addSchemas(argv.r, 'addSchema', 'schema');
     customFormatsKeywords(argv.c);

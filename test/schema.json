@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "schema.json",
     "description": "basic schema from z-schema benchmark (https://github.com/zaggino/z-schema)",
     "title": "Product set",

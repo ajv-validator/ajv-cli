@@ -30,7 +30,7 @@
     "url": "https://github.com/jessedc/ajv-cli"
   },
   "dependencies": {
-    "ajv": "^5.0.0",
+    "ajv": "^6.0.0",
     "ajv-pack": "^0.3.0",
     "fast-json-patch": "^0.5.6",
     "glob": "^7.0.3",
@@ -38,7 +38,7 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "ajv-keywords": "^2.0.0",
+    "ajv-keywords": "^3.0.0",
     "coveralls": "^2.11.8",
     "eslint": "^2.4.0",
     "mocha": "^2.4.5",
