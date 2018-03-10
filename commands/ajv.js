@@ -10,7 +10,7 @@ module.exports = function (argv) {
     var opts = options.get(argv);
     opts.schemaId = 'auto';
     if (argv.o) opts.sourceCode = true;
-    var ajv = new Ajv(opts);
+    var ajv = argv.e ? require('ajv-errors')(new Ajv(opts)) : new Ajv(opts);
     var invalid;
     ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
     ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-06.json'));

@@ -15,7 +15,8 @@ module.exports = {
             r: { $ref: '#/definitions/stringOrArray' },
             m: { $ref: '#/definitions/stringOrArray' },
             c: { $ref: '#/definitions/stringOrArray' },
-            o: { type: 'string' }
+            o: { type: 'string' },
+            e: { type: 'boolean' }
         }
     }
 };

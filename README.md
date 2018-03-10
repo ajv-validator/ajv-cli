@@ -135,6 +135,16 @@ Only a single schema can be compiled with this option.
 ajv compile -s "schema.json" -o "validate_schema.js"
 ```
 
+
+##### `-e` - Support custom error messages with [ajv-errors](https://github.com/epoberezkin/ajv-errors)
+
+You must install ajv-errors to use this option, otherwise the command will fail.
+
+```sh
+ajv compile -e -s "schema.json" -o "validate_schema.js"
+```
+
+
 This command also supports parameters `-r`, `-m` and `-c` as in [validate](#validate-data) command.
 
 
