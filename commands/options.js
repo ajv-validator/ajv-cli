@@ -12,7 +12,7 @@ var ajv = new Ajv({
 });
 
 var AJV_OPTIONS = {
-    'data':             { type: 'boolean' },
+    '\$data':           { type: 'boolean' },
     'all-errors':       { type: 'boolean' },
     'verbose':          { type: 'boolean' },
     'json-pointers':    { type: 'boolean' },
