@@ -131,6 +131,7 @@ function getOptions(argv) {
 
 
 function toCamelCase(str) {
+    if (str === 'data') return '$data';
     return str.replace(/-[a-z]/g, function (s) {
         return s[1].toUpperCase();
     });
