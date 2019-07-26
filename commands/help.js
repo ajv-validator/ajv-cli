@@ -84,7 +84,7 @@ parameters\n\
     .json extension can be omitted (but should be used in globs)\n\
 \n\
 options:\n\
-    --errors=          error reporting format ("js" by deafult)\n\
+    --errors=          error reporting format ("js" by default)\n\
     --changes=         log changes in data after validation ("no" by default)\n\
              js        JavaScript object\n\
              json      JSON format\n\
