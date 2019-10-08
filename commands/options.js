@@ -126,6 +126,12 @@ function getOptions(argv) {
         var value = argv[opt] === undefined ? argv[optCC] : argv[opt];
         if (value !== undefined) options[optCC] = value;
     }
+
+    if(options.hasOwnProperty('data')) {
+        options.$data = options.data;
+        delete options.data;
+    }
+
     return options;
 }
 
