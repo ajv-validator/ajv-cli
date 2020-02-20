@@ -19,22 +19,22 @@ var AJV_OPTIONS = {
     'unique-items':     { type: 'boolean' },
     'unicode':          { type: 'boolean' },
     'format':           { anyOf: [
-                            { type: 'boolean' },
-                            { enum: ['fast', 'full'] }
+        { type: 'boolean' },
+        { enum: ['fast', 'full'] }
     ] },
     'unknown-formats':  { anyOf: [
-                            { type: 'boolean' },
-                            { const: 'ignore' },
-                            { type: 'array', items: { type: 'string' } }
+        { type: 'boolean' },
+        { const: 'ignore' },
+        { type: 'array', items: { type: 'string' } }
     ] },
     'schema-id':        { enum: ['$id', 'id'] },
     'extend-refs':      { anyOf: [
-                            { type: 'boolean' },
-                            { enum: ['ignore', 'fail'] }
+        { type: 'boolean' },
+        { enum: ['ignore', 'fail'] }
     ] },
     'missing-refs':     { anyOf: [
-                            { type: 'boolean' },
-                            { enum: ['ignore', 'fail'] }
+        { type: 'boolean' },
+        { enum: ['ignore', 'fail'] }
     ] },
     'inline-refs':      { type: ['boolean', 'integer'], minimum: 0 },
     'multiple-of-precision': { type: 'integer' },
@@ -42,14 +42,15 @@ var AJV_OPTIONS = {
     'messages':         { type: 'boolean' },
     // modifying options
     'remove-additional': { anyOf: [
-                            { type: 'boolean' },
-                            { enum: ['all', 'failing'] }
+        { type: 'boolean' },
+        { enum: ['all', 'failing'] }
     ] },
     'use-defaults':     { type: 'boolean' },
     'coerce-types':     { anyOf: [
-                            { type: 'boolean' },
-                            { enum: ['array'] }
-    ] }
+        { type: 'boolean' },
+        { enum: ['array'] }
+    ] },
+    'add-used-schema':  { type: 'boolean' }
 };
 
 
