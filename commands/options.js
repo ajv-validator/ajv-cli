@@ -49,7 +49,8 @@ var AJV_OPTIONS = {
     'coerce-types':     { anyOf: [
                             { type: 'boolean' },
                             { enum: ['array'] }
-    ] }
+    ] },
+    'add-used-schema':  { type: 'boolean' }
 };
 
 
