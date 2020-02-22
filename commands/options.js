@@ -123,6 +123,7 @@ function getOptions(argv) {
     var options = {};
     for (var opt in AJV_OPTIONS) {
         var optCC = toCamelCase(opt);
+        if (optCC === 'data') optCC = '$data';
         var value = argv[opt] === undefined ? argv[optCC] : argv[opt];
         if (value !== undefined) options[optCC] = value;
     }
@@ -131,7 +132,6 @@ function getOptions(argv) {
 
 
 function toCamelCase(str) {
-    if (str === 'data') return '$data';
     return str.replace(/-[a-z]/g, function (s) {
         return s[1].toUpperCase();
     });
