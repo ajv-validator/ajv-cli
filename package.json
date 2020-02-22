@@ -30,19 +30,19 @@
     "url": "https://github.com/jessedc/ajv-cli"
   },
   "dependencies": {
-    "ajv": "^6.0.0",
+    "ajv": "^6.7.0",
     "ajv-pack": "^0.3.0",
-    "fast-json-patch": "^0.5.6",
-    "glob": "^7.0.3",
+    "fast-json-patch": "^2.0.0",
+    "glob": "^7.1.0",
     "json-schema-migrate": "^0.2.0",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "ajv-keywords": "^3.0.0",
-    "coveralls": "^2.11.8",
+    "ajv-keywords": "^3.2.0",
+    "coveralls": "^3.0.0",
     "eslint": "^2.4.0",
-    "mocha": "^2.4.5",
-    "nyc": "^8.3.0",
-    "pre-commit": "^1.1.2"
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "pre-commit": "^1.2.0"
   }
 }
