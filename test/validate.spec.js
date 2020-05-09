@@ -44,6 +44,15 @@ describe('validate', function() {
       });
     });
 
+    it('falls back to require on unsupported formats', function (done) {
+      cli('-s test/schema.json -d test/invalid_format.cson --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        assert.ok(/Invalid or unexpected token/i.exec(stderr));
+        done();
+      });
+    });
+
     it('should validate invalid data', function (done) {
       cli('-s test/schema.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
