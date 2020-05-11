@@ -3,6 +3,8 @@
 var glob = require('glob');
 var path = require('path');
 var fs = require('fs');
+var yaml = require('js-yaml');
+var JSON5 = require('json5');
 
 
 module.exports = {
@@ -30,12 +32,33 @@ function getFiles(args) {
 }
 
 
+function getFormatFromFileName(filename) {
+    return path.extname(filename).substr(1).toLowerCase();
+}
+
+
+function decodeFile(contents, format) {
+    switch(format) {
+        case 'json':
+            return JSON.parse(contents);
+        case 'json5':
+            return JSON5.parse(contents);
+        case 'yml':
+        case 'yaml':
+            return yaml.safeLoad(contents);
+        default:
+            throw new Error('unsupported format ' + format);
+    }
+}
+
+
 function openFile(filename, suffix){
     var json = null;
     var file = path.resolve(process.cwd(), filename);
     try {
         try {
-            json = JSON.parse(fs.readFileSync(file).toString());
+            var format = getFormatFromFileName(filename);
+            json = decodeFile(fs.readFileSync(file).toString(), format);
         } catch(JSONerr) {
             json = require(file);
         }

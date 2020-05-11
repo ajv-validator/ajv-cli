@@ -17,6 +17,42 @@ describe('validate', function() {
       });
     });
 
+    it('should validate valid data with the "yml" extension', function(done) {
+      cli('-s test/schema -d test/valid_data.yml', function(error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('should validate valid data with the "yaml" extension', function(done) {
+      cli('-s test/schema -d test/valid_data.yaml', function(error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('should validate valid data with the "json5" extension', function(done) {
+      cli('-s test/schema -d test/valid_data.json5', function(error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('falls back to require on unsupported formats', function (done) {
+      cli('-s test/schema.json -d test/invalid_format.cson --errors=line', function (error, stdout, stderr) {
+        assert(error instanceof Error);
+        assert.equal(stdout, '');
+        assert.ok(/Invalid or unexpected token/i.exec(stderr));
+        done();
+      });
+    });
+
     it('should validate invalid data', function (done) {
       cli('-s test/schema.json -d test/invalid_data.json --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
