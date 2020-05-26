@@ -3,9 +3,9 @@
 Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the [fastest json schema validators](https://github.com/ebdrup/json-schema-benchmark).
 Supports [JSON](http://json.org/), [JSON5](http://json5.org/), and [YAML](http://yaml.org/). 
 
-[![Build Status](https://travis-ci.org/jessedc/ajv-cli.svg?branch=master)](https://travis-ci.org/jessedc/ajv-cli)
+[![Build Status](https://travis-ci.org/ajv-validator/ajv-cli.svg?branch=master)](https://travis-ci.org/github/ajv-validator/ajv-cli)
 [![npm](https://img.shields.io/npm/v/ajv-cli.svg)](https://www.npmjs.com/package/ajv-cli)
-[![Coverage Status](https://coveralls.io/repos/github/jessedc/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/jessedc/ajv-cli?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/ajv-validator/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/ajv-validator/ajv-cli?branch=master)
 [![Gitter](https://img.shields.io/gitter/room/ajv-validator/ajv.svg)](https://gitter.im/ajv-validator/ajv)
 
 
