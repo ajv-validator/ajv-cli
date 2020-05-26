@@ -3,7 +3,7 @@ env:
   node: true
 extends: 'eslint:recommended'
 rules:
-  indent: [2, 4, { SwitchCase : 1 } ]
+  indent-legacy: [2, 4, { SwitchCase : 1 } ]
   no-trailing-spaces: 2
   quotes: [ 2, single, avoid-escape ]
   linebreak-style: [ 2, unix ]
