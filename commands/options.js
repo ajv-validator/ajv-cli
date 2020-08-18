@@ -16,6 +16,9 @@ var AJV_OPTIONS = {
     'all-errors':       { type: 'boolean' },
     'verbose':          { type: 'boolean' },
     'json-pointers':    { type: 'boolean' },
+    'strict-keywords':  { type: 'boolean' },
+    'strict-defaults':   { type: 'boolean'},
+    'strict-numbers':    { type: 'boolean'},
     'unique-items':     { type: 'boolean' },
     'unicode':          { type: 'boolean' },
     'format':           { anyOf: [
