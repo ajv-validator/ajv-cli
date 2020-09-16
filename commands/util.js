@@ -41,13 +41,12 @@ function decodeFile(contents, format) {
     switch(format) {
         case 'json':
             return JSON.parse(contents);
+        default:
         case 'json5':
             return JSON5.parse(contents);
         case 'yml':
         case 'yaml':
             return yaml.safeLoad(contents);
-        default:
-            throw new Error('unsupported format ' + format);
     }
 }
 

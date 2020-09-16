@@ -44,7 +44,16 @@ describe('validate', function() {
       });
     });
 
-    it('falls back to require on unsupported formats', function (done) {
+    it('falls back to json5 when the extension is not recognised', function(done) {
+      cli('-s test/schema.schema -d test/valid_data.data', function(error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
+    it('falls back to require if parsing fails', function (done) {
       cli('-s test/schema.json -d test/invalid_format.cson --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
         assert.equal(stdout, '');
