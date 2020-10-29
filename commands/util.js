@@ -41,6 +41,7 @@ function decodeFile(contents, format) {
     switch(format) {
         case 'json':
             return JSON.parse(contents);
+        case 'jsonc':
         case 'json5':
             return JSON5.parse(contents);
         case 'yml':
