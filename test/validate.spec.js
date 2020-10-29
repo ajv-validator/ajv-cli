@@ -44,6 +44,15 @@ describe('validate', function() {
       });
     });
 
+    it('should validate valid data with the "jsonc" extension', function(done) {
+      cli('-s test/schema -d test/valid_data.jsonc', function(error, stdout, stderr) {
+        assert.strictEqual(error, null);
+        assertValid(stdout, 1);
+        assert.equal(stderr, '');
+        done();
+      });
+    });
+
     it('falls back to require on unsupported formats', function (done) {
       cli('-s test/schema.json -d test/invalid_format.cson --errors=line', function (error, stdout, stderr) {
         assert(error instanceof Error);
