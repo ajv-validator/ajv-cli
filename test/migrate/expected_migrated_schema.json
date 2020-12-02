@@ -10,8 +10,8 @@
       "minimum": 1,
       "maximum": 3
     },
-    "singleValue": { "const": "foo" },
-    "multipleValues": { "enum": ["foo", "bar"] },
+    "singleValue": {"const": "foo"},
+    "multipleValues": {"enum": ["foo", "bar"]},
     "alwaysValid": true,
     "alwaysInvalid": false
   }

@@ -1,10 +1,9 @@
-'use strict';
+"use strict"
 
-var exec = require('child_process').exec;
-var path = require('path');
-var CWD = path.join(__dirname, '..');
-
+const {exec} = require("child_process")
+const path = require("path")
+const CWD = path.join(__dirname, "..")
 
 module.exports = function cli(params, callback) {
-  exec('node index ' + params, { cwd: CWD }, callback);
-};
+  exec("node index " + params, {cwd: CWD}, callback)
+}

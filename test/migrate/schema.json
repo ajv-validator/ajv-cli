@@ -14,8 +14,8 @@
       "maximum": 3,
       "exclusiveMaximum": false
     },
-    "singleValue": { "enum": ["foo"] },
-    "multipleValues": { "enum": ["foo", "bar"] },
+    "singleValue": {"enum": ["foo"]},
+    "multipleValues": {"enum": ["foo", "bar"]},
     "alwaysValid": {},
     "alwaysInvalid": {"not": {}}
   }
