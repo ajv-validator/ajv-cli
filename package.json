@@ -3,12 +3,14 @@
   "version": "3.3.0",
   "description": "A command line interface for epoberezkin/ajv JSON schema validator",
   "scripts": {
-    "eslint": "eslint index.js commands/*.js test/*.js test/**/*.js",
+    "build": "rm -rf dist && tsc",
+    "prepublish": "npm run build",
+    "eslint": "eslint \"src/**/*.js\" \"test/**/*.js\"",
     "prettier:write": "prettier --write \"./**/*.{md,json,yaml,js,ts}\"",
     "prettier:check": "prettier --list-different \"./**/*.{md,json,yaml,js,ts}\"",
     "test-spec": "mocha test/*.spec.js -R spec",
     "test-cov": "nyc npm run test-spec",
-    "test": "npm run eslint && npm run test-cov"
+    "test": "npm run build && npm run eslint && npm run test-cov"
   },
   "nyc": {
     "exclude": [
@@ -22,7 +24,7 @@
     "cache": true
   },
   "bin": {
-    "ajv": "index.js"
+    "ajv": "dist/index.js"
   },
   "preferGlobal": true,
   "author": "Jesse Collis <jesse@jcmultimedia.com.au>",
