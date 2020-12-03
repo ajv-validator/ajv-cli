@@ -1,18 +1,18 @@
 #! /usr/bin/env node
-"use strict"
 
-const argv = require("minimist")(process.argv.slice(2))
-const commands = require("./commands")
-const options = require("./commands/options")
+import minimist = require("minimist")
+import commands from "./commands"
+import {checkOptions} from "./commands/options"
 
+const argv = minimist(process.argv.slice(2))
 const command = argv._[0] || "validate"
 const cmd = commands[command]
 
 if (cmd) {
-  const errors = options.check(cmd.schema, argv)
+  const errors = checkOptions(cmd.schema, argv)
   if (errors) {
     console.error(errors)
-    commands.help.usage()
+    commands.help?.usage?.()
     process.exit(2)
   } else {
     const ok = cmd.execute(argv)
@@ -20,6 +20,6 @@ if (cmd) {
   }
 } else {
   console.error("Unknown command", command)
-  commands.help.usage()
+  commands.help?.usage?.()
   process.exit(2)
 }

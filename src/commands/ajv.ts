@@ -1,25 +1,25 @@
-"use strict"
+import Ajv = require("ajv")
+import {getOptions} from "./options"
+import util = require("./util")
+import path = require("path")
+import draft4metaSchema = require("ajv/lib/refs/json-schema-draft-04.json")
+import draft6metaSchema = require("ajv/lib/refs/json-schema-draft-06.json")
 
-const Ajv = require("ajv")
-const options = require("./options")
-const util = require("./util")
-const path = require("path")
-
-module.exports = function (argv) {
-  const opts = options.get(argv)
+export default function (argv): Ajv.Ajv {
+  const opts = getOptions(argv)
   opts.schemaId = "auto"
   if (argv.o) opts.sourceCode = true
   const ajv = new Ajv(opts)
-  let invalid
-  ajv.addMetaSchema(require("ajv/lib/refs/json-schema-draft-04.json"))
-  ajv.addMetaSchema(require("ajv/lib/refs/json-schema-draft-06.json"))
+  let invalid: boolean | undefined
+  ajv.addMetaSchema(draft4metaSchema)
+  ajv.addMetaSchema(draft6metaSchema)
   addSchemas(argv.m, "addMetaSchema", "meta-schema")
   addSchemas(argv.r, "addSchema", "schema")
   customFormatsKeywords(argv.c)
   if (invalid) process.exit(1)
   return ajv
 
-  function addSchemas(args, method, fileType) {
+  function addSchemas(args, method: string, fileType: string): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
@@ -34,7 +34,7 @@ module.exports = function (argv) {
     })
   }
 
-  function customFormatsKeywords(args) {
+  function customFormatsKeywords(args): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {

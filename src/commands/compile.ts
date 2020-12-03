@@ -1,12 +1,11 @@
-"use strict"
+import type {Command} from "../types"
+import {getFiles, openFile} from "./util"
+import getAjv from "./ajv"
+import ajvPack = require("ajv-pack")
+import fs = require("fs")
 
-const util = require("./util")
-const getAjv = require("./ajv")
-const ajvPack = require("ajv-pack")
-const fs = require("fs")
-
-module.exports = {
-  execute: execute,
+const cmd: Command = {
+  execute,
   schema: {
     type: "object",
     required: ["s"],
@@ -20,11 +19,13 @@ module.exports = {
   },
 }
 
-function execute(argv) {
+export default cmd
+
+function execute(argv): boolean {
   const ajv = getAjv(argv)
   let allValid = true
 
-  const schemaFiles = util.getFiles(argv.s)
+  const schemaFiles = getFiles(argv.s)
   if (argv.o && schemaFiles.length > 1) {
     console.error("multiple schemas cannot be compiled to a file")
     return false
@@ -33,11 +34,11 @@ function execute(argv) {
 
   return allValid
 
-  function compileSchema(file) {
-    const schema = util.openFile(file, "schema " + file)
+  function compileSchema(file: string): void {
+    const sch = openFile(file, "schema " + file)
     let validate
     try {
-      validate = ajv.compile(schema)
+      validate = ajv.compile(sch)
       /* istanbul ignore else */
       if (typeof validate == "function") {
         console.log("schema", file, "is valid")

@@ -1,8 +1,8 @@
-"use strict"
+import type {Command} from "../types"
 
-module.exports = {
-  execute: execute,
-  usage: usage,
+const cmd: Command = {
+  execute,
+  usage,
   schema: {
     type: "object",
     properties: {
@@ -12,6 +12,8 @@ module.exports = {
   },
 }
 
+export default cmd
+
 const commands = {
   validate: helpValidate,
   compile: helpCompile,
@@ -19,7 +21,7 @@ const commands = {
   test: helpTest,
 }
 
-function execute(argv) {
+function execute(argv): boolean | void {
   const command = argv._[1]
   if (!command || command === "help") {
     mainHelp()
@@ -37,7 +39,7 @@ function execute(argv) {
   usage()
 }
 
-function usage() {
+function usage(): void {
   console.error(
     "\
 usage:\n\
@@ -51,7 +53,7 @@ usage:\n\
   )
 }
 
-function mainHelp() {
+function mainHelp(): void {
   _helpValidate()
   _helpCompile()
   _helpMigrate()
@@ -66,7 +68,7 @@ More information:\n\
   )
 }
 
-function helpValidate() {
+function helpValidate(): void {
   _helpValidate()
   console.log(
     '\
@@ -95,7 +97,7 @@ options:\n\
   helpAjvOptions()
 }
 
-function _helpValidate() {
+function _helpValidate(): void {
   console.log(
     '\
 Validate data file(s) against schema\n\
@@ -104,7 +106,7 @@ Validate data file(s) against schema\n\
   )
 }
 
-function helpCompile() {
+function helpCompile(): void {
   _helpCompile()
   console.log(
     '\
@@ -125,7 +127,7 @@ parameters\n\
   helpAjvOptions()
 }
 
-function _helpCompile() {
+function _helpCompile(): void {
   console.log(
     '\
 Compile schema(s)\n\
@@ -134,7 +136,7 @@ Compile schema(s)\n\
   )
 }
 
-function helpMigrate() {
+function helpMigrate(): void {
   _helpMigrate()
   console.log(
     "\
@@ -154,7 +156,7 @@ options:\n\
   )
 }
 
-function _helpMigrate() {
+function _helpMigrate(): void {
   console.log(
     '\
 Migrate schema(s) to draft-06\n\
@@ -163,7 +165,7 @@ Migrate schema(s) to draft-06\n\
   )
 }
 
-function helpTest() {
+function helpTest(): void {
   _helpTest()
   console.log(
     '\
@@ -192,7 +194,7 @@ options:\n\
   helpAjvOptions()
 }
 
-function _helpTest() {
+function _helpTest(): void {
   console.log(
     '\
 Test data validation result\n\
@@ -202,7 +204,7 @@ Test data validation result\n\
   )
 }
 
-function helpAjvOptions() {
+function helpAjvOptions(): void {
   console.log(
     "\
 Ajv options (see https://github.com/epoberezkin/ajv#options):\n\

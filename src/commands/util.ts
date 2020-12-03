@@ -1,25 +1,17 @@
-"use strict"
+import type {Ajv} from "ajv"
+import glob = require("glob")
+import path = require("path")
+import fs = require("fs")
+import yaml = require("js-yaml")
+import JSON5 = require("json5")
 
-const glob = require("glob")
-const path = require("path")
-const fs = require("fs")
-const yaml = require("js-yaml")
-const JSON5 = require("json5")
-
-module.exports = {
-  getFiles: getFiles,
-  openFile: openFile,
-  logJSON: logJSON,
-  compile: compile,
-}
-
-function getFiles(args) {
-  let files = []
+export function getFiles(args): string[] {
+  let files: string[] = []
   if (Array.isArray(args)) args.forEach(_getFiles)
   else _getFiles(args)
   return files
 
-  function _getFiles(fileOrPattern) {
+  function _getFiles(fileOrPattern: string): void {
     if (glob.hasMagic(fileOrPattern)) {
       const dataFiles = glob.sync(fileOrPattern, {cwd: process.cwd()})
       files = files.concat(dataFiles)
@@ -29,11 +21,11 @@ function getFiles(args) {
   }
 }
 
-function getFormatFromFileName(filename) {
+function getFormatFromFileName(filename: string): string {
   return path.extname(filename).substr(1).toLowerCase()
 }
 
-function decodeFile(contents, format) {
+function decodeFile(contents: string, format: string): any {
   switch (format) {
     case "json":
       return JSON.parse(contents)
@@ -47,24 +39,25 @@ function decodeFile(contents, format) {
   }
 }
 
-function openFile(filename, suffix) {
+export function openFile(filename: string, suffix: string): any {
   let json = null
   const file = path.resolve(process.cwd(), filename)
   try {
     try {
       const format = getFormatFromFileName(filename)
       json = decodeFile(fs.readFileSync(file).toString(), format)
-    } catch (JSONerr) {
+    } catch (e) {
       json = require(file)
     }
   } catch (err) {
-    console.error("error:  " + err.message.replace(" module", " " + suffix))
+    const msg: string = err.message
+    console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
     process.exit(2)
   }
   return json
 }
 
-function logJSON(mode, data, ajv) {
+export function logJSON(mode: string, data: any, ajv?: Ajv): string {
   switch (mode) {
     case "json":
       data = JSON.stringify(data, null, "  ")
@@ -81,7 +74,7 @@ function logJSON(mode, data, ajv) {
   return data
 }
 
-function compile(ajv, schemaFile) {
+export function compile(ajv: Ajv, schemaFile): any {
   const schema = openFile(schemaFile, "schema")
   try {
     return ajv.compile(schema)

@@ -1,10 +1,9 @@
-"use strict"
+import type {Command} from "../types"
+import {compile, getFiles, openFile, logJSON} from "./util"
+import getAjv from "./ajv"
 
-const util = require("./util")
-const getAjv = require("./ajv")
-
-module.exports = {
-  execute: execute,
+const cmd: Command = {
+  execute,
   schema: {
     type: "object",
     required: ["s", "d"],
@@ -25,22 +24,24 @@ module.exports = {
   },
 }
 
-function execute(argv) {
+export default cmd
+
+function execute(argv): boolean {
   const ajv = getAjv(argv)
-  const validate = util.compile(ajv, argv.s)
+  const validate = compile(ajv, argv.s)
   const shouldBeValid = !!argv.valid && argv.valid !== "false"
   let allPassed = true
 
-  const dataFiles = util.getFiles(argv.d)
+  const dataFiles = getFiles(argv.d)
   dataFiles.forEach(testDataFile)
 
   return allPassed
 
-  function testDataFile(file) {
-    const data = util.openFile(file, "data file " + file)
+  function testDataFile(file: string): void {
+    const data = openFile(file, "data file " + file)
     const validData = validate(data)
     let errors
-    if (!validData) errors = util.logJSON(argv.errors, validate.errors, ajv)
+    if (!validData) errors = logJSON(argv.errors, validate.errors, ajv)
 
     if (validData === shouldBeValid) {
       console.log(file, "passed test")

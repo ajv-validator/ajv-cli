@@ -1,11 +1,10 @@
-"use strict"
+import type {Command} from "../types"
+import {compile, getFiles, openFile, logJSON} from "./util"
+import getAjv from "./ajv"
+import jsonPatch = require("fast-json-patch")
 
-const util = require("./util")
-const getAjv = require("./ajv")
-const jsonPatch = require("fast-json-patch")
-
-module.exports = {
-  execute: execute,
+const cmd: Command = {
+  execute,
   schema: {
     type: "object",
     required: ["s", "d"],
@@ -24,18 +23,20 @@ module.exports = {
   },
 }
 
-function execute(argv) {
+export default cmd
+
+function execute(argv): boolean {
   const ajv = getAjv(argv)
-  const validate = util.compile(ajv, argv.s)
+  const validate = compile(ajv, argv.s)
   let allValid = true
 
-  const dataFiles = util.getFiles(argv.d)
+  const dataFiles = getFiles(argv.d)
   dataFiles.forEach(validateDataFile)
 
   return allValid
 
-  function validateDataFile(file) {
-    const data = util.openFile(file, "data file " + file)
+  function validateDataFile(file: string): void {
+    const data = openFile(file, "data file " + file)
     let original
     if (argv.changes) original = JSON.parse(JSON.stringify(data))
     const validData = validate(data)
@@ -48,13 +49,13 @@ function execute(argv) {
           console.log("no changes")
         } else {
           console.log("changes:")
-          console.log(util.logJSON(argv.changes, patch))
+          console.log(logJSON(argv.changes, patch))
         }
       }
     } else {
       allValid = false
       console.error(file, "invalid")
-      console.error(util.logJSON(argv.errors, validate.errors, ajv))
+      console.error(logJSON(argv.errors, validate.errors, ajv))
     }
   }
 }

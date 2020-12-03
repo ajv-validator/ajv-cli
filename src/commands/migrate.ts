@@ -1,12 +1,11 @@
-"use strict"
+import type {Command} from "../types"
+import {getFiles, openFile} from "./util"
+import fs = require("fs")
+import migrate = require("json-schema-migrate")
+import jsonPatch = require("fast-json-patch")
 
-const util = require("./util")
-const fs = require("fs")
-const migrate = require("json-schema-migrate")
-const jsonPatch = require("fast-json-patch")
-
-module.exports = {
-  execute: execute,
+const cmd: Command = {
+  execute,
   schema: {
     type: "object",
     required: ["s"],
@@ -21,14 +20,16 @@ module.exports = {
   },
 }
 
-function execute(argv) {
+export default cmd
+
+function execute(argv): boolean {
   let allValid = true
   const opts = {
     v5: argv.v5,
     validateSchema: argv["validate-schema"],
   }
 
-  const schemaFiles = util.getFiles(argv.s)
+  const schemaFiles = getFiles(argv.s)
   if (argv.o && schemaFiles.length > 1) {
     console.error("multiple schemas cannot be migrated to a named output file")
     return false
@@ -37,13 +38,13 @@ function execute(argv) {
 
   return allValid
 
-  function migrateSchema(file) {
-    const schema = util.openFile(file, "schema " + file)
-    const migratedSchema = JSON.parse(JSON.stringify(schema))
+  function migrateSchema(file: string): void {
+    const sch = openFile(file, "schema " + file)
+    const migratedSchema = JSON.parse(JSON.stringify(sch))
 
     try {
       migrate.draft6(migratedSchema, opts)
-      const patch = jsonPatch.compare(schema, migratedSchema)
+      const patch = jsonPatch.compare(sch, migratedSchema)
       if (patch.length > 0) {
         if (argv.o) {
           saveSchema(argv.o, migratedSchema)
@@ -62,8 +63,8 @@ function execute(argv) {
     }
   }
 
-  function saveSchema(file, schema) {
-    fs.writeFileSync(file, JSON.stringify(schema, null, argv.indent || 4))
+  function saveSchema(file: string, sch: any): void {
+    fs.writeFileSync(file, JSON.stringify(sch, null, argv.indent || 4))
     console.log("saved migrated schema to", file)
   }
 }

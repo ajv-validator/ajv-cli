@@ -1,7 +1,5 @@
-"use strict"
-
-const Ajv = require("ajv")
-const glob = require("glob")
+import Ajv = require("ajv")
+import glob = require("glob")
 const ajv = new Ajv({
   allErrors: true,
   coerceTypes: "array",
@@ -41,11 +39,6 @@ const AJV_OPTIONS = {
   "add-used-schema": {type: "boolean"},
 }
 
-module.exports = {
-  check: checkOptions,
-  get: getOptions,
-}
-
 const DEFINITIONS = {
   stringOrArray: {
     anyOf: [
@@ -58,7 +51,7 @@ const DEFINITIONS = {
   },
 }
 
-function checkOptions(schema, argv) {
+export function checkOptions(schema, argv): string | null {
   schema.definitions = DEFINITIONS
   if (schema._ajvOptions !== false) {
     for (const opt in AJV_OPTIONS) {
@@ -73,7 +66,7 @@ function checkOptions(schema, argv) {
   const valid = ajv.validate(schema, argv)
   if (valid) return null
   let errors = ""
-  ajv.errors.forEach((err) => {
+  ajv.errors?.forEach((err: any) => {
     errors += "error: "
     switch (err.keyword) {
       case "required":
@@ -90,9 +83,10 @@ function checkOptions(schema, argv) {
           errors += "only one file is allowed in parameter " + parameter(err.dataPath.slice(1))
           break
         }
-      // falls through
+        errors += `parameter ${parameter(err.dataPath.slice(1))} ${err.message}`
+        break
       default:
-        errors += "parameter " + parameter(err.dataPath.slice(1)) + " " + err.message
+        errors += `parameter ${parameter(err.dataPath.slice(1))} ${err.message}`
     }
     errors += "\n"
   })
@@ -100,11 +94,11 @@ function checkOptions(schema, argv) {
   return errors
 }
 
-function parameter(str) {
+function parameter(str: string): string {
   return (str.length === 1 ? "-" : "--") + str
 }
 
-function getOptions(argv) {
+export function getOptions(argv): any {
   const options = {}
   for (const opt in AJV_OPTIONS) {
     let optCC = toCamelCase(opt)
@@ -115,8 +109,6 @@ function getOptions(argv) {
   return options
 }
 
-function toCamelCase(str) {
-  return str.replace(/-[a-z]/g, (s) => {
-    return s[1].toUpperCase()
-  })
+function toCamelCase(str: string): string {
+  return str.replace(/-[a-z]/g, (s) => s[1].toUpperCase())
 }
