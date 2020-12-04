@@ -1,7 +1,6 @@
-"use strict"
-
-const cli = require("./cli")
-const assert = require("assert")
+import cli from "./cli"
+import assert = require("assert")
+import type {DefinedError} from "ajv"
 
 describe("validate", function () {
   this.timeout(10000)
@@ -11,7 +10,7 @@ describe("validate", function () {
       cli("-s test/schema -d test/valid_data", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 1)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
@@ -20,7 +19,7 @@ describe("validate", function () {
       cli("-s test/schema -d test/valid_data.yml", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 1)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
@@ -29,7 +28,7 @@ describe("validate", function () {
       cli("-s test/schema -d test/valid_data.yaml", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 1)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
@@ -38,7 +37,7 @@ describe("validate", function () {
       cli("-s test/schema -d test/valid_data.json5", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 1)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
@@ -48,7 +47,7 @@ describe("validate", function () {
         "-s test/schema.json -d test/invalid_format.cson --errors=line",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           assert.ok(/Invalid or unexpected token/i.exec(stderr))
           done()
         }
@@ -60,7 +59,7 @@ describe("validate", function () {
         "-s test/schema.json -d test/invalid_data.json --errors=line",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           assertRequiredErrors(stderr)
           done()
         }
@@ -70,10 +69,10 @@ describe("validate", function () {
     it("should print usage if syntax is invalid", (done) => {
       cli("-d test/valid_data", (error, stdout, stderr) => {
         assert(error instanceof Error)
-        assert.equal(stdout, "")
-        assert(/usage/.test(stderr))
-        assert(/parameter/.test(stderr))
-        assert(/required/.test(stderr))
+        assert.strictEqual(stdout, "")
+        assert(stderr.includes("usage"))
+        assert(stderr.includes("parameter"))
+        assert(stderr.includes("required"))
         done()
       })
     })
@@ -85,7 +84,7 @@ describe("validate", function () {
         cli('-s test/schema -d "test/valid*.json"', (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertValid(stdout, 2)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         })
       })
@@ -110,7 +109,7 @@ describe("validate", function () {
           (error, stdout, stderr) => {
             assert.strictEqual(error, null)
             assertValid(stdout, 2)
-            assert.equal(stderr, "")
+            assert.strictEqual(stderr, "")
             done()
           }
         )
@@ -147,17 +146,17 @@ describe("validate", function () {
       cli("-s test/schema_with_ref -r test/schema -d test/valid_data", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 1)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
 
-    it("should resolve reference and validate invalide data", (done) => {
+    it("should resolve reference and validate invalid data", (done) => {
       cli(
         "-s test/schema_with_ref -r test/schema -d test/invalid_data --errors=line",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           assertRequiredErrors(stderr, "schema.json")
           done()
         }
@@ -168,11 +167,11 @@ describe("validate", function () {
   describe("validate with schema using added meta-schema", () => {
     it("should validate valid data", (done) => {
       cli(
-        "-s test/meta/schema -d test/meta/valid_data -m test/meta/meta_schema",
+        "-s test/meta/schema -d test/meta/valid_data -m test/meta/meta_schema --strict=false",
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertValid(stdout, 1)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -180,16 +179,16 @@ describe("validate", function () {
 
     it("should validate invalid data", (done) => {
       cli(
-        "-s test/meta/schema -d test/meta/invalid_data -m test/meta/meta_schema --errors=line",
+        "-s test/meta/schema -d test/meta/invalid_data -m test/meta/meta_schema --errors=line --strict=false",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           const results = assertErrors(stderr)
           const errors = results[0]
           const err = errors[0]
-          assert.equal(err.keyword, "type")
-          assert.equal(err.dataPath, ".foo")
-          assert.equal(err.schemaPath, "#/properties/foo/type")
+          assert.strictEqual(err.keyword, "type")
+          assert.strictEqual(err.dataPath, "/foo")
+          assert.strictEqual(err.schemaPath, "#/properties/foo/type")
           done()
         }
       )
@@ -200,12 +199,12 @@ describe("validate", function () {
         "-s test/meta/invalid_schema -d test/meta/valid_data -m test/meta/meta_schema --errors=line",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           const lines = stderr.split("\n")
-          assert.equal(lines.length, 3)
-          assert(/schema/.test(lines[0]))
-          assert(/invalid/.test(lines[0]))
-          assert(/error/.test(lines[1]))
+          assert.strictEqual(lines.length, 3)
+          assert(lines[0].includes("schema"))
+          assert(lines[0].includes("invalid"))
+          assert(lines[1].includes("error"))
           assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]))
           done()
         }
@@ -220,13 +219,13 @@ describe("validate", function () {
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           const lines = assertValid(stdout, 1, 2)
-          assert(/changes/.test(lines[1]))
+          assert(lines[1].includes("changes"))
           const changes = JSON.parse(lines[2])
-          assert.deepEqual(changes, [
+          assert.deepStrictEqual(changes, [
             {op: "remove", path: "/1/additionalInfo"},
             {op: "remove", path: "/0/additionalInfo"},
           ])
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -240,7 +239,7 @@ describe("validate", function () {
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertValid(stdout, 1)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -248,11 +247,11 @@ describe("validate", function () {
 
     it("should validate valid data; custom keyword definition in package", (done) => {
       cli(
-        "validate -s test/custom/schema -c ajv-keywords/keywords/typeof -d test/custom/valid_data",
+        "validate -s test/custom/schema -c ajv-keywords/dist/keywords/typeof -d test/custom/valid_data",
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertValid(stdout, 1)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -263,13 +262,13 @@ describe("validate", function () {
         "validate -s test/custom/schema -c ./test/custom/typeof.js -d test/custom/invalid_data --errors=line",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           const results = assertErrors(stderr)
           const errors = results[0]
           const err = errors[0]
-          assert.equal(err.keyword, "typeof")
-          assert.equal(err.dataPath, "")
-          assert.equal(err.schemaPath, "#/typeof")
+          assert.strictEqual(err.keyword, "typeof")
+          assert.strictEqual(err.dataPath, "")
+          assert.strictEqual(err.schemaPath, "#/typeof")
           done()
         }
       )
@@ -277,16 +276,16 @@ describe("validate", function () {
 
     it("should validate invalid data; custom keyword definition in package", (done) => {
       cli(
-        "validate -s test/custom/schema -c ajv-keywords/keywords/typeof -d test/custom/invalid_data --errors=line",
+        "validate -s test/custom/schema -c ajv-keywords/dist/keywords/typeof -d test/custom/invalid_data --errors=line",
         (error, stdout, stderr) => {
           assert(error instanceof Error)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           const results = assertErrors(stderr)
           const errors = results[0]
           const err = errors[0]
-          assert.equal(err.keyword, "typeof")
-          assert.equal(err.dataPath, "")
-          assert.equal(err.schemaPath, "#/typeof")
+          assert.strictEqual(err.keyword, "typeof")
+          assert.strictEqual(err.dataPath, "")
+          assert.strictEqual(err.schemaPath, "#/typeof")
           done()
         }
       )
@@ -294,36 +293,32 @@ describe("validate", function () {
   })
 })
 
-function assertValid(stdout, count, extraLines) {
+function assertValid(stdout: string, count: number, extraLines = 0): string[] {
   const lines = stdout.split("\n")
-  extraLines = extraLines || 0
-  assert.equal(lines.length, count + extraLines + 1)
+  assert.strictEqual(lines.length, count + extraLines + 1)
   for (let i = 0; i < count; i++) assert(/\svalid/.test(lines[i]))
   return lines
 }
 
-function assertRequiredErrors(stderr, schemaRef, count) {
-  count = count || 1
+function assertRequiredErrors(stderr: string, schemaRef = "#", count = 1): void {
   const results = assertErrors(stderr, count)
   results.forEach((errors) => {
     const err = errors[0]
-    schemaRef = schemaRef || "#"
-    assert.equal(err.keyword, "required")
-    assert.equal(err.dataPath, "[0].dimensions")
-    assert.equal(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
-    assert.deepEqual(err.params, {missingProperty: "height"})
+    assert.strictEqual(err.keyword, "required")
+    assert.strictEqual(err.dataPath, "/0/dimensions")
+    assert.strictEqual(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
+    assert.deepStrictEqual(err.params, {missingProperty: "height"})
   })
 }
 
-function assertErrors(stderr, count) {
-  count = count || 1
+function assertErrors(stderr: string, count = 1): DefinedError[][] {
   const lines = stderr.split("\n")
-  assert.equal(lines.length, count * 2 + 1)
-  const results = []
+  assert.strictEqual(lines.length, count * 2 + 1)
+  const results: DefinedError[][] = []
   for (let i = 0; i < count; i += 2) {
     assert(/\sinvalid/.test(lines[i]))
     const errors = JSON.parse(lines[i + 1])
-    assert.equal(errors.length, 1)
+    assert.strictEqual(errors.length, 1)
     results.push(errors)
   }
   return results

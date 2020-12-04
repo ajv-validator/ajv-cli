@@ -1,4 +1,4 @@
-import type {Command} from "../types"
+import type {Command} from "./types"
 import {compile, getFiles, openFile, logJSON} from "./util"
 import getAjv from "./ajv"
 import jsonPatch = require("fast-json-patch")
@@ -13,13 +13,14 @@ const cmd: Command = {
         type: "string",
         format: "notGlob",
       },
-      d: {$ref: "#/definitions/stringOrArray"},
-      r: {$ref: "#/definitions/stringOrArray"},
-      m: {$ref: "#/definitions/stringOrArray"},
-      c: {$ref: "#/definitions/stringOrArray"},
+      d: {$ref: "#/$defs/stringOrArray"},
+      r: {$ref: "#/$defs/stringOrArray"},
+      m: {$ref: "#/$defs/stringOrArray"},
+      c: {$ref: "#/$defs/stringOrArray"},
       errors: {enum: ["json", "line", "text", "js", "no"]},
       changes: {enum: [true, "json", "line", "js"]},
     },
+    ajvOptions: true,
   },
 }
 

@@ -1,7 +1,7 @@
-import type {Command} from "../types"
+import type {Command} from "./types"
 import {getFiles, openFile} from "./util"
 import getAjv from "./ajv"
-import ajvPack = require("ajv-pack")
+import standaloneCode from "ajv/dist/standalone"
 import fs = require("fs")
 
 const cmd: Command = {
@@ -10,12 +10,13 @@ const cmd: Command = {
     type: "object",
     required: ["s"],
     properties: {
-      s: {$ref: "#/definitions/stringOrArray"},
-      r: {$ref: "#/definitions/stringOrArray"},
-      m: {$ref: "#/definitions/stringOrArray"},
-      c: {$ref: "#/definitions/stringOrArray"},
+      s: {$ref: "#/$defs/stringOrArray"},
+      r: {$ref: "#/$defs/stringOrArray"},
+      m: {$ref: "#/$defs/stringOrArray"},
+      c: {$ref: "#/$defs/stringOrArray"},
       o: {type: "string"},
     },
+    ajvOptions: true,
   },
 }
 
@@ -44,7 +45,7 @@ function execute(argv): boolean {
         console.log("schema", file, "is valid")
         if (argv.o) {
           try {
-            const moduleCode = ajvPack(ajv, validate)
+            const moduleCode = standaloneCode(ajv, validate)
             try {
               fs.writeFileSync(argv.o, moduleCode)
             } catch (e) {

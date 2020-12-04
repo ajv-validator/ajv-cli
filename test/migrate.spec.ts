@@ -1,14 +1,13 @@
-"use strict"
-
-const cli = require("./cli")
-const assert = require("assert")
-const fs = require("fs")
-const path = require("path")
+import cli from "./cli"
+import assert = require("assert")
+import fs = require("fs")
+import path = require("path")
+import {AnySchemaObject} from "ajv"
 
 describe("migrate", function () {
   this.timeout(10000)
 
-  it("should migrate schema to draft-06", (done) => {
+  it("should migrate schema to draft-07", (done) => {
     try {
       deleteSchema("migrated_schema.json")
     } catch (e) {}
@@ -19,7 +18,7 @@ describe("migrate", function () {
         try {
           assert.strictEqual(error, null)
           assertMigrated(stdout, 1)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           const migratedSchema = readSchema("migrated_schema.json")
           const expectedMigratedSchema = require("./migrate/expected_migrated_schema.json")
           assert.deepStrictEqual(migratedSchema, expectedMigratedSchema)
@@ -31,14 +30,14 @@ describe("migrate", function () {
     )
   })
 
-  it("should migrate schema to draft-06 to the same file and create backup", (done) => {
+  it("should migrate schema to draft-07 to the same file and create backup", (done) => {
     const backup = fs.readFileSync(path.join(__dirname, "migrate", "schema.json"), "utf8")
 
     cli("migrate -s test/migrate/schema.json", (error, stdout, stderr) => {
       try {
         assert.strictEqual(error, null)
         assertMigrated(stdout, 1)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         const backupSchema = readSchema("schema.json.bak")
         assert.deepStrictEqual(backupSchema, JSON.parse(backup))
 
@@ -53,14 +52,14 @@ describe("migrate", function () {
     })
   })
 
-  it("should not save schema id schema is draft-06 compatible", (done) => {
+  it("should not save schema if schema is draft-07 compatible", (done) => {
     cli(
       "migrate -s test/migrate/schema_no_changes.json -o test/migrate/migrated_schema.json",
       (error, stdout, stderr) => {
         assert.strictEqual(error, null)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         const lines = stdout.split("\n")
-        assert.equal(lines.length, 2)
+        assert.strictEqual(lines.length, 2)
         assert(/no\schanges/.test(lines[0]))
         let err
         try {
@@ -76,8 +75,9 @@ describe("migrate", function () {
 
   it("should fail on invalid schema", (done) => {
     cli("migrate -s test/migrate/schema_invalid.json", (error, stdout, stderr) => {
+      console.log(error, stdout, stderr)
       assert(error instanceof Error)
-      assert.equal(stdout, "")
+      assert.strictEqual(stdout, "")
       assertError(stderr)
       done()
     })
@@ -88,7 +88,7 @@ describe("migrate", function () {
       'migrate -s "test/migrate/schema*.json"  -o test/migrate/migrated_schema.json',
       (error, stdout, stderr) => {
         assert(error instanceof Error)
-        assert.equal(stdout, "")
+        assert.strictEqual(stdout, "")
         assert(/multiple\sschemas/.test(stderr))
         done()
       }
@@ -96,25 +96,25 @@ describe("migrate", function () {
   })
 })
 
-function assertMigrated(stdout, count) {
+function assertMigrated(stdout: string, count: number): void {
   const lines = stdout.split("\n")
-  assert.equal(lines.length, count + 1)
+  assert.strictEqual(lines.length, count + 1)
   for (let i = 0; i < count; i++) assert(/saved\smigrated\sschema/.test(lines[i]))
 }
 
-function assertError(stderr) {
+function assertError(stderr: string): string[] {
   const lines = stderr.split("\n")
-  assert.equal(lines.length, 3)
-  assert(/schema/.test(lines[0]))
+  assert.strictEqual(lines.length, 3)
+  assert(lines[0].includes("schema"))
   assert(/\sinvalid/.test(lines[0]))
-  assert(/error/.test(lines[1]))
+  assert(lines[1].includes("error"))
   return lines
 }
 
-function readSchema(file) {
+function readSchema(file: string): AnySchemaObject {
   return JSON.parse(fs.readFileSync(path.join(__dirname, "migrate", file), "utf8"))
 }
 
-function deleteSchema(file) {
+function deleteSchema(file: string): void {
   fs.unlinkSync(path.join(__dirname, "migrate", file))
 }

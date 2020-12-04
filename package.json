@@ -8,7 +8,7 @@
     "eslint": "eslint \"src/**/*.*s\" \"test/**/*.js\"",
     "prettier:write": "prettier --write \"./**/*.{md,json,yaml,js,ts}\"",
     "prettier:check": "prettier --list-different \"./**/*.{md,json,yaml,js,ts}\"",
-    "test-spec": "mocha test/*.spec.js -R spec",
+    "test-spec": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register \"test/**/*.spec.{ts,js}\" -R spec",
     "test-cov": "nyc npm run test-spec",
     "test": "npm run build && npm run eslint && npm run test-cov"
   },
@@ -34,8 +34,7 @@
     "url": "https://github.com/jessedc/ajv-cli"
   },
   "dependencies": {
-    "ajv": "^6.7.0",
-    "ajv-pack": "^0.3.0",
+    "ajv": "^7.0.0-beta.9",
     "fast-json-patch": "^2.0.0",
     "glob": "^7.1.0",
     "js-yaml": "^3.14.0",
@@ -48,11 +47,14 @@
     "@types/glob": "^7.1.3",
     "@types/js-yaml": "^3.12.5",
     "@types/json5": "0.0.30",
+    "@types/minimist": "^1.2.1",
+    "@types/mocha": "^8.0.4",
     "@types/node": "^14.14.10",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
-    "ajv-keywords": "^3.2.0",
+    "ajv-keywords": "^4.0.0-beta.3",
     "coveralls": "^3.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.15.0",
     "husky": "^4.3.0",
@@ -61,6 +63,7 @@
     "nyc": "^15.0.1",
     "pre-commit": "^1.2.0",
     "prettier": "^2.2.1",
+    "ts-node": "^9.1.0",
     "typescript": "^4.1.2"
   },
   "prettier": "@ajv-validator/config/prettierrc.json",

@@ -1,7 +1,6 @@
-"use strict"
-
-const cli = require("./cli")
-const assert = require("assert")
+import cli from "./cli"
+import assert = require("assert")
+import type {DefinedError} from "ajv"
 
 describe("test", function () {
   this.timeout(10000)
@@ -11,7 +10,7 @@ describe("test", function () {
       cli("test -s test/schema -d test/valid_data --valid", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertNoErrors(stdout, 1, /\spassed/)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
@@ -20,7 +19,7 @@ describe("test", function () {
       cli('test -s test/schema -d "test/valid*.json" --valid', (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertNoErrors(stdout, 2, /\spassed/)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       })
     })
@@ -29,7 +28,7 @@ describe("test", function () {
       cli("test -s test/schema -d test/valid_data --invalid", (error, stdout, stderr) => {
         assert(error instanceof Error)
         assertNoErrors(stderr, 1, /\sfailed/)
-        assert.equal(stdout, "")
+        assert.strictEqual(stdout, "")
         done()
       })
     })
@@ -38,7 +37,7 @@ describe("test", function () {
       cli('test -s test/schema -d "test/valid*.json" --invalid', (error, stdout, stderr) => {
         assert(error instanceof Error)
         assertNoErrors(stderr, 2, /\sfailed/)
-        assert.equal(stdout, "")
+        assert.strictEqual(stdout, "")
         done()
       })
     })
@@ -51,7 +50,7 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertRequiredErrors(stdout, 1, /\spassed/)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -63,7 +62,7 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertRequiredErrors(stdout, 1, /\spassed/)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -75,7 +74,7 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertRequiredErrors(stdout, 2, /\spassed/)
-          assert.equal(stderr, "")
+          assert.strictEqual(stderr, "")
           done()
         }
       )
@@ -87,7 +86,7 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert(error instanceof Error)
           assertRequiredErrors(stderr, 1, /\sfailed/)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           done()
         }
       )
@@ -99,7 +98,7 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert(error instanceof Error)
           assertRequiredErrors(stderr, 2, /\sfailed/)
-          assert.equal(stdout, "")
+          assert.strictEqual(stdout, "")
           done()
         }
       )
@@ -133,16 +132,16 @@ describe("test", function () {
   })
 })
 
-function assertNoErrors(out, count, regexp) {
+function assertNoErrors(out: string, count: number, regexp: RegExp): void {
   const lines = out.split("\n")
-  assert.equal(lines.length, count + 1)
+  assert.strictEqual(lines.length, count + 1)
   for (let i = 0; i < count; i++) assert(regexp.test(lines[i]))
 }
 
-function assertErrors(out, count, regexp) {
+function assertErrors(out: string, count: number, regexp: RegExp): DefinedError[][] {
   const lines = out.split("\n")
-  assert.equal(lines.length, count * 2 + 1)
-  const results = []
+  assert.strictEqual(lines.length, count * 2 + 1)
+  const results: DefinedError[][] = []
   for (let i = 0; i < count; i += 2) {
     assert(regexp.test(lines[i]))
     results.push(JSON.parse(lines[i + 1]))
@@ -150,14 +149,13 @@ function assertErrors(out, count, regexp) {
   return results
 }
 
-function assertRequiredErrors(out, count, regexp, schemaRef) {
-  schemaRef = schemaRef || "#"
+function assertRequiredErrors(out: string, count: number, regexp: RegExp, schemaRef = "#"): void {
   const results = assertErrors(out, count, regexp)
   results.forEach((errors) => {
     const err = errors[0]
-    assert.equal(err.keyword, "required")
-    assert.equal(err.dataPath, "[0].dimensions")
-    assert.equal(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
-    assert.deepEqual(err.params, {missingProperty: "height"})
+    assert.strictEqual(err.keyword, "required")
+    assert.strictEqual(err.dataPath, "/0/dimensions")
+    assert.strictEqual(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
+    assert.deepStrictEqual(err.params, {missingProperty: "height"})
   })
 }

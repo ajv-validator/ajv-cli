@@ -1,7 +1,8 @@
-import type {Command} from "../types"
+import type {Command} from "./types"
+import type {AnySchemaObject} from "ajv"
 import {getFiles, openFile} from "./util"
 import fs = require("fs")
-import migrate = require("json-schema-migrate")
+import * as migrate from "json-schema-migrate"
 import jsonPatch = require("fast-json-patch")
 
 const cmd: Command = {
@@ -10,13 +11,12 @@ const cmd: Command = {
     type: "object",
     required: ["s"],
     properties: {
-      s: {$ref: "#/definitions/stringOrArray"},
+      s: {$ref: "#/$defs/stringOrArray"},
       o: {type: "string"},
-      v5: {type: "boolean"},
+      spec: {enum: ["draft7", "draft2019"]},
       indent: {type: "integer", minimum: 1},
       "validate-schema": {type: "boolean"},
     },
-    _ajvOptions: false,
   },
 }
 
@@ -24,10 +24,10 @@ export default cmd
 
 function execute(argv): boolean {
   let allValid = true
-  const opts = {
-    v5: argv.v5,
-    validateSchema: argv["validate-schema"],
-  }
+  // const opts = {
+  //   v5: argv.v5,
+  //   validateSchema: argv["validate-schema"],
+  // }
 
   const schemaFiles = getFiles(argv.s)
   if (argv.o && schemaFiles.length > 1) {
@@ -40,31 +40,31 @@ function execute(argv): boolean {
 
   function migrateSchema(file: string): void {
     const sch = openFile(file, "schema " + file)
-    const migratedSchema = JSON.parse(JSON.stringify(sch))
+    const migratedSchema: AnySchemaObject = JSON.parse(JSON.stringify(sch))
 
-    try {
-      migrate.draft6(migratedSchema, opts)
-      const patch = jsonPatch.compare(sch, migratedSchema)
-      if (patch.length > 0) {
-        if (argv.o) {
-          saveSchema(argv.o, migratedSchema)
-        } else {
-          const backupFile = file + ".bak"
-          fs.writeFileSync(backupFile, fs.readFileSync(file, "utf8"))
-          saveSchema(file, migratedSchema)
-        }
-      } else {
-        console.log("no changes in", file)
-      }
-    } catch (err) {
+    const {valid, errors} = migrate.draft7(migratedSchema)
+    if (!valid && argv["validate-schema"] !== false) {
       allValid = false
       console.error("schema", file, "is invalid")
-      console.error("error:", err.message)
+      console.error("error:", migrate.instance()?.errorsText(errors))
+      return
+    }
+    const patch = jsonPatch.compare(sch, migratedSchema)
+    if (patch.length > 0) {
+      if (argv.o) {
+        saveSchema(argv.o, migratedSchema)
+      } else {
+        const backupFile = file + ".bak"
+        fs.writeFileSync(backupFile, fs.readFileSync(file, "utf8"))
+        saveSchema(file, migratedSchema)
+      }
+    } else {
+      console.log("no changes in", file)
     }
   }
 
-  function saveSchema(file: string, sch: any): void {
-    fs.writeFileSync(file, JSON.stringify(sch, null, argv.indent || 4))
+  function saveSchema(file: string, sch: AnySchemaObject): void {
+    fs.writeFileSync(file, JSON.stringify(sch, null, argv.indent || 2))
     console.log("saved migrated schema to", file)
   }
 }

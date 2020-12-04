@@ -1,17 +1,14 @@
-import Ajv = require("ajv")
+import Ajv from "ajv"
 import {getOptions} from "./options"
 import util = require("./util")
 import path = require("path")
-import draft4metaSchema = require("ajv/lib/refs/json-schema-draft-04.json")
 import draft6metaSchema = require("ajv/lib/refs/json-schema-draft-06.json")
 
-export default function (argv): Ajv.Ajv {
+export default function (argv): Ajv {
   const opts = getOptions(argv)
-  opts.schemaId = "auto"
-  if (argv.o) opts.sourceCode = true
+  if (argv.o) opts.code.source = true
   const ajv = new Ajv(opts)
   let invalid: boolean | undefined
-  ajv.addMetaSchema(draft4metaSchema)
   ajv.addMetaSchema(draft6metaSchema)
   addSchemas(argv.m, "addMetaSchema", "meta-schema")
   addSchemas(argv.r, "addSchema", "schema")

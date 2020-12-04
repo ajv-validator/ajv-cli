@@ -1,4 +1,4 @@
-import type {Ajv} from "ajv"
+import type Ajv from "ajv"
 import glob = require("glob")
 import path = require("path")
 import fs = require("fs")

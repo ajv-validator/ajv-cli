@@ -1,66 +1,61 @@
-import Ajv = require("ajv")
+import Ajv from "ajv/dist/2019"
+import type {SchemaObject, SchemaMap} from "ajv/dist/types"
 import glob = require("glob")
+
+const boolOrNat = {type: ["boolean", "integer"], minimum: 0}
+const CODE = "code."
+const ajvOptions: SchemaMap = {
+  strict: boolOrString(["log"]),
+  strictTypes: boolOrString(["log"]),
+  strictTuples: boolOrString(["log"]),
+  allowMatchingProperties: {type: "boolean"},
+  allowUnionTypes: {type: "boolean"},
+  validateFormats: {type: "boolean"},
+  data: {type: "boolean"},
+  allErrors: {type: "boolean"},
+  verbose: {type: "boolean"},
+  comment: {type: "boolean"},
+  inlineRefs: boolOrNat,
+  addUsedSchema: {type: "boolean"},
+  loopRequired: {type: "integer"},
+  loopEnum: {type: "integer"},
+  ownProperties: {type: "boolean"},
+  multipleOfPrecision: boolOrNat,
+  messages: {type: "boolean"},
+  [`${CODE}es5`]: {type: "boolean"},
+  [`${CODE}lines`]: {type: "boolean"},
+  [`${CODE}optimize`]: boolOrNat,
+  [`${CODE}formats`]: {type: "string"},
+  [`${CODE}source`]: {type: "boolean"},
+  [`${CODE}process`]: {type: "string"},
+  // options to modify validated data:
+  removeAdditional: boolOrString(["all", "failing"]),
+  useDefaults: boolOrString(["empty"]),
+  coerceTypes: boolOrString(["array"]),
+}
+
 const ajv = new Ajv({
   allErrors: true,
   coerceTypes: "array",
-  jsonPointers: true,
-  formats: {
-    notGlob: function (s) {
-      return !glob.hasMagic(s)
-    },
-  },
+  strictTypes: false,
+  formats: {notGlob: (s) => !glob.hasMagic(s)},
+  keywords: ["ajvOptions"],
 })
 
-const AJV_OPTIONS = {
-  data: {type: "boolean"},
-  "all-errors": {type: "boolean"},
-  verbose: {type: "boolean"},
-  "json-pointers": {type: "boolean"},
-  "strict-keywords": {type: "boolean"},
-  "strict-defaults": {type: "boolean"},
-  "strict-numbers": {type: "boolean"},
-  "unique-items": {type: "boolean"},
-  unicode: {type: "boolean"},
-  format: {anyOf: [{type: "boolean"}, {enum: ["fast", "full"]}]},
-  "unknown-formats": {
-    anyOf: [{type: "boolean"}, {const: "ignore"}, {type: "array", items: {type: "string"}}],
-  },
-  "schema-id": {enum: ["$id", "id"]},
-  "extend-refs": {anyOf: [{type: "boolean"}, {enum: ["ignore", "fail"]}]},
-  "missing-refs": {anyOf: [{type: "boolean"}, {enum: ["ignore", "fail"]}]},
-  "inline-refs": {type: ["boolean", "integer"], minimum: 0},
-  "multiple-of-precision": {type: "integer"},
-  "error-data-path": {enum: ["object", "property"]},
-  messages: {type: "boolean"},
-  // modifying options
-  "remove-additional": {anyOf: [{type: "boolean"}, {enum: ["all", "failing"]}]},
-  "use-defaults": {type: "boolean"},
-  "coerce-types": {anyOf: [{type: "boolean"}, {enum: ["array"]}]},
-  "add-used-schema": {type: "boolean"},
+function boolOrString(vs: string[]): SchemaObject {
+  return {anyOf: [{type: "boolean"}, {enum: vs}]}
 }
 
-const DEFINITIONS = {
-  stringOrArray: {
-    anyOf: [
-      {type: "string"},
-      {
-        type: "array",
-        items: {type: "string"},
-      },
-    ],
-  },
+const DEFS = {
+  stringOrArray: {type: ["string", "array"], items: {type: "string"}},
 }
 
 export function checkOptions(schema, argv): string | null {
-  schema.definitions = DEFINITIONS
-  if (schema._ajvOptions !== false) {
-    for (const opt in AJV_OPTIONS) {
-      const optSchema = AJV_OPTIONS[opt]
-      schema.properties[opt] = optSchema
-      schema.properties[toCamelCase(opt)] = optSchema
-    }
+  schema.$defs = DEFS
+  if ("ajvOptions" in schema) {
+    schema.properties = {...schema.properties, ...ajvOptions, ...withDashCase(ajvOptions)}
   }
-  schema.properties._ = schema.properties._ || {maxItems: 1}
+  schema.properties._ ||= {maxItems: 1}
   schema.additionalProperties = false
 
   const valid = ajv.validate(schema, argv)
@@ -99,16 +94,28 @@ function parameter(str: string): string {
 }
 
 export function getOptions(argv): any {
-  const options = {}
-  for (const opt in AJV_OPTIONS) {
-    let optCC = toCamelCase(opt)
-    if (optCC === "data") optCC = "$data"
-    const value = argv[opt] === undefined ? argv[optCC] : argv[opt]
-    if (value !== undefined) options[optCC] = value
+  const options = {code: {}}
+  for (let opt in ajvOptions) {
+    if (opt === "data") opt = "$data"
+    const value = argv[toDashCase(opt)] ?? argv[opt]
+    if (value === undefined) continue
+    if (opt.startsWith(CODE)) {
+      options.code[opt.slice(CODE.length)] = value
+    } else {
+      options[opt] = value
+    }
   }
   return options
 }
 
-function toCamelCase(str: string): string {
-  return str.replace(/-[a-z]/g, (s) => s[1].toUpperCase())
+function toDashCase(str: string): string {
+  return str.replace(/[A-Z]/g, (s) => "-" + s.toLowerCase())
+}
+
+function withDashCase(sm: SchemaMap): SchemaMap {
+  const res: SchemaMap = {}
+  for (const p in sm) {
+    res[toDashCase(p)] = sm[p]
+  }
+  return res
 }

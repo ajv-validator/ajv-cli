@@ -1,4 +1,4 @@
-import type {Command} from "../types"
+import type {Command} from "./types"
 import compile from "./compile"
 import help from "./help"
 import validate from "./validate"

@@ -1,4 +1,4 @@
-import type {Command} from "../types"
+import type {Command} from "./types"
 import usage from "./usage"
 
 const cmd: Command = {
@@ -8,7 +8,6 @@ const cmd: Command = {
     properties: {
       _: {maxItems: 2},
     },
-    _ajvOptions: false,
   },
 }
 

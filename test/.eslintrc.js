@@ -7,14 +7,14 @@ module.exports = {
     {
       files: ["*.ts"],
       parserOptions: {
-        project: ["./spec/tsconfig.json"],
+        project: ["./test/tsconfig.json"],
       },
-      // rules: {
-      //   "@typescript-eslint/no-empty-function": "off",
-      //   "@typescript-eslint/no-extraneous-class": "off",
-      //   "@typescript-eslint/no-var-requires": "off",
-      //   "@typescript-eslint/no-unsafe-call": "off",
-      // },
+      rules: {
+        "@typescript-eslint/no-invalid-this": "off",
+        //   "@typescript-eslint/no-extraneous-class": "off",
+        //   "@typescript-eslint/no-var-requires": "off",
+        //   "@typescript-eslint/no-unsafe-call": "off",
+      },
     },
   ],
   rules: {

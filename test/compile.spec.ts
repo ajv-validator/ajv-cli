@@ -1,8 +1,7 @@
-"use strict"
-
-const cli = require("./cli")
-const assert = require("assert")
-const fs = require("fs")
+import type {ExecException} from "child_process"
+import cli from "./cli"
+import assert = require("assert")
+import fs = require("fs")
 
 describe("compile", function () {
   this.timeout(10000)
@@ -11,18 +10,18 @@ describe("compile", function () {
     cli("compile -s test/schema", (error, stdout, stderr) => {
       assert.strictEqual(error, null)
       assertValid(stdout, 1)
-      assert.equal(stderr, "")
+      assert.strictEqual(stderr, "")
       done()
     })
   })
 
   it("should compile multiple schemas", (done) => {
     cli(
-      "compile -s test/schema -s test/meta/schema -m test/meta/meta_schema",
+      "compile -s test/schema -s test/meta/schema -m test/meta/meta_schema --strict=false",
       (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 2)
-        assert.equal(stderr, "")
+        assert.strictEqual(stderr, "")
         done()
       }
     )
@@ -32,7 +31,7 @@ describe("compile", function () {
     cli("compile -s test/schema -o test/validate_schema.js", (error, stdout, stderr) => {
       assert.strictEqual(error, null)
       assertValid(stdout, 1)
-      assert.equal(stderr, "")
+      assert.strictEqual(stderr, "")
 
       const validate = require("./validate_schema.js")
       const validData = require("./valid_data.json")
@@ -46,12 +45,15 @@ describe("compile", function () {
   })
 
   it("should compile valid schema with a custom meta-schema", (done) => {
-    cli("compile -s test/meta/schema -m test/meta/meta_schema", (error, stdout, stderr) => {
-      assert.strictEqual(error, null)
-      assertValid(stdout, 1)
-      assert.equal(stderr, "")
-      done()
-    })
+    cli(
+      "compile -s test/meta/schema -m test/meta/meta_schema --strict=false",
+      (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 1)
+        assert.strictEqual(stderr, "")
+        done()
+      }
+    )
   })
 
   it("should compile schema with custom keyword", (done) => {
@@ -66,7 +68,7 @@ describe("compile", function () {
 
   it("should compile schema with custom keyword from npm package", (done) => {
     cli(
-      "compile -s test/custom/schema -c ajv-keywords/keywords/typeof -o test/custom/validate_schema.js",
+      "compile -s test/custom/schema -c ajv-keywords/dist/keywords/typeof -o test/custom/validate_schema.js",
       (error, stdout, stderr) => {
         assertCompiledCustom(error, stdout, stderr)
         done()
@@ -74,19 +76,10 @@ describe("compile", function () {
     )
   })
 
-  it("should support draft-04 meta-schema", (done) => {
-    cli("compile -s test/migrate/schema", (error, stdout, stderr) => {
-      assert.strictEqual(error, null)
-      assertValid(stdout, 1)
-      assert.equal(stderr, "")
-      done()
-    })
-  })
-
   it("should fail to compile invalid schema with a custom meta-schema", (done) => {
     cli("compile -s test/meta/invalid_schema -m test/meta/meta_schema", (error, stdout, stderr) => {
       assert(error instanceof Error)
-      assert.equal(stdout, "")
+      assert.strictEqual(stdout, "")
       const lines = assertError(stderr)
       assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]))
       done()
@@ -98,9 +91,9 @@ describe("compile", function () {
       "compile -s test/schema -s test/meta/schema -m test/meta/meta_schema -o test/validate_schema.js",
       (error, stdout, stderr) => {
         assert(error instanceof Error)
-        assert.equal(stdout, "")
+        assert.strictEqual(stdout, "")
         const lines = stderr.split("\n")
-        assert.equal(lines.length, 2)
+        assert.strictEqual(lines.length, 2)
         assert(/multiple\sschemas/.test(lines[0]))
         done()
       }
@@ -113,6 +106,7 @@ describe("compile", function () {
       assertValid(stdout, 1)
       const lines = stderr.split("\n")
       assert(lines.length > 1)
+      console.log(lines[0])
       assert(/error\ssaving\sfile/.test(lines[0]))
       done()
     })
@@ -121,7 +115,7 @@ describe("compile", function () {
   it("should fail to compile if referenced schema is invalid", (done) => {
     cli("compile -s test/schema -r test/meta/invalid_schema2", (error, stdout, stderr) => {
       assert(error instanceof Error)
-      assert.equal(stdout, "")
+      assert.strictEqual(stdout, "")
       const lines = assertError(stderr)
       assert(/schema\sis\sinvalid/.test(lines[1]))
       done()
@@ -133,7 +127,7 @@ describe("compile", function () {
       "compile -s test/custom/schema -c ./test/custom/invalid_custom.js",
       (error, stdout, stderr) => {
         assert(error instanceof Error)
-        assert.equal(stdout, "")
+        assert.strictEqual(stdout, "")
         const lines = stderr.split("\n")
         assert(/module.*is\sinvalid/.test(lines[0]))
         assert(/not\sa\sfunction/.test(lines[1]))
@@ -143,25 +137,25 @@ describe("compile", function () {
   })
 })
 
-function assertValid(stdout, count) {
+function assertValid(stdout: string, count: number): void {
   const lines = stdout.split("\n")
-  assert.equal(lines.length, count + 1)
+  assert.strictEqual(lines.length, count + 1)
   for (let i = 0; i < count; i++) assert(/\svalid/.test(lines[i]))
 }
 
-function assertError(stderr) {
+function assertError(stderr: string): string[] {
   const lines = stderr.split("\n")
-  assert.equal(lines.length, 3)
-  assert(/schema/.test(lines[0]))
+  assert.strictEqual(lines.length, 3)
+  assert(lines[0].includes("schema"))
   assert(/\sinvalid/.test(lines[0]))
-  assert(/error/.test(lines[1]))
+  assert(lines[1].includes("error"))
   return lines
 }
 
-function assertCompiledCustom(error, stdout, stderr) {
+function assertCompiledCustom(error: ExecException | null, stdout: string, stderr: string): void {
   assert.strictEqual(error, null)
   assertValid(stdout, 1)
-  assert.equal(stderr, "")
+  assert.strictEqual(stderr, "")
 
   const validate = require("./custom/validate_schema.js")
   const validData = require("./custom/valid_data.json")
