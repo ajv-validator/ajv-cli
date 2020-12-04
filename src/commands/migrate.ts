@@ -46,7 +46,7 @@ function execute(argv): boolean {
     if (!valid && argv["validate-schema"] !== false) {
       allValid = false
       console.error("schema", file, "is invalid")
-      console.error("error:", migrate.instance()?.errorsText(errors))
+      console.error("error:", migrate.getAjv().errorsText(errors))
       return
     }
     const patch = jsonPatch.compare(sch, migratedSchema)
