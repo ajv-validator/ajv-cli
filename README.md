@@ -11,10 +11,12 @@ Supports [JSON](http://json.org/), [JSON5](http://json5.org/), and [YAML](http:/
 ## Contents
 
 - [Installation](#installation)
+- [JSON schema version](#json-schema-version)
 - Commands
-  - [Help](#help)
+  - [Help](#help-command)
   - [Validate data](#validate-data)
-  - [Migrate schema(s) to draft-06](#migrate-schemas-to-draft-06)
+  - [Compile schemas](#compile-schemas)
+  - [Migrate schemas](#migrate-schemas)
   - [Test validation result](#test-validation-result)
 - [Ajv options](#ajv-options)
 - [Version History, License](#version_history)
@@ -25,7 +27,16 @@ Supports [JSON](http://json.org/), [JSON5](http://json5.org/), and [YAML](http:/
 npm install -g ajv-cli
 ```
 
-## Help
+## JSON schema version
+
+Parameter `--spec` can be used with all commands (other than help) to define which JSON schema version is used:
+
+- `--spec=draft7` (default) - support JSON Schema draft-07 (uses `import Ajv from "ajv"`)
+- `--spec=draft2019` - support JSON Schema draft-2019-09 (uses `import Ajv from "ajv/dist/2019"`)
+
+## Commands
+
+### Help command
 
 ```sh
 ajv help
@@ -35,7 +46,7 @@ ajv help migrate
 ajv help test
 ```
 
-## Validate data
+### Validate data
 
 This command validates data files against JSON-schema
 
@@ -66,7 +77,7 @@ If some file is invalid exit code will be 1.
 
 The schema in `-s` parameter can reference any of these schemas with `$ref` keyword.
 
-Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer). Glob pattern should be quoted and extensions cannot be omitted.
+Multiple schemas can be passed both by using this parameter multiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer). Glob pattern should be quoted and extensions cannot be omitted.
 
 ##### `-m` - meta-schemas
 
@@ -94,7 +105,7 @@ For example, you can use `-c ajv-keywords` to add all keywords from [ajv-keyword
   The changes are reported in JSON-patch format ([RFC6902](https://tools.ietf.org/html/rfc6902)).<br>
   Possible values are `js` (default), `json` and `line` (see `--errors` option).
 
-## Compile schemas
+### Compile schemas
 
 This command validates and compiles schema without validating any data.
 
@@ -127,9 +138,11 @@ ajv compile -s "schema.json" -o "validate_schema.js"
 
 This command also supports parameters `-r`, `-m` and `-c` as in [validate](#validate-data) command.
 
-## Migrate schema(s) to draft-06
+### Migrate schemas
 
-This command validates and migrates schema to draft-06 using [json-schema-migrate](https://github.com/epoberezkin/json-schema-migrate) package.
+This command validates and migrates schema from JSON Schema draft-04 to JSON Schema draft-07 or draft-2019-09 using [json-schema-migrate](https://github.com/epoberezkin/json-schema-migrate) package.
+
+The [version of JSON Schema](#json-schema-version) is determined by `--spec` parameter (`"draft7"` or `"draft2019"`).
 
 ```sh
 ajv migrate -s schema
@@ -166,7 +179,7 @@ ajv compile -s "schema.json" -o migrated_schema.json
 - `--indent=`: indentation in migrated schema JSON file, 4 by default
 - `--validate-schema=false`: skip schema validation
 
-## Test validation result
+### Test validation result
 
 This command asserts that the result of the validation is as expected.
 
@@ -181,32 +194,42 @@ This command supports the same options and parameters as [validate](#validate-da
 
 ## Ajv options
 
-You can pass the following Ajv options (excluding `migrate` command):
+You can pass the following [Ajv options](https://github.com/ajv-validator/ajv/blob/master/docs/api.md#options):
 
 | Option                       | Description                                                               |
 | ---------------------------- | ------------------------------------------------------------------------- |
-| `--data`                     | use [$data references](https://github.com/epoberezkin/ajv#data-reference) |
-| `--all-errors`               | collect all errors                                                        |
-| `--unknown-formats=`         | handling of unknown formats                                               |
-| `--verbose`                  | include schema and data in errors                                         |
-| `--json-pointers`            | report data paths in errors using JSON-pointers                           |
-| `--unique-items=false`       | do not validate uniqueItems keyword                                       |
-| `--unicode=false`            | count unicode pairs as 2 characters                                       |
-| `--format=full`              | format mode                                                               |
-| `--schema-id=`               | keyword(s) to use as schema ID                                            |
-| `--extend-refs=`             | validation of other keywords when $ref is present in the schema           |
-| `--missing-refs=`            | handle missing referenced schemas (true/ignore/fail)                      |
-| `--inline-refs=`             | referenced schemas compilation mode (true/false/\<number\>)               |
-| `--remove-additional`        | remove additional properties (true/all/failing)                           |
-| `--use-defaults`             | replace missing properties/items with the values from default keyword     |
-| `--coerce-types`             | change type of data to match type keyword                                 |
-| `--multiple-of-precision`    | precision of multipleOf, pass integer number                              |
-| `--error-data-path=property` | data path in errors                                                       |
-| `--messages=false`           | do not include text messages in errors                                    |
+| Strict mode |
+| `--strict=false`             | disable [strict mode](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md) |
+| `--strict-tuples=`           | throw on (`true`) or ignore (`false`) [strict tuples](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-unconstrained-tuples) restrictions (the default is to log) |
+| `--strict-types=`            | throw on (`true`) or ignore (`false`) [strict types](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#strict-types) restrictions (the default is to log) |
+| `--allow-matching-properties`| allow `properties` [matching patterns](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-overlap-between-properties-and-patternproperties-keywords) in `patternProperties` |
+| `--allow-union-types`        | allow [union types](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-union-types) |
+| `--validate-formats=false`   | disable format validation |
+| Validation and reporting |
+| `--data`                     | use [$data references](https://github.com/ajv-validator/ajv/blob/master/docs/validation.md#data-reference) |
+| `--all-errors`               | collect all validation errors |
+| `--verbose`                  | include schema and data in errors |
+| `--comment`                  | log schema `$comment`s |
+| `--inline-refs=`             | referenced schemas compilation mode (true/false/\<number\>) |
+| Modify validated data |
+| `--remove-additional`        | remove additional properties (true/all/failing) |
+| `--use-defaults`             | replace missing properties/items with the values from default keyword |
+| `--coerce-types`             | change type of data to match type keyword |
+| Advanced |
+| `--multiple-of-precision`    | precision of multipleOf, pass integer number |
+| `--messages=false`           | do not include text messages in errors |
+| `--loop-required=`           | max size of `required` to compile to expression (rather than to loop) |
+| `--loop-enum=`               | max size of `enum` to compile to expression (rather than to loop) |
+| `--own-properties`           | only validate own properties (not relevant for JSON, but can have effect for JavaScript objects) |
+| Code generation |
+| `code.es5`                   | generate ES5 code |
+| `code.lines`                 | generate multi-line code |
+| `code.optimize=`             | disable optimization (`false`) or number of optimization passes (1 pass by default) |
+| `code.formats=`              | code to require formats object (only needed if you generate standalone code and do not use [ajv-formats](https://github.com/ajv-validator/ajv-formats)) |
 
-Options can be passed in either dash-case and camelCase.
+Options can be passed using either dash-case or camelCase.
 
-See [Ajv Options](https://github.com/epoberezkin/ajv#options) for more information.
+See [Ajv Options](https://github.com/ajv-validator/ajv/blob/master/docs/api.md#options) for more information.
 
 ## Version History
 
@@ -214,4 +237,4 @@ See https://github.com/jessedc/ajv-cli/releases
 
 ## Licence
 
-MIT
+[MIT](./LICENSE)

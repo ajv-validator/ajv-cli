@@ -16,7 +16,6 @@ const ajvOptions: SchemaMap = {
   verbose: {type: "boolean"},
   comment: {type: "boolean"},
   inlineRefs: boolOrNat,
-  addUsedSchema: {type: "boolean"},
   loopRequired: {type: "integer"},
   loopEnum: {type: "integer"},
   ownProperties: {type: "boolean"},
@@ -26,8 +25,6 @@ const ajvOptions: SchemaMap = {
   [`${CODE}lines`]: {type: "boolean"},
   [`${CODE}optimize`]: boolOrNat,
   [`${CODE}formats`]: {type: "string"},
-  [`${CODE}source`]: {type: "boolean"},
-  [`${CODE}process`]: {type: "string"},
   // options to modify validated data:
   removeAdditional: boolOrString(["all", "failing"]),
   useDefaults: boolOrString(["empty"]),
