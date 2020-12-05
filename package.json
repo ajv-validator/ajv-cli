@@ -1,7 +1,7 @@
 {
   "name": "ajv-cli",
   "version": "3.3.0",
-  "description": "A command line interface for epoberezkin/ajv JSON schema validator",
+  "description": "Command line interface for Ajv JSON schema validator",
   "scripts": {
     "build": "rm -rf dist && tsc",
     "prepublish": "npm run build",
