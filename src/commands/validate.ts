@@ -19,6 +19,7 @@ const cmd: Command = {
       c: {$ref: "#/$defs/stringOrArray"},
       errors: {enum: ["json", "line", "text", "js", "no"]},
       changes: {enum: [true, "json", "line", "js"]},
+      spec: {enum: ["draft7", "draft2019"]},
     },
     ajvOptions: true,
   },

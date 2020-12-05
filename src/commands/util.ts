@@ -1,4 +1,6 @@
 import type Ajv from "ajv"
+import type {ParsedArgs} from "minimist"
+import type {SchemaSpec} from "./types"
 import glob = require("glob")
 import path = require("path")
 import fs = require("fs")
@@ -83,4 +85,8 @@ export function compile(ajv: Ajv, schemaFile): any {
     console.error("error:", err.message)
     process.exit(1)
   }
+}
+
+export function getSpec(argv: ParsedArgs): SchemaSpec {
+  return argv.spec === "draft2019" ? "draft2019" : "draft7"
 }

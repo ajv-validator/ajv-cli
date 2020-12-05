@@ -20,6 +20,7 @@ const cmd: Command = {
       valid: {type: "boolean"},
       invalid: {type: "boolean", enum: [true]},
       errors: {enum: ["json", "line", "text", "js", "no"]},
+      spec: {enum: ["draft7", "draft2019"]},
     },
     ajvOptions: true,
   },

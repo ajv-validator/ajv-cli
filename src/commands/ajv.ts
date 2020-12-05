@@ -1,12 +1,16 @@
-import Ajv from "ajv"
+import type AjvCore from "ajv/dist/core"
+import type {ParsedArgs} from "minimist"
+import Ajv7 from "ajv"
+import Ajv2019 from "ajv/dist/2019"
 import {getOptions} from "./options"
 import util = require("./util")
 import path = require("path")
 import draft6metaSchema = require("ajv/lib/refs/json-schema-draft-06.json")
 
-export default function (argv): Ajv {
+export default function (argv: ParsedArgs): AjvCore {
   const opts = getOptions(argv)
   if (argv.o) opts.code.source = true
+  const Ajv: typeof AjvCore = argv.spec === "draft2019" ? Ajv2019 : Ajv7
   const ajv = new Ajv(opts)
   let invalid: boolean | undefined
   ajv.addMetaSchema(draft6metaSchema)

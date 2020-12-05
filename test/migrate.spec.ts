@@ -8,27 +8,48 @@ describe("migrate", function () {
   this.timeout(10000)
 
   it("should migrate schema to draft-07", (done) => {
+    testMigrate(
+      "migrate -s test/migrate/schema.json -o test/migrate/migrated_schema.json --spec=draft7",
+      "./migrate/expected_migrated_schema.json",
+      done
+    )
+  })
+
+  it("should migrate schema to draft-07 by default", (done) => {
+    testMigrate(
+      "migrate -s test/migrate/schema.json -o test/migrate/migrated_schema.json",
+      "./migrate/expected_migrated_schema.json",
+      done
+    )
+  })
+
+  it("should migrate schema to draft-2019-09", (done) => {
+    testMigrate(
+      "migrate -s test/migrate/schema.json -o test/migrate/migrated_schema.json --spec=draft2019",
+      "./migrate/expected_migrated_schema_2019.json",
+      done
+    )
+  })
+
+  function testMigrate(cmd: string, expectedFile: string, done: () => void): void {
     try {
       deleteSchema("migrated_schema.json")
     } catch (e) {}
 
-    cli(
-      "migrate -s test/migrate/schema.json -o test/migrate/migrated_schema.json",
-      (error, stdout, stderr) => {
-        try {
-          assert.strictEqual(error, null)
-          assertMigrated(stdout, 1)
-          assert.strictEqual(stderr, "")
-          const migratedSchema = readSchema("migrated_schema.json")
-          const expectedMigratedSchema = require("./migrate/expected_migrated_schema.json")
-          assert.deepStrictEqual(migratedSchema, expectedMigratedSchema)
-        } finally {
-          deleteSchema("migrated_schema.json")
-        }
-        done()
+    cli(cmd, (error, stdout, stderr) => {
+      try {
+        assert.strictEqual(error, null)
+        assertMigrated(stdout, 1)
+        assert.strictEqual(stderr, "")
+        const migratedSchema = readSchema("migrated_schema.json")
+        const expectedMigratedSchema = require(expectedFile)
+        assert.deepStrictEqual(migratedSchema, expectedMigratedSchema)
+      } finally {
+        deleteSchema("migrated_schema.json")
       }
-    )
-  })
+      done()
+    })
+  }
 
   it("should migrate schema to draft-07 to the same file and create backup", (done) => {
     const backup = fs.readFileSync(path.join(__dirname, "migrate", "schema.json"), "utf8")

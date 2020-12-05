@@ -15,6 +15,7 @@ const cmd: Command = {
       m: {$ref: "#/$defs/stringOrArray"},
       c: {$ref: "#/$defs/stringOrArray"},
       o: {type: "string"},
+      spec: {enum: ["draft7", "draft2019"]},
     },
     ajvOptions: true,
   },
