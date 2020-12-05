@@ -1,5 +1,6 @@
 import type {Command} from "./types"
-import {compile, getFiles, openFile, logJSON} from "./util"
+import type {ParsedArgs} from "minimist"
+import {compile, getFiles, openFile, logJSON, all} from "./util"
 import getAjv from "./ajv"
 
 const cmd: Command = {
@@ -28,18 +29,13 @@ const cmd: Command = {
 
 export default cmd
 
-function execute(argv): boolean {
+function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
   const validate = compile(ajv, argv.s)
   const shouldBeValid = !!argv.valid && argv.valid !== "false"
-  let allPassed = true
+  return all(getFiles(argv.d), testDataFile)
 
-  const dataFiles = getFiles(argv.d)
-  dataFiles.forEach(testDataFile)
-
-  return allPassed
-
-  function testDataFile(file: string): void {
+  function testDataFile(file: string): boolean {
     const data = openFile(file, "data file " + file)
     const validData = validate(data)
     let errors
@@ -48,10 +44,10 @@ function execute(argv): boolean {
     if (validData === shouldBeValid) {
       console.log(file, "passed test")
       if (errors) console.log(errors)
-    } else {
-      allPassed = false
-      console.error(file, "failed test")
-      if (errors) console.error(errors)
+      return true
     }
+    console.error(file, "failed test")
+    if (errors) console.error(errors)
+    return false
   }
 }

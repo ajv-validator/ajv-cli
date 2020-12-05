@@ -1,7 +1,7 @@
 import type {Command} from "./types"
 import type {AnySchemaObject} from "ajv"
 import type {ParsedArgs} from "minimist"
-import {getFiles, getSpec, openFile} from "./util"
+import {getFiles, getSpec, openFile, all} from "./util"
 import getAjv from "./ajv"
 import fs = require("fs")
 import * as migrate from "json-schema-migrate"
@@ -25,28 +25,24 @@ const cmd: Command = {
 export default cmd
 
 function execute(argv: ParsedArgs): boolean {
-  let allValid = true
   const schemaFiles = getFiles(argv.s)
   if (argv.o && schemaFiles.length > 1) {
     console.error("multiple schemas cannot be migrated to a named output file")
     return false
   }
-  schemaFiles.forEach(migrateSchema)
+  return all(schemaFiles, migrateSchema)
 
-  return allValid
-
-  function migrateSchema(file: string): void {
-    const sch = openFile(file, "schema " + file)
+  function migrateSchema(file: string): boolean {
+    const sch = openFile(file, `schema ${file}`)
     const migratedSchema: AnySchemaObject = JSON.parse(JSON.stringify(sch))
     migrate[getSpec(argv)](migratedSchema)
     if (argv["validate-schema"] !== false) {
       const ajv = getAjv(argv)
       const valid = ajv.validateSchema(migratedSchema) as boolean
       if (!valid) {
-        allValid = false
-        console.error("schema", file, "is invalid after migration")
+        console.error(`schema ${file} is invalid after migration`)
         console.error("error:", migrate.getAjv().errorsText(ajv.errors))
-        return
+        return false
       }
     }
     const patch = jsonPatch.compare(sch, migratedSchema)
@@ -59,12 +55,13 @@ function execute(argv: ParsedArgs): boolean {
         saveSchema(file, migratedSchema)
       }
     } else {
-      console.log("no changes in", file)
+      console.log(`no changes in ${file}`)
     }
+    return true
   }
 
   function saveSchema(file: string, sch: AnySchemaObject): void {
     fs.writeFileSync(file, JSON.stringify(sch, null, argv.indent || 2))
-    console.log("saved migrated schema to", file)
+    console.log(`saved migrated schema to ${file}`)
   }
 }

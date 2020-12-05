@@ -1,5 +1,6 @@
 import type {Command} from "./types"
-import {compile, getFiles, openFile, logJSON} from "./util"
+import type {ParsedArgs} from "minimist"
+import {compile, getFiles, openFile, logJSON, all} from "./util"
 import getAjv from "./ajv"
 import jsonPatch = require("fast-json-patch")
 
@@ -27,21 +28,16 @@ const cmd: Command = {
 
 export default cmd
 
-function execute(argv): boolean {
+function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
   const validate = compile(ajv, argv.s)
-  let allValid = true
+  return all(getFiles(argv.d), validateDataFile)
 
-  const dataFiles = getFiles(argv.d)
-  dataFiles.forEach(validateDataFile)
-
-  return allValid
-
-  function validateDataFile(file: string): void {
+  function validateDataFile(file: string): boolean {
     const data = openFile(file, "data file " + file)
     let original
     if (argv.changes) original = JSON.parse(JSON.stringify(data))
-    const validData = validate(data)
+    const validData = validate(data) as boolean
 
     if (validData) {
       console.log(file, "valid")
@@ -55,9 +51,9 @@ function execute(argv): boolean {
         }
       }
     } else {
-      allValid = false
       console.error(file, "invalid")
       console.error(logJSON(argv.errors, validate.errors, ajv))
     }
+    return validData
   }
 }

@@ -9,7 +9,6 @@ describe("compile", function () {
   it("should compile valid schema", (done) => {
     cli("compile -s test/schema", (error, stdout, stderr) => {
       assert.strictEqual(error, null)
-      console.log(JSON.stringify(stdout))
       assertValid(stdout, 1)
       assert.strictEqual(stderr, "")
       done()
@@ -115,7 +114,6 @@ describe("compile", function () {
       assertValid(stdout, 1)
       const lines = stderr.split("\n")
       assert(lines.length > 1)
-      console.log(lines[0])
       assert(/error\ssaving\sfile/.test(lines[0]))
       done()
     })
@@ -143,6 +141,26 @@ describe("compile", function () {
         done()
       }
     )
+  })
+
+  it("should fail if output file is glob", (done) => {
+    cli("compile -s test/schema -o test/*.js", (error, stdout, stderr) => {
+      assert(error instanceof Error)
+      assert(stderr.includes("only one file is allowed"))
+      assert(stderr.includes("usage"))
+      assert.strictEqual(stdout, "")
+      done()
+    })
+  })
+
+  it("should fail if too many parameters", (done) => {
+    cli("compile file -s test/schema", (error, stdout, stderr) => {
+      assert(error instanceof Error)
+      assert(stderr.includes("too many arguments"))
+      assert(stderr.includes("usage"))
+      assert.strictEqual(stdout, "")
+      done()
+    })
   })
 })
 

@@ -1,5 +1,6 @@
-import Ajv from "ajv/dist/2019"
-import type {SchemaObject, SchemaMap} from "ajv/dist/types"
+import Ajv, {CodeOptions, Options} from "ajv/dist/2019"
+import type {SchemaObject, SchemaMap, ErrorObject} from "ajv/dist/types"
+import type {ParsedArgs} from "minimist"
 import glob = require("glob")
 
 const boolOrNat = {type: ["boolean", "integer"], minimum: 0}
@@ -47,7 +48,7 @@ const DEFS = {
   stringOrArray: {type: ["string", "array"], items: {type: "string"}},
 }
 
-export function checkOptions(schema, argv): string | null {
+export function checkOptions(schema: SchemaObject, argv: ParsedArgs): string | null {
   schema.$defs = DEFS
   if ("ajvOptions" in schema) {
     schema.properties = {...schema.properties, ...ajvOptions, ...withDashCase(ajvOptions)}
@@ -58,7 +59,7 @@ export function checkOptions(schema, argv): string | null {
   const valid = ajv.validate(schema, argv)
   if (valid) return null
   let errors = ""
-  ajv.errors?.forEach((err: any) => {
+  ajv.errors?.forEach((err: ErrorObject) => {
     errors += "error: "
     switch (err.keyword) {
       case "required":
@@ -90,8 +91,8 @@ function parameter(str: string): string {
   return (str.length === 1 ? "-" : "--") + str
 }
 
-export function getOptions(argv): any {
-  const options = {code: {}}
+export function getOptions(argv: ParsedArgs): Options & {code: CodeOptions} {
+  const options: {[K in string]: any} = {code: {}}
   for (let opt in ajvOptions) {
     if (opt === "data") opt = "$data"
     const value = argv[toDashCase(opt)] ?? argv[opt]
@@ -102,7 +103,7 @@ export function getOptions(argv): any {
       options[opt] = value
     }
   }
-  return options
+  return options as Options & {code: CodeOptions}
 }
 
 function toDashCase(str: string): string {

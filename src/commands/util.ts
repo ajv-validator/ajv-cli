@@ -6,8 +6,9 @@ import path = require("path")
 import fs = require("fs")
 import yaml = require("js-yaml")
 import JSON5 = require("json5")
+import { AnyValidateFunction } from "ajv/dist/core"
 
-export function getFiles(args): string[] {
+export function getFiles(args: string | string[]): string[] {
   let files: string[] = []
   if (Array.isArray(args)) args.forEach(_getFiles)
   else _getFiles(args)
@@ -76,7 +77,7 @@ export function logJSON(mode: string, data: any, ajv?: Ajv): string {
   return data
 }
 
-export function compile(ajv: Ajv, schemaFile): any {
+export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
   const schema = openFile(schemaFile, "schema")
   try {
     return ajv.compile(schema)
@@ -89,4 +90,8 @@ export function compile(ajv: Ajv, schemaFile): any {
 
 export function getSpec(argv: ParsedArgs): SchemaSpec {
   return argv.spec === "draft2019" ? "draft2019" : "draft7"
+}
+
+export function all(xs: string[], f: (x: string) => boolean): boolean {
+  return xs.reduce((res: boolean, x: string) => f(x) && res, true)
 }

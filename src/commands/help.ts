@@ -1,4 +1,5 @@
 import type {Command} from "./types"
+import type {ParsedArgs} from "minimist"
 import usage from "./usage"
 
 const cmd: Command = {
@@ -13,14 +14,14 @@ const cmd: Command = {
 
 export default cmd
 
-const commands = {
+const commands: {[Name in string]?: () => void} = {
   validate: helpValidate,
   compile: helpCompile,
   migrate: helpMigrate,
   test: helpTest,
 }
 
-function execute(argv): boolean | void {
+function execute(argv: ParsedArgs): boolean {
   const command = argv._[1]
   if (!command || command === "help") {
     mainHelp()
@@ -28,7 +29,6 @@ function execute(argv): boolean | void {
   }
 
   const cmdHelp = commands[command]
-
   if (cmdHelp) {
     cmdHelp()
     return true
@@ -36,6 +36,7 @@ function execute(argv): boolean | void {
 
   console.error("Unknown command", command)
   usage()
+  return false
 }
 
 function mainHelp(): void {

@@ -7,7 +7,6 @@
     "types": ["node"],
     "allowJs": true,
     "target": "ES2018",
-    "noImplicitAny": false,
     "resolveJsonModule": true,
     "esModuleInterop": false
   }

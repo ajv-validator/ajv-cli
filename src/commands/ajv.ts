@@ -7,6 +7,8 @@ import util = require("./util")
 import path = require("path")
 import draft6metaSchema = require("ajv/lib/refs/json-schema-draft-06.json")
 
+type AjvMethod = "addSchema" | "addMetaSchema"
+
 export default function (argv: ParsedArgs): AjvCore {
   const opts = getOptions(argv)
   if (argv.o) opts.code.source = true
@@ -20,7 +22,7 @@ export default function (argv: ParsedArgs): AjvCore {
   if (invalid) process.exit(1)
   return ajv
 
-  function addSchemas(args, method: string, fileType: string): void {
+  function addSchemas(args: string | string[] | undefined, method: AjvMethod, fileType: string): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
@@ -29,13 +31,13 @@ export default function (argv: ParsedArgs): AjvCore {
         ajv[method](schema)
       } catch (err) {
         console.error(fileType, file, "is invalid")
-        console.error("error:", err.message)
+        console.error("error:", (err as Error).message)
         invalid = true
       }
     })
   }
 
-  function customFormatsKeywords(args): void {
+  function customFormatsKeywords(args: string | string[] | undefined): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
@@ -44,7 +46,7 @@ export default function (argv: ParsedArgs): AjvCore {
         require(file)(ajv)
       } catch (err) {
         console.error("module", file, "is invalid; it should export function")
-        console.error("error:", err.message)
+        console.error("error:", (err as Error).message)
         invalid = true
       }
     })
