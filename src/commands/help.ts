@@ -44,12 +44,21 @@ function mainHelp(): void {
   _helpCompile()
   _helpMigrate()
   _helpTest()
+  schemaSpecOption()
   console.log(`
 More information:
         ajv help validate
         ajv help compile
         ajv help migrate
         ajv help test`)
+}
+
+function schemaSpecOption(): void {
+  console.log(`
+options:
+    --spec=            JSON schema specification to use
+            draft7     JSON Schema draft-07 (default)
+            draft2019  JSON Schema draft-2019-09`)
 }
 
 function helpValidate(): void {
@@ -66,9 +75,9 @@ parameters
     glob should be enclosed in double quotes
     -c module(s) should export a function that accepts Ajv instance as parameter
     (file path should start with ".", otherwise used as require package)
-    .json extension can be omitted (but should be used in globs)
-
-options:
+    .json extension can be omitted (but should be used in globs)`)
+  schemaSpecOption()
+  console.log(`
     --errors=          error reporting format ("js" by default)
     --changes=         log changes in data after validation ("no" by default)
              js        JavaScript object
@@ -97,11 +106,12 @@ parameters
     -o output file for compiled validation function
 
     -s, -r, -m, -c can be globs and can be used multiple times
-    If option -o is used only one schema can be compiled
-    glob should be enclosed in double quotes
+    With option -o multiple schemas will be exported using $ids as export names
+    Glob should be enclosed in double quotes
     -c module(s) should export a function that accepts Ajv instance as parameter
     (file path should start with ".", otherwise used as require package)
     .json extension can be omitted (but should be used in globs)`)
+  schemaSpecOption()
   helpAjvOptions()
 }
 
@@ -116,25 +126,24 @@ function helpMigrate(): void {
   _helpMigrate()
   console.log(`
 parameters
-    -s JSON schema(s) to migrate to draft-06 (required)
+    -s JSON schema(s) to migrate to draft-07 or draft-2019-09 (required)
     -o output file for migrated schema (only allowed for a single schema)
 
     -s can be glob and can be used multiple times
     If option -o is used only one schema can be migrated
     glob should be enclosed in double quotes
-    .json extension can be omitted (but should be used in globs)
-
-options:
-    --v5                    migrate schema as v5 if $schema is not specified
+    .json extension can be omitted (but should be used in globs)`)
+  schemaSpecOption()
+  console.log(`
     --indent=<N>            indentation in migrated schema JSON file, 4 by default
     --validate-schema=false skip schema validation`)
 }
 
 function _helpMigrate(): void {
   console.log(`
-Migrate schema(s) to draft-06
+Migrate schema(s) to draft-07 or draft-2019-09
     ajv migrate -s schema[.json] -o migrated_schema.json
-    ajv migrate -s "schema*.json`)
+    ajv migrate -s "schema*.json"`)
 }
 
 function helpTest(): void {
@@ -153,9 +162,9 @@ parameters
     -c module(s) should export a function that accepts Ajv instance as parameter
     (file path should start with ".", otherwise used as require package)
     .json extension can be omitted (but should be used in globs)
-    --valid=false can be used instead of --invalid
-
-options:
+    --valid=false can be used instead of --invalid`)
+  schemaSpecOption()
+  console.log(`
     --errors=          error reporting
              js        JavaScript object (default)
              json      JSON format
@@ -175,37 +184,36 @@ Test data validation result
 function helpAjvOptions(): void {
   console.log(`
 Ajv options (see https://github.com/epoberezkin/ajv#options):
+    --strict=false     disable strict mode
+
+    --strict-tuples=   unconstrained tuples
+             true      throw exception
+             false     allow
+             log       log warning
+
+    --strict-types=    union or unspecified types
+             true      throw exception
+             false     allow
+             log       log warning
+
+    --allow-matching-properties  allow "properties" matching patterns in "patternProperties"
+
+    --allow-union-types  allow union type keyword
+
+    --validate-formats=false  disable format validation
+
     --data             use $data references
 
     --all-errors       collect all errors
 
-    --unknown-formats= handling of unknown formats
-             true      throw exception during schema compilation (default)
-             <string>  allowed unknown format name, multiple names can be used
+    --verbose          include schema and data in errors
 
-    --json-pointers    report data paths as JSON pointers
+    --comment          log schema "$comment"s
 
-    --unique-items=false  do not validate uniqueItems keyword
-
-    --unicode=false    count unicode pairs as 2 characters
-
-    --format=          format validation mode
-             fast      using regex (default)
-             full      using functions
-
-    --schema-id=       (by default both IDs will be used)
-             $id       use $id
-             id        use id
-
-    --extend-refs=     validation of other keywords when $ref is present in the schema
-             ignore    ignore other keywords (default)
-             fail      throw exception (recommended)
-             true      validate all keywords
-
-    --missing-refs=    handling missing referenced schemas
-             true      fail schema compilation (default)
-             ignore    log error and pass validation
-             fail      log error and fail validation if ref is used
+    --inline-refs=     referenced schemas compilation mode
+             true      inline $ref code when possible
+             false     always compile $ref as a function call
+             <number>  inline $ref code up to this number of keywords
 
     --remove-additional=  remove additional properties
              all       remove all additional properties
@@ -218,9 +226,19 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):
 
     --multiple-of-precision=N  pass integer number
 
-    --error-data-path= data path in errors of required, additionalProperties and dependencies
-             object    point to object (default)
-             property  point to property
+    --messages=false   do not include text messages in errors
+    
+    --loop-required=   max size of "required to compile to expression (rather than to loop)
 
-    --messages=false   do not include text messages in errors`)
+    --loop-enum=       max size of "enum" to compile to expression (rather than to loop)
+    
+    --own-properties   only validate own properties (not relevant for JSON, but can have effect for JavaScript objects)
+    
+    --code.es5         generate ES5 code
+
+    --code.lines       generate multi-line code
+
+    --code.optimize=   code optimization
+             false     disable
+             <number>  number of optimization passes (1 pass by default)`)
 }
