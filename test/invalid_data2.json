@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "A blue mouse",
-    "price": 25.50,
+    "price": 25.5,
     "dimensions": {
       "length": 3.1,
       "width": 1.0
@@ -15,7 +15,7 @@
   {
     "id": 2,
     "name": "An ice sculpture",
-    "price": 12.50,
+    "price": 12.5,
     "tags": ["cold", "ice"],
     "dimensions": {
       "length": 7.0,
