@@ -9,6 +9,7 @@ describe("compile", function () {
   it("should compile valid schema", (done) => {
     cli("compile -s test/schema", (error, stdout, stderr) => {
       assert.strictEqual(error, null)
+      console.log(JSON.stringify(stdout))
       assertValid(stdout, 1)
       assert.strictEqual(stderr, "")
       done()
@@ -28,20 +29,42 @@ describe("compile", function () {
   })
 
   it("should compile schema to output file", (done) => {
-    cli("compile -s test/schema -o test/validate_schema.js", (error, stdout, stderr) => {
+    cli("compile -s test/schema -o test/validate_schema1.js", (error, stdout, stderr) => {
       assert.strictEqual(error, null)
       assertValid(stdout, 1)
       assert.strictEqual(stderr, "")
 
-      const validate = require("./validate_schema.js")
+      const validate = require("./validate_schema1.js")
+      fs.unlinkSync("test/validate_schema1.js")
+
       const validData = require("./valid_data.json")
       const invalidData = require("./invalid_data.json")
       assert.strictEqual(validate(validData), true)
       assert.strictEqual(validate(invalidData), false)
-
-      fs.unlinkSync("test/validate_schema.js")
       done()
     })
+  })
+
+  it("should compile multiple schemas to output file", (done) => {
+    cli(
+      "compile -s test/schema -s test/schema_with_ref -o test/validate_schema2.js",
+      (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 2)
+        assert.strictEqual(stderr, "")
+
+        const validators = require("./validate_schema2.js")
+        fs.unlinkSync("test/validate_schema2.js")
+
+        const validData = require("./valid_data.json")
+        const invalidData = require("./invalid_data.json")
+        assert.strictEqual(validators["schema.json"](validData), true)
+        assert.strictEqual(validators["schema.json"](invalidData), false)
+        assert.strictEqual(validators["schema_with_ref.json"](validData), true)
+        assert.strictEqual(validators["schema_with_ref.json"](invalidData), false)
+        done()
+      }
+    )
   })
 
   it("should compile valid schema with a custom meta-schema", (done) => {
@@ -84,20 +107,6 @@ describe("compile", function () {
       assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]))
       done()
     })
-  })
-
-  it("should fail to compile multiple schemas to output file", (done) => {
-    cli(
-      "compile -s test/schema -s test/meta/schema -m test/meta/meta_schema -o test/validate_schema.js",
-      (error, stdout, stderr) => {
-        assert(error instanceof Error)
-        assert.strictEqual(stdout, "")
-        const lines = stderr.split("\n")
-        assert.strictEqual(lines.length, 2)
-        assert(/multiple\sschemas/.test(lines[0]))
-        done()
-      }
-    )
   })
 
   it("should fail to save compiled schemas when path does not exist", (done) => {

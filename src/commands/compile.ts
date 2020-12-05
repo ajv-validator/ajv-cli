@@ -1,4 +1,6 @@
 import type {Command} from "./types"
+import type {AnyValidateFunction} from "ajv/dist/core"
+import type {ParsedArgs} from "minimist"
 import {getFiles, openFile} from "./util"
 import getAjv from "./ajv"
 import standaloneCode from "ajv/dist/standalone"
@@ -23,50 +25,56 @@ const cmd: Command = {
 
 export default cmd
 
-function execute(argv): boolean {
-  const ajv = getAjv(argv)
-  let allValid = true
+function and(xs: string[], f: (x: string) => boolean): boolean {
+  return xs.reduce((res: boolean, x: string) => res && f(x), true)
+}
 
+function execute(argv: ParsedArgs): boolean {
+  const ajv = getAjv(argv)
   const schemaFiles = getFiles(argv.s)
-  if (argv.o && schemaFiles.length > 1) {
-    console.error("multiple schemas cannot be compiled to a file")
+  if (argv.o && schemaFiles.length > 1) return compileMultiExportModule(schemaFiles)
+  return and(schemaFiles, compileSchemaAndSave)
+
+  function compileMultiExportModule(files: string[]): boolean {
+    const allValid = and(files, (file) => !!compileSchema(file))
+    if (allValid) return saveStandaloneCode()
+    console.error("module not generated")
     return false
   }
-  schemaFiles.forEach(compileSchema)
 
-  return allValid
+  function compileSchemaAndSave(file: string): boolean {
+    const validate = compileSchema(file)
+    if (validate) return argv.o ? saveStandaloneCode(validate) : true
+    return false
+  }
 
-  function compileSchema(file: string): void {
-    const sch = openFile(file, "schema " + file)
-    let validate
+  function compileSchema(file: string): AnyValidateFunction | undefined {
+    const sch = openFile(file, `schema ${file}`)
     try {
-      validate = ajv.compile(sch)
-      /* istanbul ignore else */
-      if (typeof validate == "function") {
-        console.log("schema", file, "is valid")
-        if (argv.o) {
-          try {
-            const moduleCode = standaloneCode(ajv, validate)
-            try {
-              fs.writeFileSync(argv.o, moduleCode)
-            } catch (e) {
-              console.error("error saving file:", e)
-              allValid = false
-            }
-          } catch (e) {
-            console.error("error preparing module:", e)
-            allValid = false
-          }
-        }
-      } else {
-        allValid = false
-        console.error("schema", file, "failed to compile to a function")
-        console.error(validate)
-      }
+      ajv.addSchema(sch, sch.$id ? undefined : file )
+      const validate = ajv.getSchema(sch.$id)
+      console.log(`schema ${file} is valid`)
+      return validate
     } catch (err) {
-      allValid = false
-      console.error("schema", file, "is invalid")
-      console.error("error:", err.message)
+      console.error(`schema ${file} is invalid`)
+      console.error(`error: ${err.message}`)
+      return undefined
+    }
+  }
+
+  function saveStandaloneCode(validate?: AnyValidateFunction): boolean {
+    try {
+      const moduleCode = standaloneCode(ajv, validate)
+      try {
+        fs.writeFileSync(argv.o, moduleCode)
+        return true
+      } catch (e) {
+        console.error("error saving file:", e)
+        return false
+      }
+    } catch (e) {
+      console.error("error preparing module:", e)
+      return false
     }
   }
 }
