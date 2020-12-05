@@ -38,7 +38,7 @@ function decodeFile(contents: string, format: string): any {
     case "yaml":
       return yaml.safeLoad(contents)
     default:
-      throw new Error("unsupported format " + format)
+      throw new Error(`unsupported file format ${format}`)
   }
 }
 
@@ -82,8 +82,8 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
   try {
     return ajv.compile(schema)
   } catch (err) {
-    console.error("schema", schemaFile, "is invalid")
-    console.error("error:", err.message)
+    console.error(`schema ${schemaFile} is invalid`)
+    console.error(`error: ${err.message}`)
     process.exit(1)
   }
 }
@@ -92,6 +92,7 @@ export function getSpec(argv: ParsedArgs): SchemaSpec {
   return argv.spec === "draft2019" ? "draft2019" : "draft7"
 }
 
-export function all(xs: string[], f: (x: string) => boolean): boolean {
-  return xs.reduce((res: boolean, x: string) => f(x) && res, true)
+// Like Array.prototype.every but without short-circuiting (for side-effects)
+export function all<T>(xs: T[], f: (x: T) => boolean): boolean {
+  return xs.reduce((res: boolean, x: T) => f(x) && res, true)
 }

@@ -34,7 +34,7 @@ function execute(argv: ParsedArgs): boolean {
   function compileMultiExportModule(files: string[]): boolean {
     const allValid = all(files, (file) => !!compileSchema(file))
     if (allValid) return saveStandaloneCode()
-    console.error("module not generated")
+    console.error("module not saved")
     return false
   }
 

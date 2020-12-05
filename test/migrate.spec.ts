@@ -96,7 +96,6 @@ describe("migrate", function () {
 
   it("should fail on invalid schema", (done) => {
     cli("migrate -s test/migrate/schema_invalid.json", (error, stdout, stderr) => {
-      console.log(error, stdout, stderr)
       assert(error instanceof Error)
       assert.strictEqual(stdout, "")
       assertError(stderr)

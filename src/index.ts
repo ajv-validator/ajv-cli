@@ -4,12 +4,12 @@ import minimist = require("minimist")
 import commands from "./commands"
 import {checkOptions} from "./commands/options"
 import usage from "./commands/usage"
+import type {CmdName} from "./commands/types"
 
 const argv = minimist(process.argv.slice(2))
 const command = argv._[0] || "validate"
-const cmd = commands[command]
-
-if (cmd) {
+if (command in commands) {
+  const cmd = commands[command as CmdName]
   const errors = checkOptions(cmd.schema, argv)
   if (errors) {
     console.error(errors)
@@ -20,7 +20,7 @@ if (cmd) {
     process.exit(ok ? 0 : 1)
   }
 } else {
-  console.error("Unknown command", command)
+  console.error(`Unknown command ${command}`)
   usage()
   process.exit(2)
 }

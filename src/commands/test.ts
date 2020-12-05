@@ -36,17 +36,17 @@ function execute(argv: ParsedArgs): boolean {
   return all(getFiles(argv.d), testDataFile)
 
   function testDataFile(file: string): boolean {
-    const data = openFile(file, "data file " + file)
+    const data = openFile(file, `data file ${file}`)
     const validData = validate(data)
     let errors
     if (!validData) errors = logJSON(argv.errors, validate.errors, ajv)
 
     if (validData === shouldBeValid) {
-      console.log(file, "passed test")
+      console.log(`${file} passed test`)
       if (errors) console.log(errors)
       return true
     }
-    console.error(file, "failed test")
+    console.error(`${file} failed test`)
     if (errors) console.error(errors)
     return false
   }

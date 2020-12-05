@@ -30,8 +30,8 @@ export default function (argv: ParsedArgs): AjvCore {
       try {
         ajv[method](schema)
       } catch (err) {
-        console.error(fileType, file, "is invalid")
-        console.error("error:", (err as Error).message)
+        console.error(`${fileType} ${file} is invalid`)
+        console.error(`error: ${(err as Error).message}`)
         invalid = true
       }
     })
@@ -45,8 +45,8 @@ export default function (argv: ParsedArgs): AjvCore {
       try {
         require(file)(ajv)
       } catch (err) {
-        console.error("module", file, "is invalid; it should export function")
-        console.error("error:", (err as Error).message)
+        console.error(`module ${file} is invalid; it should export function`)
+        console.error(`error: ${(err as Error).message}`)
         invalid = true
       }
     })

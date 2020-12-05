@@ -1,4 +1,4 @@
-import type {Command} from "./types"
+import type {Command, CmdName} from "./types"
 import type {ParsedArgs} from "minimist"
 import usage from "./usage"
 
@@ -14,23 +14,23 @@ const cmd: Command = {
 
 export default cmd
 
-const commands: {[Name in string]?: () => void} = {
-  validate: helpValidate,
+const commands: {[Name in CmdName]: () => void} = {
+  help: mainHelp,
   compile: helpCompile,
+  validate: helpValidate,
   migrate: helpMigrate,
   test: helpTest,
 }
 
 function execute(argv: ParsedArgs): boolean {
   const command = argv._[1]
-  if (!command || command === "help") {
+  if (!command) {
     mainHelp()
     return true
   }
 
-  const cmdHelp = commands[command]
-  if (cmdHelp) {
-    cmdHelp()
+  if (command in commands) {
+    commands[command as CmdName]()
     return true
   }
 
