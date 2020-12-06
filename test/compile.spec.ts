@@ -29,12 +29,12 @@ describe("compile", function () {
 
   it("should compile schema to output file", (done) => {
     cli("compile -s test/schema -o test/validate_schema1.js", (error, stdout, stderr) => {
+      const validate = require("./validate_schema1.js")
+      fs.unlinkSync("test/validate_schema1.js")
+
       assert.strictEqual(error, null)
       assertValid(stdout, 1)
       assert.strictEqual(stderr, "")
-
-      const validate = require("./validate_schema1.js")
-      fs.unlinkSync("test/validate_schema1.js")
 
       const validData = require("./valid_data.json")
       const invalidData = require("./invalid_data.json")
@@ -48,12 +48,12 @@ describe("compile", function () {
     cli(
       "compile -s test/schema -s test/schema_with_ref -o test/validate_schema2.js",
       (error, stdout, stderr) => {
+        const validators = require("./validate_schema2.js")
+        fs.unlinkSync("test/validate_schema2.js")
+
         assert.strictEqual(error, null)
         assertValid(stdout, 2)
         assert.strictEqual(stderr, "")
-
-        const validators = require("./validate_schema2.js")
-        fs.unlinkSync("test/validate_schema2.js")
 
         const validData = require("./valid_data.json")
         const invalidData = require("./invalid_data.json")

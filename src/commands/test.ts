@@ -1,6 +1,6 @@
 import type {Command} from "./types"
 import type {ParsedArgs} from "minimist"
-import {compile, getFiles, openFile, logJSON, all} from "./util"
+import {compile, getFiles, openFile, logJSON} from "./util"
 import getAjv from "./ajv"
 
 const cmd: Command = {
@@ -33,7 +33,7 @@ function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
   const validate = compile(ajv, argv.s)
   const shouldBeValid = !!argv.valid && argv.valid !== "false"
-  return all(getFiles(argv.d), testDataFile)
+  return getFiles(argv.d).map(testDataFile).every((x) => x)
 
   function testDataFile(file: string): boolean {
     const data = openFile(file, `data file ${file}`)

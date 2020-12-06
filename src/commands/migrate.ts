@@ -1,7 +1,7 @@
 import type {Command} from "./types"
 import type {AnySchemaObject} from "ajv"
 import type {ParsedArgs} from "minimist"
-import {getFiles, getSpec, openFile, all} from "./util"
+import {getFiles, openFile} from "./util"
 import getAjv from "./ajv"
 import fs = require("fs")
 import * as migrate from "json-schema-migrate"
@@ -30,12 +30,13 @@ function execute(argv: ParsedArgs): boolean {
     console.error("multiple schemas cannot be migrated to a named output file")
     return false
   }
-  return all(schemaFiles, migrateSchema)
+  return schemaFiles.map(migrateSchema).every((x) => x)
 
   function migrateSchema(file: string): boolean {
     const sch = openFile(file, `schema ${file}`)
     const migratedSchema: AnySchemaObject = JSON.parse(JSON.stringify(sch))
-    migrate[getSpec(argv)](migratedSchema)
+    const spec = argv.spec === "draft2019" ? "draft2019" : "draft7"
+    migrate[spec](migratedSchema)
     if (argv["validate-schema"] !== false) {
       const ajv = getAjv(argv)
       const valid = ajv.validateSchema(migratedSchema) as boolean

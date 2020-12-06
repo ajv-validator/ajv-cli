@@ -4,7 +4,7 @@ import type {ParsedArgs} from "minimist"
 import glob = require("glob")
 
 const boolOrNat = {type: ["boolean", "integer"], minimum: 0}
-const CODE = "code."
+const CODE = "code-"
 const ajvOptions: SchemaMap = {
   strict: boolOrString(["log"]),
   strictTypes: boolOrString(["log"]),

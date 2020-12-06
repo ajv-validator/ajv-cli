@@ -1,6 +1,4 @@
 import type Ajv from "ajv"
-import type {ParsedArgs} from "minimist"
-import type {SchemaSpec} from "./types"
 import glob = require("glob")
 import path = require("path")
 import fs = require("fs")
@@ -86,13 +84,4 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
     console.error(`error: ${err.message}`)
     process.exit(1)
   }
-}
-
-export function getSpec(argv: ParsedArgs): SchemaSpec {
-  return argv.spec === "draft2019" ? "draft2019" : "draft7"
-}
-
-// Like Array.prototype.every but without short-circuiting (for side-effects)
-export function all<T>(xs: T[], f: (x: T) => boolean): boolean {
-  return xs.reduce((res: boolean, x: T) => f(x) && res, true)
 }

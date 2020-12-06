@@ -222,10 +222,10 @@ You can pass the following [Ajv options](https://github.com/ajv-validator/ajv/bl
 | `--loop-enum=`               | max size of `enum` to compile to expression (rather than to loop) |
 | `--own-properties`           | only validate own properties (not relevant for JSON, but can have effect for JavaScript objects) |
 | Code generation |
-| `--code.es5`                 | generate ES5 code |
-| `--code.lines`               | generate multi-line code |
-| `--code.optimize=`           | disable optimization (`false`) or number of optimization passes (1 pass by default) |
-| `--code.formats=`            | code to require formats object (only needed if you generate standalone code and do not use [ajv-formats](https://github.com/ajv-validator/ajv-formats)) |
+| `--code-es5`                 | generate ES5 code |
+| `--code-lines`               | generate multi-line code |
+| `--code-optimize=`           | disable optimization (`false`) or number of optimization passes (1 pass by default) |
+| `--code-formats=`            | code to require formats object (only needed if you generate standalone code and do not use [ajv-formats](https://github.com/ajv-validator/ajv-formats)) |
 
 Options can be passed using either dash-case or camelCase.
 
