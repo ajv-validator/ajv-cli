@@ -97,11 +97,11 @@ For example, you can use `-c ajv-keywords` to add all keywords from [ajv-keyword
 
   - `js` (default): JavaScript object
   - `json`: JSON with indentation and line-breaks
-  - `line`: JSON without indentaion/line-breaks (for easy parsing)
+  - `line`: JSON without indentation/line-breaks (for easy parsing)
   - `text`: human readable error messages with data paths
 
 - `--changes=`: detect changes in data after validation.<br>
-  Data can be modifyed with [Ajv options](#ajv-options) `--remove-additional`, `--use-defaults` and `--coerce-types`).<br>
+  Data can be modified with [Ajv options](#ajv-options) `--remove-additional`, `--use-defaults` and `--coerce-types`).<br>
   The changes are reported in JSON-patch format ([RFC6902](https://tools.ietf.org/html/rfc6902)).<br>
   Possible values are `js` (default), `json` and `line` (see `--errors` option).
 
@@ -114,27 +114,32 @@ It can be used to check that the schema is valid and to create a standalone modu
 ```sh
 ajv compile -s schema
 
-# compile to module (BETA)
+# compile to module file
 ajv compile -s schema -o validate.js
+
+## compile to stdout, to allow code formatting (js-beautify has to be installed separately)
+ajv compile -s schema -o | js-beautify > validate.js
 ```
 
 #### Parameters
 
 ##### `-s` - file name(s) of JSON-schema(s)
 
-Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
+Multiple schemas can be passed both by using this parameter multiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
 
 ```sh
 ajv compile -s "test/schema*.json"
 ```
 
-##### `-o` - output file for compiled validation function module (BETA)
+##### `-o` - output file for compiled validation function module
 
 Only a single schema can be compiled with this option.
 
 ```sh
 ajv compile -s "schema.json" -o "validate_schema.js"
 ```
+
+`-o` without parameter should be used to output code to stdout to pass it to some code formatter.
 
 This command also supports parameters `-r`, `-m` and `-c` as in [validate](#validate-data) command.
 
@@ -155,7 +160,7 @@ ajv migrate -s schema -o migrated_schema.json
 
 ##### `-s` - file name(s) of JSON-schema(s)
 
-Multiple schemas can be passed both by using this parameter mupltiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
+Multiple schemas can be passed both by using this parameter multiple times and with [glob patterns](https://github.com/isaacs/node-glob#glob-primer).
 
 ```sh
 ajv migrate -s "test/schema*.json"
