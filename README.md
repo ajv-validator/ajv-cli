@@ -5,6 +5,7 @@ Supports [JSON](http://json.org/), [JSON5](http://json5.org/), and [YAML](http:/
 
 [![Build Status](https://travis-ci.org/ajv-validator/ajv-cli.svg?branch=master)](https://travis-ci.org/github/ajv-validator/ajv-cli)
 [![npm](https://img.shields.io/npm/v/ajv-cli.svg)](https://www.npmjs.com/package/ajv-cli)
+[![npm (beta)](https://img.shields.io/npm/v/ajv-cli/beta)](https://www.npmjs.com/package/ajv-cli/v/4.0.0-rc.0)
 [![Coverage Status](https://coveralls.io/repos/github/ajv-validator/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/ajv-validator/ajv-cli?branch=master)
 [![Gitter](https://img.shields.io/gitter/room/ajv-validator/ajv.svg)](https://gitter.im/ajv-validator/ajv)
 
