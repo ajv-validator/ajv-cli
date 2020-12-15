@@ -3,11 +3,10 @@
 Command line interface for [ajv](https://github.com/epoberezkin/ajv), one of the [fastest json schema validators](https://github.com/ebdrup/json-schema-benchmark).
 Supports [JSON](http://json.org/), [JSON5](http://json5.org/), and [YAML](http://yaml.org/).
 
-[![Build Status](https://travis-ci.org/ajv-validator/ajv-cli.svg?branch=master)](https://travis-ci.org/github/ajv-validator/ajv-cli)
+[![build](https://github.com/ajv-validator/ajv-cli/workflows/build/badge.svg)](https://github.com/ajv-validator/ajv-cli/actions?query=workflow%3Abuild)
 [![npm](https://img.shields.io/npm/v/ajv-cli.svg)](https://www.npmjs.com/package/ajv-cli)
-[![npm (beta)](https://img.shields.io/npm/v/ajv-cli/beta)](https://www.npmjs.com/package/ajv-cli/v/4.0.0-rc.0)
-[![Coverage Status](https://coveralls.io/repos/github/ajv-validator/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/ajv-validator/ajv-cli?branch=master)
-[![Gitter](https://img.shields.io/gitter/room/ajv-validator/ajv.svg)](https://gitter.im/ajv-validator/ajv)
+[![coverage](https://coveralls.io/repos/github/ajv-validator/ajv-cli/badge.svg?branch=master)](https://coveralls.io/github/ajv-validator/ajv-cli?branch=master)
+[![gitter](https://img.shields.io/gitter/room/ajv-validator/ajv.svg)](https://gitter.im/ajv-validator/ajv)
 
 ## Contents
 
@@ -134,7 +133,7 @@ ajv compile -s "test/schema*.json"
 
 ##### `-o` - output file for compiled validation function module
 
-Only a single schema can be compiled with this option.
+If multiple schemas are compiled with this option the module will have multiple exports named as schema $id's or as file names, otherwise the module will export validation function as default export.
 
 ```sh
 ajv compile -s "schema.json" -o "validate_schema.js"
