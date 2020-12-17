@@ -94,7 +94,10 @@ function parameter(str: string): string {
 export function getOptions(argv: ParsedArgs): Options & {code: CodeOptions} {
   const options: {[K in string]: any} = {code: {}}
   for (let opt in ajvOptions) {
-    if (opt === "data") opt = "$data"
+    if (opt === "data") {
+      opt = "$data"
+      argv.$data = argv.data
+    }
     const value = argv[toDashCase(opt)] ?? argv[opt]
     if (value === undefined) continue
     if (opt.startsWith(CODE)) {
