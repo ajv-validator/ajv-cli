@@ -232,6 +232,34 @@ describe("validate", function () {
     })
   })
 
+  describe('option "data"', () => {
+    it("should exit with error when not specified in the presence of `$data` references", (done) => {
+      cli(
+        "validate -s test/schema_with_data_reference -d test/data_for_schema_with_data_reference",
+        (error, stdout, stderr) => {
+          assert(error instanceof Error)
+          assert.strictEqual(stdout, "")
+          assert(stderr.includes("test/schema_with_data_reference is invalid"))
+          assert(stderr.includes("larger/minimum"))
+          assert(stderr.includes("should be number"))
+          done()
+        }
+      )
+    })
+
+    it("it should enable `$data` references when specified", (done) => {
+      cli(
+        "validate --data -s test/schema_with_data_reference -d test/data_for_schema_with_data_reference",
+        (error, stdout, stderr) => {
+          assert.strictEqual(error, null)
+          assertValid(stdout, 1)
+          assert.strictEqual(stderr, "")
+          done()
+        }
+      )
+    })
+  })
+
   describe("custom keywords", () => {
     it("should validate valid data; custom keyword definition in file", (done) => {
       cli(

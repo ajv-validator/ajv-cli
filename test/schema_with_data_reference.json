@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schema_with_data.json",
+  "description": "schema to test $data references",
+  "type": "object",
+  "properties": {
+    "larger": {
+      "type": "number",
+      "minimum": {
+        "$data": "1/smaller"
+      }
+    },
+    "smaller": {
+      "type": "number"
+    }
+  }
+}
