@@ -1,13 +1,22 @@
 import type AjvCore from "ajv/dist/core"
 import type {ParsedArgs} from "minimist"
-import Ajv7 from "ajv"
+import Ajv7, {Plugin} from "ajv"
 import Ajv2019 from "ajv/dist/2019"
+import {Service} from "ts-node"
 import {getOptions} from "./options"
 import util = require("./util")
 import path = require("path")
 import draft6metaSchema = require("ajv/lib/refs/json-schema-draft-06.json")
 
 type AjvMethod = "addSchema" | "addMetaSchema"
+
+// copied from https://github.com/babel/babel/blob/d8da63c929f2d28c401571e2a43166678c555bc4/packages/babel-helpers/src/helpers.js#L602-L606
+/* istanbul ignore next */
+const interopRequireDefault = (obj: any): {default: any} =>
+  obj && obj.__esModule ? obj : {default: obj}
+
+const importDefault = <T = unknown>(moduleName: string): T =>
+  interopRequireDefault(require(moduleName)).default
 
 export default function (argv: ParsedArgs): AjvCore {
   const opts = getOptions(argv)
@@ -43,12 +52,39 @@ export default function (argv: ParsedArgs): AjvCore {
     files.forEach((file) => {
       if (file[0] === ".") file = path.resolve(process.cwd(), file)
       try {
-        require(file)(ajv)
+        if (file.endsWith(".ts")) {
+          requireTypeScriptKeyword(file)
+        } else {
+          require(file)(ajv)
+        }
       } catch (err) {
         console.error(`module ${file} is invalid; it should export function`)
         console.error(`error: ${(err as Error).message}`)
         invalid = true
       }
     })
+  }
+
+  function requireTypeScriptKeyword(file: string): void {
+    let registerer: Service
+
+    try {
+      registerer = require("ts-node").register()
+    } catch (err) {
+      /* istanbul ignore next */
+      if (err.code === "MODULE_NOT_FOUND") {
+        throw new Error(
+          `'ts-node' is required for the TypeScript configuration files. Make sure it is installed\nError: ${err.message}`
+        )
+      }
+
+      throw err
+    }
+
+    registerer.enabled(true)
+
+    importDefault<Plugin<undefined>>(file)(ajv)
+
+    registerer.enabled(false)
   }
 }
