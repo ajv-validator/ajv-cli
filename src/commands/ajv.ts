@@ -22,7 +22,11 @@ export default function (argv: ParsedArgs): AjvCore {
   if (invalid) process.exit(1)
   return ajv
 
-  function addSchemas(args: string | string[] | undefined, method: AjvMethod, fileType: string): void {
+  function addSchemas(
+    args: string | string[] | undefined,
+    method: AjvMethod,
+    fileType: string
+  ): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
