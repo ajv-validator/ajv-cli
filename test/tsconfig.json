@@ -1,0 +1,9 @@
+{
+  "extends": "..",
+  "include": ["."],
+  "compilerOptions": {
+    "types": ["node", "mocha"],
+    "noImplicitAny": false,
+    "esModuleInterop": true
+  }
+}

@@ -1,6 +1,16 @@
 {
   "id": "my-schema",
   "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "str": {
+      "id": "#str",
+      "type": "string"
+    },
+    "num": {
+      "id": "another-schema#num",
+      "type": "string"
+    }
+  },
   "properties": {
     "exclusiveLimits": {
       "minimum": 1,
@@ -14,9 +24,21 @@
       "maximum": 3,
       "exclusiveMaximum": false
     },
-    "singleValue": { "enum": ["foo"] },
-    "multipleValues": { "enum": ["foo", "bar"] },
+    "singleValue": {"enum": ["foo"]},
+    "singleValueConstant": {"constant": "foo"},
+    "multipleValues": {"enum": ["foo", "bar"]},
     "alwaysValid": {},
-    "alwaysInvalid": {"not": {}}
+    "alsoAlwaysValid": {"not": {"not": {}}},
+    "alwaysInvalid": {"not": {}},
+    "alsoAlwaysInvalid": {"not": {"not": {"not": {}}}}
+  },
+  "dependencies": {
+    "foo": ["bar"],
+    "bar": {
+      "required": ["baz"],
+      "properties": {
+        "baz": {"type": "string"}
+      }
+    }
   }
 }
