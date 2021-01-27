@@ -16,8 +16,14 @@ if (command in commands) {
     usage()
     process.exit(2)
   } else {
-    const ok = cmd.execute(argv)
-    process.exit(ok ? 0 : 1)
+    cmd
+      .execute(argv)
+      .then((ok: boolean) => {
+        process.exit(ok ? 0 : 1)
+      })
+      .catch(() => {
+        process.exit(1)
+      })
   }
 } else {
   console.error(`Unknown command ${command}`)

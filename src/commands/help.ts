@@ -22,21 +22,21 @@ const commands: {[Name in CmdName]: () => void} = {
   test: helpTest,
 }
 
-function execute(argv: ParsedArgs): boolean {
+function execute(argv: ParsedArgs): Promise<boolean> {
   const command = argv._[1]
   if (!command) {
     mainHelp()
-    return true
+    return Promise.resolve(true)
   }
 
   if (command in commands) {
     commands[command as CmdName]()
-    return true
+    return Promise.resolve(true)
   }
 
   console.error("Unknown command", command)
   usage()
-  return false
+  return Promise.resolve(false)
 }
 
 function mainHelp(): void {

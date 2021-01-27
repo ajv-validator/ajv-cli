@@ -15,6 +15,15 @@ describe("validate", function () {
       })
     })
 
+    it("should validate remote schemas with valid data", (done) => {
+      cli("-s test/remotes/schema -d test/valid_data", (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 1)
+        assert.strictEqual(stderr, "")
+        done()
+      })
+    })
+
     it('should validate valid data with the "yml" extension', (done) => {
       cli("-s test/schema -d test/valid_data.yml", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
@@ -66,6 +75,18 @@ describe("validate", function () {
       )
     })
 
+    it("should validate remote schema with invalid data", (done) => {
+      cli(
+        "-s test/remotes/schema.json -d test/invalid_data.json --errors=line",
+        (error, stdout, stderr) => {
+          assert(error instanceof Error)
+          assert.strictEqual(stdout, "")
+          assertRequiredErrors(stderr, "http://localhost:8080/test/remotes/dimensions.json")
+          done()
+        }
+      )
+    })
+
     it("should print usage if syntax is invalid", (done) => {
       cli("-d test/valid_data", (error, stdout, stderr) => {
         assert(error instanceof Error)
@@ -95,7 +116,7 @@ describe("validate", function () {
           (error, stdout, stderr) => {
             assert(error instanceof Error)
             assertValid(stdout, 2)
-            assertRequiredErrors(stderr, "#", 2)
+            assertRequiredErrors(stderr, "#/items/properties/dimensions", 2)
             done()
           }
         )
@@ -133,7 +154,7 @@ describe("validate", function () {
           (error, stdout, stderr) => {
             assert(error instanceof Error)
             assertValid(stdout, 2)
-            assertRequiredErrors(stderr, "#", 2)
+            assertRequiredErrors(stderr, "#/items/properties/dimensions", 2)
             done()
           }
         )
@@ -157,7 +178,7 @@ describe("validate", function () {
         (error, stdout, stderr) => {
           assert(error instanceof Error)
           assert.strictEqual(stdout, "")
-          assertRequiredErrors(stderr, "schema.json")
+          assertRequiredErrors(stderr, "schema.json/items/properties/dimensions")
           done()
         }
       )
@@ -328,13 +349,17 @@ function assertValid(stdout: string, count: number, extraLines = 0): string[] {
   return lines
 }
 
-function assertRequiredErrors(stderr: string, schemaRef = "#", count = 1): void {
+function assertRequiredErrors(
+  stderr: string,
+  schemaRef = "#/items/properties/dimensions",
+  count = 1
+): void {
   const results = assertErrors(stderr, count)
   results.forEach((errors) => {
     const err = errors[0]
     assert.strictEqual(err.keyword, "required")
     assert.strictEqual(err.dataPath, "/0/dimensions")
-    assert.strictEqual(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
+    assert.strictEqual(err.schemaPath, schemaRef + "/required")
     assert.deepStrictEqual(err.params, {missingProperty: "height"})
   })
 }

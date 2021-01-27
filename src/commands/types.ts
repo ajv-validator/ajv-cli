@@ -4,7 +4,7 @@ import type {ParsedArgs} from "minimist"
 export type CmdName = "compile" | "help" | "validate" | "migrate" | "test"
 
 export interface Command {
-  execute: (argv: ParsedArgs) => boolean
+  execute: (argv: ParsedArgs) => Promise<boolean>
   schema: SchemaObject
 }
 

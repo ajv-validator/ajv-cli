@@ -1,0 +1,10 @@
+{
+  "$id": "http://localhost:8080/test/remotes/dimensions_file_that_does_not_exist_on_server.json",
+  "type": "object",
+  "properties": {
+    "length": {"type": "number"},
+    "width": {"type": "number"},
+    "height": {"type": "number"}
+  },
+  "required": ["length", "width", "height"]
+}

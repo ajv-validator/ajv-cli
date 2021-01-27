@@ -24,13 +24,13 @@ const cmd: Command = {
 
 export default cmd
 
-function execute(argv: ParsedArgs): boolean {
+function execute(argv: ParsedArgs): Promise<boolean> {
   const schemaFiles = getFiles(argv.s)
   if (argv.o && schemaFiles.length > 1) {
     console.error("multiple schemas cannot be migrated to a named output file")
-    return false
+    return Promise.resolve(false)
   }
-  return schemaFiles.map(migrateSchema).every((x) => x)
+  return Promise.resolve(schemaFiles.map(migrateSchema).every((x) => x))
 
   function migrateSchema(file: string): boolean {
     const sch = openFile(file, `schema ${file}`)

@@ -27,6 +27,40 @@ describe("compile", function () {
     )
   })
 
+  it("should compile both valid and invalid schemas", (done) => {
+    cli(
+      "compile -s test/schema -s test/meta/invalid_schema -m test/meta/meta_schema",
+      (error, stdout, stderr) => {
+        assert(error instanceof Error)
+        assert.strictEqual(stdout, "schema test/schema is valid\n")
+        const lines = assertError(stderr)
+        assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]))
+        done()
+      }
+    )
+  })
+
+  it("should compile valid remote schema", (done) => {
+    cli("compile -s test/remotes/schema", (error, stdout, stderr) => {
+      assert.strictEqual(error, null)
+      assertValid(stdout, 1)
+      assert.strictEqual(stderr, "")
+      done()
+    })
+  })
+
+  it("should compile valid remote schema reference using local reference", (done) => {
+    cli(
+      "compile -s test/remotes/schema_by_ref_only -r test/remotes/dimensions_by_ref_only",
+      (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 1)
+        assert.strictEqual(stderr, "")
+        done()
+      }
+    )
+  })
+
   it("should compile schema to output file", (done) => {
     cli("compile -s test/schema -o test/validate_schema1.js", (error, stdout, stderr) => {
       const validate = require("./validate_schema1.js")
@@ -125,6 +159,17 @@ describe("compile", function () {
       assert.strictEqual(stdout, "")
       const lines = assertError(stderr)
       assert(/schema\sis\sinvalid/.test(lines[1]))
+      done()
+    })
+  })
+
+  it("should fail to compile if referenced remote schema is missing", (done) => {
+    cli("compile -s test/remotes/invalid_schema", (error, stdout, stderr) => {
+      assert(error instanceof Error)
+      assert.strictEqual(stdout, "")
+      const lines = assertError(stderr)
+      assert(/schema\sis\sinvalid/.test(lines[0]))
+      assert(/Loading\sError/.test(lines[1]))
       done()
     })
   })

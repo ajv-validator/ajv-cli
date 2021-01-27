@@ -1,7 +1,7 @@
 import type {Command} from "./types"
 import type {AnyValidateFunction} from "ajv/dist/core"
 import type {ParsedArgs} from "minimist"
-import {getFiles, openFile} from "./util"
+import {compile, getFiles, openFile} from "./util"
 import getAjv from "./ajv"
 import standaloneCode from "ajv/dist/standalone"
 import fs = require("fs")
@@ -25,11 +25,21 @@ const cmd: Command = {
 
 export default cmd
 
-function execute(argv: ParsedArgs): boolean {
+async function execute(argv: ParsedArgs): Promise<boolean> {
   const ajv = getAjv(argv)
   const schemaFiles = getFiles(argv.s)
-  if ("o" in argv && schemaFiles.length > 1) return compileMultiExportModule(schemaFiles)
-  return schemaFiles.map(compileSchemaAndSave).every((x) => x)
+  if ("o" in argv || schemaFiles.length > 1) {
+    if ("o" in argv && schemaFiles.length > 1) return compileMultiExportModule(schemaFiles)
+    return schemaFiles.map(compileSchemaAndSave).every((x) => x)
+  }
+  // If only one schema is provided, then we can asyncronously compile it
+  try {
+    await compile(ajv, schemaFiles[0])
+    console.log(`schema ${schemaFiles[0]} is valid`)
+    return true
+  } catch (err) {
+    return false
+  }
 
   function compileMultiExportModule(files: string[]): boolean {
     const validators = files.map(compileSchema)
@@ -50,7 +60,7 @@ function execute(argv: ParsedArgs): boolean {
     const sch = openFile(file, `schema ${file}`)
     try {
       const id = sch?.$id
-      ajv.addSchema(sch, id ? undefined : file )
+      ajv.addSchema(sch, id ? undefined : file)
       const validate = ajv.getSchema(id || file)
       if (argv.o !== true) console.log(`schema ${file} is valid`)
       return validate
@@ -61,7 +71,7 @@ function execute(argv: ParsedArgs): boolean {
     }
   }
 
-  function getRefs(validators: AnyValidateFunction[], files: string[]): {[K in string]?: string}  {
+  function getRefs(validators: AnyValidateFunction[], files: string[]): {[K in string]?: string} {
     const refs: {[K in string]?: string} = {}
     validators.forEach((v, i) => {
       const ref = typeof v.schema == "object" ? v.schema.$id || files[i] : files[i]

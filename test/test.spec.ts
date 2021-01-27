@@ -15,6 +15,15 @@ describe("test", function () {
       })
     })
 
+    it("should pass remote schema if expected result is valid", (done) => {
+      cli("test -s test/remotes/schema -d test/valid_data --valid", (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertNoErrors(stdout, 1, /\spassed/)
+        assert.strictEqual(stderr, "")
+        done()
+      })
+    })
+
     it("should pass multiple files if expected result is valid", (done) => {
       cli('test -s test/schema -d "test/valid*.json" --valid', (error, stdout, stderr) => {
         assert.strictEqual(error, null)
@@ -26,6 +35,15 @@ describe("test", function () {
 
     it("should fail if expected result is invalid", (done) => {
       cli("test -s test/schema -d test/valid_data --invalid", (error, stdout, stderr) => {
+        assert(error instanceof Error)
+        assertNoErrors(stderr, 1, /\sfailed/)
+        assert.strictEqual(stdout, "")
+        done()
+      })
+    })
+
+    it("should fail remote schema if expected result is invalid", (done) => {
+      cli("test -s test/remotes/schema -d test/valid_data --invalid", (error, stdout, stderr) => {
         assert(error instanceof Error)
         assertNoErrors(stderr, 1, /\sfailed/)
         assert.strictEqual(stdout, "")
@@ -50,6 +68,23 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert.strictEqual(error, null)
           assertRequiredErrors(stdout, 1, /\spassed/)
+          assert.strictEqual(stderr, "")
+          done()
+        }
+      )
+    })
+
+    it("should pass remote schema if expected result is invalid", (done) => {
+      cli(
+        "test -s test/remotes/schema -d test/invalid_data --invalid --errors=line",
+        (error, stdout, stderr) => {
+          assert.strictEqual(error, null)
+          assertRequiredErrors(
+            stdout,
+            1,
+            /\spassed/,
+            "http://localhost:8080/test/remotes/dimensions.json"
+          )
           assert.strictEqual(stderr, "")
           done()
         }
@@ -86,6 +121,23 @@ describe("test", function () {
         (error, stdout, stderr) => {
           assert(error instanceof Error)
           assertRequiredErrors(stderr, 1, /\sfailed/)
+          assert.strictEqual(stdout, "")
+          done()
+        }
+      )
+    })
+
+    it("should fail remote schema if expected result is valid", (done) => {
+      cli(
+        "test -s test/remotes/schema -d test/invalid_data --valid --errors=line",
+        (error, stdout, stderr) => {
+          assert(error instanceof Error)
+          assertRequiredErrors(
+            stderr,
+            1,
+            /\sfailed/,
+            "http://localhost:8080/test/remotes/dimensions.json"
+          )
           assert.strictEqual(stdout, "")
           done()
         }
@@ -149,13 +201,18 @@ function assertErrors(out: string, count: number, regexp: RegExp): DefinedError[
   return results
 }
 
-function assertRequiredErrors(out: string, count: number, regexp: RegExp, schemaRef = "#"): void {
+function assertRequiredErrors(
+  out: string,
+  count: number,
+  regexp: RegExp,
+  schemaRef = "#/items/properties/dimensions"
+): void {
   const results = assertErrors(out, count, regexp)
   results.forEach((errors) => {
     const err = errors[0]
     assert.strictEqual(err.keyword, "required")
     assert.strictEqual(err.dataPath, "/0/dimensions")
-    assert.strictEqual(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
+    assert.strictEqual(err.schemaPath, schemaRef + "/required")
     assert.deepStrictEqual(err.params, {missingProperty: "height"})
   })
 }

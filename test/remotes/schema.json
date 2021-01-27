@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schema.json",
+  "description": "basic schema from z-schema benchmark (https://github.com/zaggino/z-schema)",
+  "title": "Product set",
+  "type": "array",
+  "items": {
+    "title": "Product",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "description": "The unique identifier for a product",
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "price": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "uniqueItems": true
+      },
+      "dimensions": {
+        "$ref": "http://localhost:8080/test/remotes/dimensions.json"
+      },
+      "warehouseLocation": {
+        "description": "Coordinates of the warehouse with the product"
+      }
+    },
+    "required": ["id", "name", "price"]
+  }
+}

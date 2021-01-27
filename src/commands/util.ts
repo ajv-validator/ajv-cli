@@ -4,7 +4,18 @@ import path = require("path")
 import fs = require("fs")
 import yaml = require("js-yaml")
 import JSON5 = require("json5")
-import { AnyValidateFunction } from "ajv/dist/core"
+import fetch, {Response} from "node-fetch"
+import {AnyValidateFunction, SchemaObject} from "ajv/dist/core"
+
+export async function loadSchema(uri: string): Promise<SchemaObject> {
+  return fetch(uri).then((response: Response) => {
+    if (!response.ok) {
+      throw new Error(`Loading Error ${response.status} for [ ${uri} ]`)
+    } else {
+      return response.json()
+    }
+  })
+}
 
 export function getFiles(args: string | string[]): string[] {
   let files: string[] = []
@@ -75,13 +86,13 @@ export function logJSON(mode: string, data: any, ajv?: Ajv): string {
   return data
 }
 
-export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
+export async function compile(ajv: Ajv, schemaFile: string): Promise<AnyValidateFunction> {
   const schema = openFile(schemaFile, "schema")
   try {
-    return ajv.compile(schema)
-  } catch (err) {
+    return await ajv.compileAsync(schema)
+  } catch (error) {
     console.error(`schema ${schemaFile} is invalid`)
-    console.error(`error: ${err.message}`)
-    process.exit(1)
+    console.error(`error: ${error.message}`)
+    throw error
   }
 }

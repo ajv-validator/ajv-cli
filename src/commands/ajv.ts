@@ -12,6 +12,7 @@ type AjvMethod = "addSchema" | "addMetaSchema"
 export default function (argv: ParsedArgs): AjvCore {
   const opts = getOptions(argv)
   if (argv.o) opts.code.source = true
+  opts.loadSchema = util.loadSchema
   const Ajv: typeof AjvCore = argv.spec === "draft2019" ? Ajv2019 : Ajv7
   const ajv = new Ajv(opts)
   let invalid: boolean | undefined
@@ -22,7 +23,11 @@ export default function (argv: ParsedArgs): AjvCore {
   if (invalid) process.exit(1)
   return ajv
 
-  function addSchemas(args: string | string[] | undefined, method: AjvMethod, fileType: string): void {
+  function addSchemas(
+    args: string | string[] | undefined,
+    method: AjvMethod,
+    fileType: string
+  ): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
