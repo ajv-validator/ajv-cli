@@ -28,10 +28,12 @@ const cmd: Command = {
 
 export default cmd
 
-function execute(argv: ParsedArgs): boolean {
+async function execute(argv: ParsedArgs): Promise<boolean> {
   const ajv = getAjv(argv)
-  const validate = compile(ajv, argv.s)
-  return getFiles(argv.d).map(validateDataFile).every((x) => x)
+  const validate = await compile(ajv, argv.s)
+  return getFiles(argv.d)
+    .map(validateDataFile)
+    .every((x) => x)
 
   function validateDataFile(file: string): boolean {
     const data = openFile(file, `data file ${file}`)
