@@ -1,3 +1,4 @@
 {
-    "$ref": "schema.json"
+  "$id": "schema_with_ref.json",
+  "$ref": "schema.json"
 }

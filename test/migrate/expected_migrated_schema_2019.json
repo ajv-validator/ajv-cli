@@ -1,13 +1,14 @@
 {
   "$id": "my-schema",
-  "$schema": "http://json-schema.org/draft-07/schema",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
   "definitions": {
     "str": {
-      "$id": "#str",
+      "$anchor": "str",
       "type": "string"
     },
     "num": {
-      "$id": "another-schema#num",
+      "$id": "another-schema",
+      "$anchor": "num",
       "type": "string"
     }
   },
@@ -28,8 +29,10 @@
     "alwaysInvalid": false,
     "alsoAlwaysInvalid": false
   },
-  "dependencies": {
-    "foo": ["bar"],
+  "dependentRequired": {
+    "foo": ["bar"]
+  },
+  "dependentSchemas": {
     "bar": {
       "required": ["baz"],
       "properties": {
