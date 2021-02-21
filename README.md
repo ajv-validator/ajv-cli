@@ -201,36 +201,36 @@ This command supports the same options and parameters as [validate](#validate-da
 
 You can pass the following [Ajv options](https://github.com/ajv-validator/ajv/blob/master/docs/api.md#options):
 
-| Option                       | Description                                                               |
-| ---------------------------- | ------------------------------------------------------------------------- |
-| Strict mode |
-| `--strict=false`             | disable [strict mode](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md) |
-| `--strict-tuples=`           | throw on (`true`) or ignore (`false`) [strict tuples](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-unconstrained-tuples) restrictions (the default is to log) |
-| `--strict-types=`            | throw on (`true`) or ignore (`false`) [strict types](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#strict-types) restrictions (the default is to log) |
-| `--allow-matching-properties`| allow `properties` [matching patterns](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-overlap-between-properties-and-patternproperties-keywords) in `patternProperties` |
-| `--allow-union-types`        | allow [union types](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-union-types) |
-| `--validate-formats=false`   | disable format validation |
-| Validation and reporting |
-| `--data`                     | use [$data references](https://github.com/ajv-validator/ajv/blob/master/docs/validation.md#data-reference) |
-| `--all-errors`               | collect all validation errors |
-| `--verbose`                  | include schema and data in errors |
-| `--comment`                  | log schema `$comment`s |
-| `--inline-refs=`             | referenced schemas compilation mode (true/false/\<number\>) |
-| Modify validated data |
-| `--remove-additional`        | remove additional properties (true/all/failing) |
-| `--use-defaults`             | replace missing properties/items with the values from default keyword |
-| `--coerce-types`             | change type of data to match type keyword |
-| Advanced |
-| `--multiple-of-precision`    | precision of multipleOf, pass integer number |
-| `--messages=false`           | do not include text messages in errors |
-| `--loop-required=`           | max size of `required` to compile to expression (rather than to loop) |
-| `--loop-enum=`               | max size of `enum` to compile to expression (rather than to loop) |
-| `--own-properties`           | only validate own properties (not relevant for JSON, but can have effect for JavaScript objects) |
-| Code generation |
-| `--code-es5`                 | generate ES5 code |
-| `--code-lines`               | generate multi-line code |
-| `--code-optimize=`           | disable optimization (`false`) or number of optimization passes (1 pass by default) |
-| `--code-formats=`            | code to require formats object (only needed if you generate standalone code and do not use [ajv-formats](https://github.com/ajv-validator/ajv-formats)) |
+| Option                        | Description                                                                                                                                                                                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Strict mode                   |
+| `--strict=false`              | disable [strict mode](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md)                                                                                                            |
+| `--strict-tuples=`            | throw on (`true`) or ignore (`false`) [strict tuples](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-unconstrained-tuples) restrictions (the default is to log)         |
+| `--strict-types=`             | throw on (`true`) or ignore (`false`) [strict types](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#strict-types) restrictions (the default is to log)                           |
+| `--allow-matching-properties` | allow `properties` [matching patterns](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-overlap-between-properties-and-patternproperties-keywords) in `patternProperties` |
+| `--allow-union-types`         | allow [union types](https://github.com/ajv-validator/ajv/blob/master/docs/strict-mode.md#prohibit-union-types)                                                                                         |
+| `--validate-formats=false`    | disable format validation                                                                                                                                                                              |
+| Validation and reporting      |
+| `--data`                      | use [$data references](https://github.com/ajv-validator/ajv/blob/master/docs/validation.md#data-reference)                                                                                             |
+| `--all-errors`                | collect all validation errors                                                                                                                                                                          |
+| `--verbose`                   | include schema and data in errors                                                                                                                                                                      |
+| `--comment`                   | log schema `$comment`s                                                                                                                                                                                 |
+| `--inline-refs=`              | referenced schemas compilation mode (true/false/\<number\>)                                                                                                                                            |
+| Modify validated data         |
+| `--remove-additional`         | remove additional properties (true/all/failing)                                                                                                                                                        |
+| `--use-defaults`              | replace missing properties/items with the values from default keyword                                                                                                                                  |
+| `--coerce-types`              | change type of data to match type keyword                                                                                                                                                              |
+| Advanced                      |
+| `--multiple-of-precision`     | precision of multipleOf, pass integer number                                                                                                                                                           |
+| `--messages=false`            | do not include text messages in errors                                                                                                                                                                 |
+| `--loop-required=`            | max size of `required` to compile to expression (rather than to loop)                                                                                                                                  |
+| `--loop-enum=`                | max size of `enum` to compile to expression (rather than to loop)                                                                                                                                      |
+| `--own-properties`            | only validate own properties (not relevant for JSON, but can have effect for JavaScript objects)                                                                                                       |
+| Code generation               |
+| `--code-es5`                  | generate ES5 code                                                                                                                                                                                      |
+| `--code-lines`                | generate multi-line code                                                                                                                                                                               |
+| `--code-optimize=`            | disable optimization (`false`) or number of optimization passes (1 pass by default)                                                                                                                    |
+| `--code-formats=`             | code to require formats object (only needed if you generate standalone code and do not use [ajv-formats](https://github.com/ajv-validator/ajv-formats))                                                |
 
 Options can be passed using either dash-case or camelCase.
 
