@@ -50,7 +50,7 @@ function execute(argv: ParsedArgs): boolean {
     const sch = openFile(file, `schema ${file}`)
     try {
       const id = sch?.$id
-      ajv.addSchema(sch, id ? undefined : file)
+      ajv.addSchema(sch, id ? undefined : file )
       const validate = ajv.getSchema(id || file)
       if (argv.o !== true) console.log(`schema ${file} is valid`)
       return validate
@@ -61,7 +61,7 @@ function execute(argv: ParsedArgs): boolean {
     }
   }
 
-  function getRefs(validators: AnyValidateFunction[], files: string[]): {[K in string]?: string} {
+  function getRefs(validators: AnyValidateFunction[], files: string[]): {[K in string]?: string}  {
     const refs: {[K in string]?: string} = {}
     validators.forEach((v, i) => {
       const ref = typeof v.schema == "object" ? v.schema.$id || files[i] : files[i]
