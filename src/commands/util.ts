@@ -4,7 +4,7 @@ import path = require("path")
 import fs = require("fs")
 import yaml = require("js-yaml")
 import JSON5 = require("json5")
-import {AnyValidateFunction} from "ajv/dist/core"
+import { AnyValidateFunction } from "ajv/dist/core"
 
 export function getFiles(args: string | string[]): string[] {
   let files: string[] = []
