@@ -33,7 +33,9 @@ function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
   const validate = compile(ajv, argv.s)
   const shouldBeValid = !!argv.valid && argv.valid !== "false"
-  return getFiles(argv.d).map(testDataFile).every((x) => x)
+  return getFiles(argv.d)
+    .map(testDataFile)
+    .every((x) => x)
 
   function testDataFile(file: string): boolean {
     const data = openFile(file, `data file ${file}`)

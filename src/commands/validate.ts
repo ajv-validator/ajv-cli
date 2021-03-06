@@ -31,7 +31,9 @@ export default cmd
 function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
   const validate = compile(ajv, argv.s)
-  return getFiles(argv.d).map(validateDataFile).every((x) => x)
+  return getFiles(argv.d)
+    .map(validateDataFile)
+    .every((x) => x)
 
   function validateDataFile(file: string): boolean {
     const data = openFile(file, `data file ${file}`)
