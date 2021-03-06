@@ -3,7 +3,7 @@
   "version": "4.1.0",
   "description": "Command line interface for Ajv JSON schema validator",
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rimraf dist && tsc",
     "prepublish": "npm run build",
     "eslint": "eslint \"src/**/*.*s\" \"test/**/*.js\"",
     "prettier:write": "prettier --write \"./**/*.{md,json,yaml,js,ts}\"",
@@ -63,6 +63,7 @@
     "nyc": "^15.0.1",
     "pre-commit": "^1.2.0",
     "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
     "ts-node": "^9.1.0",
     "typescript": "^4.1.2"
   },
