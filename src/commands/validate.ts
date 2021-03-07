@@ -2,7 +2,7 @@ import type {Command} from "./types"
 import type {ParsedArgs} from "minimist"
 import {compile, getFiles, openFile, logJSON} from "./util"
 import getAjv from "./ajv"
-import jsonPatch = require("fast-json-patch")
+import * as jsonPatch from "fast-json-patch"
 
 const cmd: Command = {
   execute,

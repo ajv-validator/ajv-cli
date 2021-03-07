@@ -1,5 +1,5 @@
 import {exec, ExecException} from "child_process"
-import path = require("path")
+import * as path from "path"
 const cwd = path.join(__dirname, "..")
 
 export default function cli(

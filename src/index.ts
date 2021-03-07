@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import minimist = require("minimist")
+import * as minimist from "minimist"
 import commands from "./commands"
 import {checkOptions} from "./commands/options"
 import usage from "./commands/usage"

@@ -4,9 +4,9 @@ import Ajv7, {Plugin} from "ajv"
 import Ajv2019 from "ajv/dist/2019"
 import {Service} from "ts-node"
 import {getOptions} from "./options"
-import util = require("./util")
-import path = require("path")
-import draft6metaSchema = require("ajv/lib/refs/json-schema-draft-06.json")
+import * as util from "./util"
+import * as path from "path"
+import * as draft6metaSchema from "ajv/lib/refs/json-schema-draft-06.json"
 
 type AjvMethod = "addSchema" | "addMetaSchema"
 

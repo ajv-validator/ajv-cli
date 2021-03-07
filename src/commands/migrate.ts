@@ -3,9 +3,9 @@ import type {AnySchemaObject} from "ajv"
 import type {ParsedArgs} from "minimist"
 import {getFiles, openFile} from "./util"
 import getAjv from "./ajv"
-import fs = require("fs")
+import * as fs from "fs"
 import * as migrate from "json-schema-migrate"
-import jsonPatch = require("fast-json-patch")
+import * as jsonPatch from "fast-json-patch"
 
 const cmd: Command = {
   execute,

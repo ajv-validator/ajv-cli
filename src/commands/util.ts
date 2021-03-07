@@ -1,9 +1,9 @@
 import type Ajv from "ajv"
-import glob = require("glob")
-import path = require("path")
-import fs = require("fs")
-import yaml = require("js-yaml")
-import JSON5 = require("json5")
+import * as glob from "glob"
+import * as path from "path"
+import * as fs from "fs"
+import * as yaml from "js-yaml"
+import * as JSON5 from "json5"
 import {AnyValidateFunction} from "ajv/dist/core"
 
 export function getFiles(args: string | string[]): string[] {

@@ -4,7 +4,7 @@ import type {ParsedArgs} from "minimist"
 import {getFiles, openFile} from "./util"
 import getAjv from "./ajv"
 import standaloneCode from "ajv/dist/standalone"
-import fs = require("fs")
+import * as fs from "fs"
 
 const cmd: Command = {
   execute,
