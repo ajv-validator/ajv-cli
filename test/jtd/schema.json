@@ -1,0 +1,15 @@
+{
+  "discriminator": "type",
+  "mapping": {
+    "a": {
+      "properties": {
+        "a": {"type": "int32"}
+      }
+    },
+    "b": {
+      "optionalProperties": {
+        "b": {"type": "timestamp"}
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@
     "build": "rimraf dist && tsc",
     "prepublish": "npm run build",
     "eslint": "eslint \"src/**/*.*s\" \"test/**/*.js\"",
-    "prettier:write": "prettier --write \"./**/*.{md,json,yaml,js,ts}\"",
+    "prettier:write": "prettier --write \"./**/*.{json,yaml,js,ts}\"",
     "prettier:check": "prettier --list-different \"./**/*.{md,json,yaml,js,ts}\"",
     "test-spec": "cross-env TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register \"test/**/*.spec.{ts,js}\" -R spec",
     "test-cov": "nyc npm run test-spec",
@@ -34,7 +34,7 @@
     "url": "https://github.com/ajv-validator/ajv-cli"
   },
   "dependencies": {
-    "ajv": "^7.1.0",
+    "ajv": "^7.2.1",
     "fast-json-patch": "^2.0.0",
     "glob": "^7.1.0",
     "js-yaml": "^3.14.0",

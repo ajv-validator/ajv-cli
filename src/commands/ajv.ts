@@ -2,6 +2,7 @@ import type AjvCore from "ajv/dist/core"
 import type {ParsedArgs} from "minimist"
 import Ajv7, {Plugin} from "ajv"
 import Ajv2019 from "ajv/dist/2019"
+import AjvJTD from "ajv/dist/jtd"
 import {Service} from "ts-node"
 import {getOptions} from "./options"
 import * as util from "./util"
@@ -18,13 +19,19 @@ const interopRequireDefault = (obj: any): {default: any} =>
 const importDefault = <T = unknown>(moduleName: string): T =>
   interopRequireDefault(require(moduleName)).default
 
+const AjvClass: {[S in string]?: typeof AjvCore} = {
+  jtd: AjvJTD,
+  draft7: Ajv7,
+  draft2019: Ajv2019,
+}
+
 export default function (argv: ParsedArgs): AjvCore {
   const opts = getOptions(argv)
   if (argv.o) opts.code.source = true
-  const Ajv: typeof AjvCore = argv.spec === "draft2019" ? Ajv2019 : Ajv7
+  const Ajv: typeof AjvCore = AjvClass[argv.spec] || Ajv7
   const ajv = new Ajv(opts)
   let invalid: boolean | undefined
-  ajv.addMetaSchema(draft6metaSchema)
+  if (argv.spec !== "jtd") ajv.addMetaSchema(draft6metaSchema)
   addSchemas(argv.m, "addMetaSchema", "meta-schema")
   addSchemas(argv.r, "addSchema", "schema")
   customFormatsKeywords(argv.c)

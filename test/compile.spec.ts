@@ -172,6 +172,15 @@ describe("compile", function () {
       done()
     })
   })
+
+  it("should compile JTD schema", (done) => {
+    cli("compile -s test/jtd/schema --spec=jtd", (error, stdout, stderr) => {
+      assert.strictEqual(error, null)
+      assertValid(stdout, 1)
+      assert.strictEqual(stderr, "")
+      done()
+    })
+  })
 })
 
 function assertValid(stdout: string, count: number): void {

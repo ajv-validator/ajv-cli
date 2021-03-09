@@ -85,6 +85,27 @@ describe("validate", function () {
         done()
       })
     })
+
+    it("should validate valid data with JTD schema", (done) => {
+      cli("validate -s test/jtd/schema -d test/jtd/data --spec=jtd", (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 1)
+        assert.strictEqual(stderr, "")
+        done()
+      })
+    })
+
+    it("should validate invalid data with JTD schema", (done) => {
+      cli(
+        "validate -s test/jtd/schema -d test/jtd/invalid_data --spec=jtd --errors=line",
+        (error, stdout, stderr) => {
+          assert(error instanceof Error)
+          assert.strictEqual(stdout, "")
+          assertErrors(stderr, 1).forEach((errors) => assert.strictEqual(errors.length, 1))
+          done()
+        }
+      )
+    })
   })
 
   describe("multiple file validation", () => {
