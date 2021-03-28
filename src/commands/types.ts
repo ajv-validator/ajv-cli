@@ -8,4 +8,6 @@ export interface Command {
   schema: SchemaObject
 }
 
-export type SchemaSpec = "draft7" | "draft2019"
+export type JSONSchemaDraft = "draft7" | "draft2019" | "draft2020"
+
+export type SchemaSpec = JSONSchemaDraft | "jtd"

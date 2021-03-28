@@ -7,8 +7,11 @@ const boolOrNat = {type: ["boolean", "integer"], minimum: 0}
 const CODE = "code-"
 const ajvOptions: SchemaMap = {
   strict: boolOrString(["log"]),
+  strictSchema: boolOrString(["log"]),
+  strictNumbers: boolOrString(["log"]),
   strictTypes: boolOrString(["log"]),
   strictTuples: boolOrString(["log"]),
+  strictRequired: boolOrString(["log"]),
   allowMatchingProperties: {type: "boolean"},
   allowUnionTypes: {type: "boolean"},
   validateFormats: {type: "boolean"},
@@ -73,13 +76,13 @@ export function checkOptions(schema: SchemaObject, argv: ParsedArgs): string | n
         break
       case "format":
         if (err.params.format === "notGlob") {
-          errors += "only one file is allowed in parameter " + parameter(err.dataPath.slice(1))
+          errors += "only one file is allowed in parameter " + parameter(err.instancePath.slice(1))
           break
         }
-        errors += `parameter ${parameter(err.dataPath.slice(1))} ${err.message}`
+        errors += `parameter ${parameter(err.instancePath.slice(1))} ${err.message}`
         break
       default:
-        errors += `parameter ${parameter(err.dataPath.slice(1))} ${err.message}`
+        errors += `parameter ${parameter(err.instancePath.slice(1))} ${err.message}`
     }
     errors += "\n"
   })

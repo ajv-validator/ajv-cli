@@ -1,4 +1,4 @@
-import type {Command} from "./types"
+import type {Command, JSONSchemaDraft} from "./types"
 import type {AnySchemaObject} from "ajv"
 import type {ParsedArgs} from "minimist"
 import {getFiles, openFile} from "./util"
@@ -17,7 +17,7 @@ const cmd: Command = {
       o: {type: "string"},
       indent: {type: "integer", minimum: 1},
       "validate-schema": {type: "boolean"},
-      spec: {enum: ["draft7", "draft2019"]},
+      spec: {enum: ["draft7", "draft2019", "draft2020"]},
     },
   },
 }
@@ -35,7 +35,7 @@ function execute(argv: ParsedArgs): boolean {
   function migrateSchema(file: string): boolean {
     const sch = openFile(file, `schema ${file}`)
     const migratedSchema: AnySchemaObject = JSON.parse(JSON.stringify(sch))
-    const spec = argv.spec === "draft2019" ? "draft2019" : "draft7"
+    const spec = (argv.spec || "draft7") as JSONSchemaDraft
     migrate[spec](migratedSchema)
     if (argv["validate-schema"] !== false) {
       const ajv = getAjv(argv)

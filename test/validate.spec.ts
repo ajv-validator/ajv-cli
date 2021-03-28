@@ -217,7 +217,7 @@ describe("validate", function () {
           const errors = results[0]
           const err = errors[0]
           assert.strictEqual(err.keyword, "type")
-          assert.strictEqual(err.dataPath, "/foo")
+          assert.strictEqual(err.instancePath, "/foo")
           assert.strictEqual(err.schemaPath, "#/properties/foo/type")
           done()
         }
@@ -235,7 +235,7 @@ describe("validate", function () {
           assert(lines[0].includes("schema"))
           assert(lines[0].includes("invalid"))
           assert(lines[1].includes("error"))
-          assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]))
+          assert(/my_keyword\smust\sbe\sboolean/.test(lines[1]))
           done()
         }
       )
@@ -271,7 +271,7 @@ describe("validate", function () {
           assert.strictEqual(stdout, "")
           assert(stderr.includes("test/schema_with_data_reference is invalid"))
           assert(stderr.includes("larger/minimum"))
-          assert(stderr.includes("should be number"))
+          assert(stderr.includes("must be number"))
           done()
         }
       )
@@ -325,7 +325,7 @@ describe("validate", function () {
           const errors = results[0]
           const err = errors[0]
           assert.strictEqual(err.keyword, "typeof")
-          assert.strictEqual(err.dataPath, "")
+          assert.strictEqual(err.instancePath, "")
           assert.strictEqual(err.schemaPath, "#/typeof")
           done()
         }
@@ -342,7 +342,7 @@ describe("validate", function () {
           const errors = results[0]
           const err = errors[0]
           assert.strictEqual(err.keyword, "typeof")
-          assert.strictEqual(err.dataPath, "")
+          assert.strictEqual(err.instancePath, "")
           assert.strictEqual(err.schemaPath, "#/typeof")
           done()
         }
@@ -363,7 +363,7 @@ function assertRequiredErrors(stderr: string, schemaRef = "#", count = 1): void 
   results.forEach((errors) => {
     const err = errors[0]
     assert.strictEqual(err.keyword, "required")
-    assert.strictEqual(err.dataPath, "/0/dimensions")
+    assert.strictEqual(err.instancePath, "/0/dimensions")
     assert.strictEqual(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
     assert.deepStrictEqual(err.params, {missingProperty: "height"})
   })

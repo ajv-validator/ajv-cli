@@ -113,7 +113,7 @@ describe("compile", function () {
       assert(error instanceof Error)
       assert.strictEqual(stdout, "")
       const lines = assertError(stderr)
-      assert(/my_keyword\sshould\sbe\sboolean/.test(lines[1]))
+      assert(/my_keyword\smust\sbe\sboolean/.test(lines[1]))
       done()
     })
   })

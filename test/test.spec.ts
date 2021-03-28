@@ -154,7 +154,7 @@ function assertRequiredErrors(out: string, count: number, regexp: RegExp, schema
   results.forEach((errors) => {
     const err = errors[0]
     assert.strictEqual(err.keyword, "required")
-    assert.strictEqual(err.dataPath, "/0/dimensions")
+    assert.strictEqual(err.instancePath, "/0/dimensions")
     assert.strictEqual(err.schemaPath, schemaRef + "/items/properties/dimensions/required")
     assert.deepStrictEqual(err.params, {missingProperty: "height"})
   })
