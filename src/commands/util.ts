@@ -35,7 +35,7 @@ function decodeFile(contents: string, format: string): any {
       return JSON5.parse(contents)
     case "yml":
     case "yaml":
-      return yaml.safeLoad(contents)
+      return yaml.safeLoad(contents, {schema: yaml.CORE_SCHEMA})
     default:
       throw new Error(`unsupported file format ${format}`)
   }
