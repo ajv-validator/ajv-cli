@@ -3,6 +3,7 @@ import type {ParsedArgs} from "minimist"
 import {compile, getFiles, openFile, logJSON} from "./util"
 import getAjv from "./ajv"
 import * as jsonPatch from "fast-json-patch"
+import {i18n} from "./i18n"
 
 const cmd: Command = {
   execute,
@@ -54,7 +55,7 @@ function execute(argv: ParsedArgs): boolean {
       }
     } else {
       console.error(file, "invalid")
-      console.error(logJSON(argv.errors, validate.errors, ajv))
+      console.error(logJSON(argv.errors, i18n(argv, validate.errors), ajv))
     }
     return validData
   }
