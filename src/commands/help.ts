@@ -234,11 +234,11 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):
     
     --own-properties   only validate own properties (not relevant for JSON, but can have effect for JavaScript objects)
     
-    --code.es5         generate ES5 code
+    --code-es5         generate ES5 code
 
-    --code.lines       generate multi-line code
+    --code-lines       generate multi-line code
 
-    --code.optimize=   code optimization
+    --code-optimize=   code optimization
              false     disable
              <number>  number of optimization passes (1 pass by default)`)
 }
