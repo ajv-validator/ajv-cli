@@ -5,6 +5,7 @@ import * as fs from "fs"
 import * as yaml from "js-yaml"
 import * as JSON5 from "json5"
 import {AnyValidateFunction} from "ajv/dist/core"
+import * as betterAjvErrors from "better-ajv-errors"
 
 export function getFiles(args: string | string[]): string[] {
   let files: string[] = []
@@ -51,7 +52,7 @@ export function openFile(filename: string, suffix: string): any {
     } catch (e) {
       json = require(file)
     }
-  } catch (err) {
+  } catch (err: any) {
     const msg: string = err.message
     console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
     process.exit(2)
@@ -59,7 +60,7 @@ export function openFile(filename: string, suffix: string): any {
   return json
 }
 
-export function logJSON(mode: string, data: any, ajv?: Ajv): string {
+export function logJSON(mode: string, data: any, ajv?: Ajv, original?: any, schema?: any): string {
   switch (mode) {
     case "json":
       data = JSON.stringify(data, null, "  ")
@@ -72,6 +73,16 @@ export function logJSON(mode: string, data: any, ajv?: Ajv): string {
       break
     case "text":
       if (ajv) data = ajv.errorsText(data)
+      break
+    case "pretty":
+      if (original && schema) {
+        for (const error of data) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore Workaround https://github.com/atlassian/better-ajv-errors/issues/90
+          error.dataPath = error.instancePath
+        }
+        data = betterAjvErrors(JSON.stringify(schema), JSON.stringify(original), data)
+      }
   }
   return data
 }
@@ -80,7 +91,7 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
   const schema = openFile(schemaFile, "schema")
   try {
     return ajv.compile(schema)
-  } catch (err) {
+  } catch (err: any) {
     console.error(`schema ${schemaFile} is invalid`)
     console.error(`error: ${err.message}`)
     process.exit(1)
