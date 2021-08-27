@@ -76,7 +76,12 @@ export function logJSON(mode: string, data: any, ajv?: Ajv, original?: any, sche
       break
     case "pretty":
       if (original && schema) {
-        data = betterAjvErrors(schema, original, data)
+        for (const error of data) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore Workaround https://github.com/atlassian/better-ajv-errors/issues/90
+          error.dataPath = error.instancePath
+        }
+        data = betterAjvErrors(JSON.stringify(schema), JSON.stringify(original), data)
       }
   }
   return data
