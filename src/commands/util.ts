@@ -5,7 +5,7 @@ import * as fs from "fs"
 import * as yaml from "js-yaml"
 import * as JSON5 from "json5"
 import {AnyValidateFunction} from "ajv/dist/core"
-import * as betterAjvErrors from "better-ajv-errors";
+import * as betterAjvErrors from "better-ajv-errors"
 
 export function getFiles(args: string | string[]): string[] {
   let files: string[] = []
