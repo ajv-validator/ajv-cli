@@ -18,7 +18,7 @@ const cmd: Command = {
       r: {$ref: "#/$defs/stringOrArray"},
       m: {$ref: "#/$defs/stringOrArray"},
       c: {$ref: "#/$defs/stringOrArray"},
-      errors: {enum: ["json", "line", "text", "js", "no"]},
+      errors: {enum: ["json", "line", "text", "js", "no", "pretty"]},
       changes: {enum: [true, "json", "line", "js"]},
       spec: {enum: ["draft7", "draft2019", "draft2020", "jtd"]},
     },
@@ -38,7 +38,7 @@ function execute(argv: ParsedArgs): boolean {
   function validateDataFile(file: string): boolean {
     const data = openFile(file, `data file ${file}`)
     let original
-    if (argv.changes) original = JSON.parse(JSON.stringify(data))
+    if (argv.changes || argv.errors === "pretty") original = JSON.parse(JSON.stringify(data))
     const validData = validate(data) as boolean
 
     if (validData) {
@@ -54,7 +54,7 @@ function execute(argv: ParsedArgs): boolean {
       }
     } else {
       console.error(file, "invalid")
-      console.error(logJSON(argv.errors, validate.errors, ajv))
+      console.error(logJSON(argv.errors, validate.errors, ajv, original, argv.s))
     }
     return validData
   }
