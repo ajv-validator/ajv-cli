@@ -49,6 +49,8 @@ export default function (argv: ParsedArgs): AjvCore {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
+      // See https://github.com/ajv-validator/ajv-cli/issues/172.
+      if (file === argv.s) return
       const schema = util.openFile(file, fileType)
       try {
         ajv[method](schema)

@@ -1,0 +1,16 @@
+{
+  "$id": "dependency.json",
+
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+
+    "root": {
+      "$ref": "./root.json"
+    }
+  },
+
+  "type": "object",
+  "additionalProperties": false
+}
