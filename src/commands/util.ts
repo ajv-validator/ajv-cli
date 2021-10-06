@@ -4,7 +4,7 @@ import * as path from "path"
 import * as fs from "fs"
 import * as yaml from "js-yaml"
 import * as JSON5 from "json5"
-import {AnyValidateFunction} from "ajv/dist/core"
+import {AnyValidateFunction, ErrorObject} from "ajv/dist/core"
 
 export function getFiles(args: string | string[]): string[] {
   let files: string[] = []
@@ -52,14 +52,14 @@ export function openFile(filename: string, suffix: string): any {
       json = require(file)
     }
   } catch (err) {
-    const msg: string = err.message
+    const msg: string = (err as Error).message
     console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
     process.exit(2)
   }
   return json
 }
 
-export function logJSON(mode: string, data: any, ajv?: Ajv): string {
+export function logJSON(mode: string, data: string | ErrorObject[], ajv?: Ajv): string {
   switch (mode) {
     case "json":
       data = JSON.stringify(data, null, "  ")
@@ -71,9 +71,9 @@ export function logJSON(mode: string, data: any, ajv?: Ajv): string {
       data = ""
       break
     case "text":
-      if (ajv) data = ajv.errorsText(data)
+      if (ajv) data = ajv.errorsText(data as ErrorObject[])
   }
-  return data
+  return data as string
 }
 
 export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
@@ -82,7 +82,7 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
     return ajv.compile(schema)
   } catch (err) {
     console.error(`schema ${schemaFile} is invalid`)
-    console.error(`error: ${err.message}`)
+    console.error(`error: ${(err as Error).message}`)
     process.exit(1)
   }
 }
