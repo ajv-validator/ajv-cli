@@ -59,7 +59,8 @@ options:
     --spec=            JSON schema specification to use
             draft7     JSON Schema draft-07 (default)
             draft2019  JSON Schema draft-2019-09
-            draft2020  JSON Schema draft-2020-12`)
+            draft2020  JSON Schema draft-2020-12
+            jtd        JSON Type Definition`)
 }
 
 function helpValidate(): void {
