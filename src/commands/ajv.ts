@@ -35,8 +35,9 @@ export default function (argv: ParsedArgs): AjvCore {
   const ajv = new Ajv(opts)
   let invalid: boolean | undefined
   if (argv.spec !== "jtd") ajv.addMetaSchema(draft6metaSchema)
+  const sources = util.getFiles(argv.s)
   addSchemas(argv.m, "addMetaSchema", "meta-schema")
-  addSchemas(argv.r, "addSchema", "schema")
+  addSchemas(argv.r, "addSchema", "schema", (filename) => !sources.includes(filename))
   customFormatsKeywords(argv.c)
   if (invalid) process.exit(1)
   return ajv
@@ -44,11 +45,15 @@ export default function (argv: ParsedArgs): AjvCore {
   function addSchemas(
     args: string | string[] | undefined,
     method: AjvMethod,
-    fileType: string
+    fileType: string,
+    test?: (filename: string) => boolean
   ): void {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
+      if (test && !test(file)) {
+        return
+      }
       const schema = util.openFile(file, fileType)
       try {
         ajv[method](schema)
@@ -84,11 +89,12 @@ export default function (argv: ParsedArgs): AjvCore {
 
     try {
       registerer = require("ts-node").register()
-    } catch (err) {
+    } catch (err: any) {
       /* istanbul ignore next */
-      if (err.code === "MODULE_NOT_FOUND") {
+      const {code, message} = err
+      if (code === "MODULE_NOT_FOUND") {
         throw new Error(
-          `'ts-node' is required for the TypeScript configuration files. Make sure it is installed\nError: ${err.message}`
+          `'ts-node' is required for the TypeScript configuration files. Make sure it is installed\nError: ${message}`
         )
       }
 
