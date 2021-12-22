@@ -181,6 +181,19 @@ describe("validate", function () {
       })
     })
 
+    // See https://github.com/ajv-validator/ajv-cli/issues/172.
+    it("should resolve references that are also provided via the primary schema", (done) => {
+      cli(
+          '-s test/models/root.json -r "test/models/*.json" -d test/models/valid_data.jsonc',
+          (error, stdout, stderr) => {
+              assert.strictEqual(error, null)
+              assertValid(stdout, 1)
+              assert.strictEqual(stderr, "")
+              done()
+          }
+      )
+    })
+
     it("should resolve reference and validate invalid data", (done) => {
       cli(
         "-s test/schema_with_ref -r test/schema -d test/invalid_data --errors=line",

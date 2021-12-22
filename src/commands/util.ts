@@ -51,7 +51,7 @@ export function openFile(filename: string, suffix: string): any {
     } catch (e) {
       json = require(file)
     }
-  } catch (err) {
+  } catch (err: any) {
     const msg: string = err.message
     console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
     process.exit(2)
@@ -80,7 +80,7 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
   const schema = openFile(schemaFile, "schema")
   try {
     return ajv.compile(schema)
-  } catch (err) {
+  } catch (err: any) {
     console.error(`schema ${schemaFile} is invalid`)
     console.error(`error: ${err.message}`)
     process.exit(1)
