@@ -234,7 +234,9 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):
     
     --own-properties   only validate own properties (not relevant for JSON, but can have effect for JavaScript objects)
     
-    --code-es5         generate ES5 code
+    --code-es5         generate ES5 code    
+
+    --code-esm         generate ESM code
 
     --code-lines       generate multi-line code
 
