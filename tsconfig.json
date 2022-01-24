@@ -8,6 +8,7 @@
     "allowJs": true,
     "target": "ES2018",
     "resolveJsonModule": true,
-    "esModuleInterop": false
+    "esModuleInterop": false,
+    "useUnknownInCatchVariables": false
   }
 }
