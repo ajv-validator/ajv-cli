@@ -232,6 +232,7 @@ You can pass the following [Ajv options](https://ajv.js.org/options.html):
 | `--own-properties` | only validate own properties (not relevant for JSON, but can have effect for JavaScript objects) |
 | Code generation |
 | `--code-es5` | generate ES5 code |
+| `--code-esm` | generate ESM code |
 | `--code-lines` | generate multi-line code |
 | `--code-optimize=` | disable optimization (`false`) or number of optimization passes (1 pass by default) |
 | `--code-formats=` | code to require formats object (only needed if you generate standalone code and do not use [ajv-formats](https://github.com/ajv-validator/ajv-formats)) |
