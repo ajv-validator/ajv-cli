@@ -236,6 +236,8 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):
     
     --code-es5         generate ES5 code
 
+    --code-esm         generate ESM exported code
+
     --code-lines       generate multi-line code
 
     --code-optimize=   code optimization
