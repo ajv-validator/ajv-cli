@@ -92,7 +92,10 @@ Multiple meta-schemas can be passed, as in `-r` parameter.
 You can pass module(s) that define custom keywords/formats. The modules should export a function that accepts Ajv instance as a parameter. The file name should start with ".", it will be resolved relative to the current folder. The package name can also be passed - it will be used in require as is.
 These modules can be written in TypeScript if you have `ts-node` installed.
 
-For example, you can use `-c ajv-keywords` to add all keywords from [ajv-keywords](https://github.com/ajv-validator/ajv-keywords) package or `-c ajv-keywords/keywords/typeof` to add only typeof keyword.
+For example:
+
+* Use `-c ajv-keywords` to add all keywords from the [ajv-keywords](https://github.com/ajv-validator/ajv-keywords) package or `-c ajv-keywords/keywords/typeof` to add only typeof keyword.
+* Use `-c ajv-formats` to enable formats from the [ajv-formats](https://github.com/ajv-validator/ajv-formats) package
 
 #### Options
 
