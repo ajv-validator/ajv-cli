@@ -19,7 +19,7 @@ Supports [JSON](http://json.org/), [JSON5](http://json5.org/), and [YAML](http:/
   - [Migrate schemas](#migrate-schemas)
   - [Test validation result](#test-validation-result)
 - [Ajv options](#ajv-options)
-- [Version History, License](#version_history)
+- [Version History, License](#version-history)
 
 ## Installation
 
