@@ -26,6 +26,7 @@ const ajvOptions: SchemaMap = {
   multipleOfPrecision: boolOrNat,
   messages: {type: "boolean"},
   [`${CODE}es5`]: {type: "boolean"},
+  [`${CODE}esm`]: {type: "boolean"},
   [`${CODE}lines`]: {type: "boolean"},
   [`${CODE}optimize`]: boolOrNat,
   [`${CODE}formats`]: {type: "string"},
