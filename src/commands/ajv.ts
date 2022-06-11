@@ -10,6 +10,7 @@ import {getOptions} from "./options"
 import * as util from "./util"
 import * as path from "path"
 import * as draft6metaSchema from "ajv/lib/refs/json-schema-draft-06.json"
+import * as fastUri from "fast-uri"
 
 type AjvMethod = "addSchema" | "addMetaSchema"
 
@@ -30,6 +31,7 @@ const AjvClass: {[S in SchemaSpec]?: typeof AjvCore} = {
 
 export default function (argv: ParsedArgs): AjvCore {
   const opts = getOptions(argv)
+  if (argv["uri-resolver"] === "fast-uri") opts.uriResolver = fastUri
   if (argv.o) opts.code.source = true
   const Ajv: typeof AjvCore = AjvClass[argv.spec as SchemaSpec] || Ajv7
   const ajv = new Ajv(opts)
