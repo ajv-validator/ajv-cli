@@ -234,6 +234,8 @@ Ajv options (see https://github.com/epoberezkin/ajv#options):
     
     --own-properties   only validate own properties (not relevant for JSON, but can have effect for JavaScript objects)
     
+    --uri-resolver=    override embedded uriResolver (uri-js) with alternative (fast-uri)
+    
     --code-es5         generate ES5 code
 
     --code-lines       generate multi-line code

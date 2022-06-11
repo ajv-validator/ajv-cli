@@ -227,6 +227,7 @@ You can pass the following [Ajv options](https://ajv.js.org/options.html):
 | Advanced |
 | `--multiple-of-precision` | precision of multipleOf, pass integer number |
 | `--messages=false` | do not include text messages in errors |
+| `--uri-resolver=` | override embedded uriResolver (uri-js) with alternative (fast-uri) |
 | `--loop-required=` | max size of `required` to compile to expression (rather than to loop) |
 | `--loop-enum=` | max size of `enum` to compile to expression (rather than to loop) |
 | `--own-properties` | only validate own properties (not relevant for JSON, but can have effect for JavaScript objects) |
