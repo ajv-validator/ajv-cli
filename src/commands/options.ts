@@ -25,6 +25,7 @@ const ajvOptions: SchemaMap = {
   ownProperties: {type: "boolean"},
   multipleOfPrecision: boolOrNat,
   messages: {type: "boolean"},
+  uriResolver: {type: "string", enum: ["fast-uri"]},
   [`${CODE}es5`]: {type: "boolean"},
   [`${CODE}lines`]: {type: "boolean"},
   [`${CODE}optimize`]: boolOrNat,
