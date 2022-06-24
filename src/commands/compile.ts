@@ -27,7 +27,7 @@ export default cmd
 
 function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
-  const schemaFiles = getFiles(argv.s)
+  const schemaFiles = getFiles(argv.s).map(loadSchema)
   if ("o" in argv && schemaFiles.length > 1) return compileMultiExportModule(schemaFiles)
   return schemaFiles.map(compileSchemaAndSave).every((x) => x)
 
@@ -46,11 +46,23 @@ function execute(argv: ParsedArgs): boolean {
     return false
   }
 
-  function compileSchema(file: string): AnyValidateFunction | undefined {
+  function loadSchema(file: string): string | never {
     const sch = openFile(file, `schema ${file}`)
     try {
       const id = sch?.$id
       ajv.addSchema(sch, id ? undefined : file)
+      return file
+    } catch (err) {
+      console.error(`schema ${file} is invalid`)
+      console.error(`error: ${(err as Error).message}`)
+      process.exit(1)
+    }
+  }
+
+  function compileSchema(file: string): AnyValidateFunction | undefined {
+    const sch = openFile(file, `schema ${file}`)
+    try {
+      const id = sch?.$id
       const validate = ajv.getSchema(id || file)
       if (argv.o !== true) console.log(`schema ${file} is valid`)
       return validate
