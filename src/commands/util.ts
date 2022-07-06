@@ -6,7 +6,7 @@ import * as yaml from "js-yaml"
 import * as JSON5 from "json5"
 import {AnyValidateFunction} from "ajv/dist/core"
 
-export function getFiles(args: string | string[]): string[] {
+export function getFiles(args: string | string[], ignore?: string): string[] {
   let files: string[] = []
   if (Array.isArray(args)) args.forEach(_getFiles)
   else _getFiles(args)
@@ -14,7 +14,7 @@ export function getFiles(args: string | string[]): string[] {
 
   function _getFiles(fileOrPattern: string): void {
     if (glob.hasMagic(fileOrPattern)) {
-      const dataFiles = glob.sync(fileOrPattern, {cwd: process.cwd()})
+      const dataFiles = glob.sync(fileOrPattern, {cwd: process.cwd(), ignore})
       files = files.concat(dataFiles)
     } else {
       files.push(fileOrPattern)
@@ -51,7 +51,7 @@ export function openFile(filename: string, suffix: string): any {
     } catch (e) {
       json = require(file)
     }
-  } catch (err) {
+  } catch (err: any) {
     const msg: string = err.message
     console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
     process.exit(2)
@@ -80,7 +80,7 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
   const schema = openFile(schemaFile, "schema")
   try {
     return ajv.compile(schema)
-  } catch (err) {
+  } catch (err: any) {
     console.error(`schema ${schemaFile} is invalid`)
     console.error(`error: ${err.message}`)
     process.exit(1)

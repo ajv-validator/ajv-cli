@@ -70,9 +70,11 @@ parameters
     -r referenced schema(s)
     -m meta schema(s)
     -c custom keywords/formats definitions
+    -x data file pattern to be ignored
 
     -d, -r, -m, -c can be globs and can be used multiple times
     glob should be enclosed in double quotes
+    -x can only be used once, but can be a glob
     -c module(s) should export a function that accepts Ajv instance as parameter
     (file path should start with ".", otherwise used as require package)
     .json extension can be omitted (but should be used in globs)`)
