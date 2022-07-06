@@ -18,6 +18,9 @@ const cmd: Command = {
       r: {$ref: "#/$defs/stringOrArray"},
       m: {$ref: "#/$defs/stringOrArray"},
       c: {$ref: "#/$defs/stringOrArray"},
+      x: {
+        type: "string",
+      },
       errors: {enum: ["json", "line", "text", "js", "no"]},
       changes: {enum: [true, "json", "line", "js"]},
       spec: {enum: ["draft7", "draft2019", "draft2020", "jtd"]},
@@ -31,7 +34,7 @@ export default cmd
 function execute(argv: ParsedArgs): boolean {
   const ajv = getAjv(argv)
   const validate = compile(ajv, argv.s)
-  return getFiles(argv.d)
+  return getFiles(argv.d, argv.x)
     .map(validateDataFile)
     .every((x) => x)
 

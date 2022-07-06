@@ -94,6 +94,14 @@ These modules can be written in TypeScript if you have `ts-node` installed.
 
 For example, you can use `-c ajv-keywords` to add all keywords from [ajv-keywords](https://github.com/ajv-validator/ajv-keywords) package or `-c ajv-keywords/keywords/typeof` to add only typeof keyword.
 
+##### `-x` - exclude data files
+
+If the files matched by the `-d` glob pattern(s) are too broad, an ignore pattern can be added using `-x`.  This pattern is passed directly to the [glob library](https://github.com/isaacs/node-glob#options) as the `ignore` option.  Only a single ignore pattern can be specified, but it can be quite flexible:
+
+```sh
+ajv -s test/schema.json -d test/*.json -x "test/+(schema|legacy-*).json"
+```
+
 #### Options
 
 - `--errors=`: error reporting format. Possible values:
