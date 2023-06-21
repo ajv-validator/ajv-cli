@@ -1,5 +1,6 @@
 import cli from "./cli"
 import assert = require("assert")
+import fs = require("fs")
 import type {DefinedError} from "ajv"
 
 describe("validate", function () {
@@ -344,6 +345,25 @@ describe("validate", function () {
           assert.strictEqual(err.keyword, "typeof")
           assert.strictEqual(err.instancePath, "")
           assert.strictEqual(err.schemaPath, "#/typeof")
+          done()
+        }
+      )
+    })
+
+    it("should validate invalid data to output file", (done) => {
+      cli(
+        "validate -s test/custom/schema -c ajv-keywords/dist/keywords/typeof -d test/custom/invalid_data -o test/validate_schema.json",
+        (error, stdout, stderr) => {
+          const validate = require("./validate_schema.json")
+          fs.unlinkSync("test/validate_schema.json")
+          assert(error instanceof Error)
+          assert.strictEqual(stdout, "")
+          assert.strictEqual(stderr, "test/custom/invalid_data invalid\n")
+          assert.strictEqual(1, validate.length)
+          const validateOutput = validate[0]
+          assert.strictEqual(validateOutput.schemaPath, "#/typeof")
+          assert.strictEqual(validateOutput.keyword, "typeof")
+          assert.strictEqual(validateOutput.message, `must pass "typeof" keyword validation`)
           done()
         }
       )

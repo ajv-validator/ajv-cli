@@ -3,6 +3,7 @@ import type {ParsedArgs} from "minimist"
 import {compile, getFiles, openFile, logJSON} from "./util"
 import getAjv from "./ajv"
 import * as jsonPatch from "fast-json-patch"
+import * as fs from "fs"
 
 const cmd: Command = {
   execute,
@@ -18,6 +19,7 @@ const cmd: Command = {
       r: {$ref: "#/$defs/stringOrArray"},
       m: {$ref: "#/$defs/stringOrArray"},
       c: {$ref: "#/$defs/stringOrArray"},
+      o: {type: "string", format: "notGlob"},
       errors: {enum: ["json", "line", "text", "js", "no"]},
       changes: {enum: [true, "json", "line", "js"]},
       spec: {enum: ["draft7", "draft2019", "draft2020", "jtd"]},
@@ -54,7 +56,11 @@ function execute(argv: ParsedArgs): boolean {
       }
     } else {
       console.error(file, "invalid")
-      console.error(logJSON(argv.errors, validate.errors, ajv))
+      if (argv.o) {
+        fs.writeFileSync(argv.o, JSON.stringify(validate.errors))
+      } else {
+        console.error(logJSON(argv.errors, validate.errors, ajv))
+      }
     }
     return validData
   }
