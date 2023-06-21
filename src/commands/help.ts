@@ -70,6 +70,7 @@ parameters
     -r referenced schema(s)
     -m meta schema(s)
     -c custom keywords/formats definitions
+    -o output file to save any validation results
 
     -d, -r, -m, -c can be globs and can be used multiple times
     glob should be enclosed in double quotes
