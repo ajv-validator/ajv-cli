@@ -47,7 +47,7 @@ function execute(argv: ParsedArgs): boolean {
   }
 
   function compileSchema(file: string): AnyValidateFunction | undefined {
-    const sch = openFile(file, `schema ${file}`)
+    const sch = openFile(file, `schema ${file}`, "json")
     try {
       const id = sch?.$id
       ajv.addSchema(sch, id ? undefined : file)

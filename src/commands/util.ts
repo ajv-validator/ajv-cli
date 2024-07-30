@@ -41,17 +41,16 @@ function decodeFile(contents: string, format: string): any {
   }
 }
 
-export function openFile(filename: string, suffix: string): any {
+export function openFile(filename: string, suffix: string, format?: string): any {
   let json = null
   const file = path.resolve(process.cwd(), filename)
   try {
     try {
-      const format = getFormatFromFileName(filename)
-      json = decodeFile(fs.readFileSync(file).toString(), format)
+      json = decodeFile(fs.readFileSync(file).toString(), format ?? getFormatFromFileName(filename))
     } catch (e) {
       json = require(file)
     }
-  } catch (err) {
+  } catch (err: any) {
     const msg: string = err.message
     console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
     process.exit(2)
@@ -77,10 +76,10 @@ export function logJSON(mode: string, data: any, ajv?: Ajv): string {
 }
 
 export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
-  const schema = openFile(schemaFile, "schema")
+  const schema = openFile(schemaFile, "schema", "json")
   try {
     return ajv.compile(schema)
-  } catch (err) {
+  } catch (err: any) {
     console.error(`schema ${schemaFile} is invalid`)
     console.error(`error: ${err.message}`)
     process.exit(1)

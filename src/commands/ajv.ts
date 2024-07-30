@@ -49,7 +49,7 @@ export default function (argv: ParsedArgs): AjvCore {
     if (!args) return
     const files = util.getFiles(args)
     files.forEach((file) => {
-      const schema = util.openFile(file, fileType)
+      const schema = util.openFile(file, fileType, "json")
       try {
         ajv[method](schema)
       } catch (err) {
@@ -84,7 +84,7 @@ export default function (argv: ParsedArgs): AjvCore {
 
     try {
       registerer = require("ts-node").register()
-    } catch (err) {
+    } catch (err: any) {
       /* istanbul ignore next */
       if (err.code === "MODULE_NOT_FOUND") {
         throw new Error(

@@ -33,7 +33,7 @@ function execute(argv: ParsedArgs): boolean {
   return schemaFiles.map(migrateSchema).every((x) => x)
 
   function migrateSchema(file: string): boolean {
-    const sch = openFile(file, `schema ${file}`)
+    const sch = openFile(file, `schema ${file}`, "json")
     const migratedSchema: AnySchemaObject = JSON.parse(JSON.stringify(sch))
     const spec = (argv.spec || "draft7") as JSONSchemaDraft
     migrate[spec](migratedSchema)
