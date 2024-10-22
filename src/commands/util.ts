@@ -29,6 +29,7 @@ function getFormatFromFileName(filename: string): string {
 function decodeFile(contents: string, format: string): any {
   switch (format) {
     case "json":
+    case "":
       return JSON.parse(contents)
     case "jsonc":
     case "json5":
@@ -52,13 +53,16 @@ export function openFile(filename: string, suffix: string): any {
       json = require(file)
     }
   } catch (err) {
-    const msg: string = err.message
-    console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
+    if (err instanceof Error) {
+      const msg: string = err.message
+      console.error(`error:  ${msg.replace(" module", " " + suffix)}`)
+    }
     process.exit(2)
   }
   return json
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function logJSON(mode: string, data: any, ajv?: Ajv): string {
   switch (mode) {
     case "json":
@@ -81,8 +85,10 @@ export function compile(ajv: Ajv, schemaFile: string): AnyValidateFunction {
   try {
     return ajv.compile(schema)
   } catch (err) {
-    console.error(`schema ${schemaFile} is invalid`)
-    console.error(`error: ${err.message}`)
+    if (err instanceof Error) {
+      console.error(`schema ${schemaFile} is invalid`)
+      console.error(`error: ${err.message}`)
+    }
     process.exit(1)
   }
 }

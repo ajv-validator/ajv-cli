@@ -42,8 +42,24 @@ describe("validate", function () {
       })
     })
 
-    it('should validate valid data with the "jsonc" extension', (done) => {
-      cli("-s test/schema -d test/valid_data.jsonc", (error, stdout, stderr) => {
+    it("should try JSON format if data file has no extension", (done) => {
+      cli("-s test/schema -d test/valid_data_no_ext", (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 1)
+        assert.strictEqual(stderr, "")
+        done()
+      })
+    })
+    it("should try JSON format if schema file has no extension", (done) => {
+      cli("-s test/schema_no_ext -d test/valid_data.json", (error, stdout, stderr) => {
+        assert.strictEqual(error, null)
+        assertValid(stdout, 1)
+        assert.strictEqual(stderr, "")
+        done()
+      })
+    })
+    it("should try JSON format if schema and data file have no extension", (done) => {
+      cli("-s test/schema_no_ext -d test/valid_data_no_ext", (error, stdout, stderr) => {
         assert.strictEqual(error, null)
         assertValid(stdout, 1)
         assert.strictEqual(stderr, "")
@@ -62,6 +78,7 @@ describe("validate", function () {
         }
       )
     })
+
 
     it("should validate invalid data", (done) => {
       cli(
