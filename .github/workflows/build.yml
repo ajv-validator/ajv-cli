@@ -74,6 +74,13 @@ jobs:
             BUILD_DATE=${{env.BUILD_DATE}}
             APP_VERSION=${{env.APP_VERSION}}
 
+      - name: Test Container Image
+        id: test-image
+        run:
+          wget https://gitlab.com/gitlab-org/gitlab/-/raw/master/ee/app/validators/json_schemas/security_orchestration_policy.json
+          ajv-cli migrate -s security_orchestration_policy.json
+          docker run -v $(pwd):/build -it continuoussecuritytooling/ajv-cli:${{env.APP_VERSION}}_rc validate --spec=draft2020 --strict=false --validate-formats=true  -c ajv-formats --unicodeRegExp=false -s /build/security_orchestration_policy.json -d /build/test/gitlab/policy.yml
+
   build-results:
     name: Build results
     if: ${{ always() }}
